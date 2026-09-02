@@ -1,6 +1,8 @@
 # xiaoyu-skill
 
-一组面向科研写作、投稿、论文制图和 AI agent 协作的开源 skills。每个 skill 都是独立、可安装的目录；仓库根目录不是一个总入口 skill。
+面向科研工作的开源 Skill 合集，覆盖参考文献、期刊选择、论文格式、学术制图和多模型协作。
+
+可以按需安装任意一个 Skill，也可以保留完整仓库，统一更新。
 
 ## Skills
 
@@ -13,13 +15,13 @@
 | [`study-area-map`](skills/study-area-map/) | 使用 R 绘制论文研究区区位图和地形底图 | [keros68/study-area-map.skill](https://github.com/keros68/study-area-map.skill) |
 | [`ai-cross`](skills/ai-cross/) | 多模型分工、分层派发和跨厂商交叉验证 | [keros68/ai-cross](https://github.com/keros68/ai-cross) |
 
-`journal-fit` 不再单独收录；其投稿前期刊定向审查能力已经并入 `sci-select`。
+`sci-select` 已集成原 `journal-fit` 的投稿前期刊定向审查能力。
 
 ## 安装
 
-安装时选择需要的 skill 子目录，不要把仓库根目录当成一个 skill。目标目录应直接包含对应的 `SKILL.md`。
+先克隆仓库，再将需要的 Skill 目录复制到 Codex 的用户 Skill 目录。以 `sci-select` 为例。
 
-以 Codex 和 `sci-select` 为例：
+Windows PowerShell：
 
 ```powershell
 git clone https://github.com/keros68/xiaoyu-skill.git "$env:USERPROFILE\xiaoyu-skill"
@@ -33,11 +35,43 @@ git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
 cp -R ~/xiaoyu-skill/skills/sci-select ~/.codex/skills/sci-select
 ```
 
-如需安装其他 skill，将示例中的 `sci-select` 换成表格里的目录名。各 skill 的依赖、触发方式和使用边界见其目录内的 `README.md` 与 `SKILL.md`。
+安装其他 Skill 时，将示例中的 `sci-select` 换成对应目录名。安装后，Skill 目录内应直接包含 `SKILL.md`。
+
+## 使用
+
+在 Codex 中描述任务，符合用途的 Skill 会按其触发规则启用。也可以在提示词中直接指定 Skill，例如：
+
+```text
+使用 sci-select，根据这篇论文的标题和摘要给出候选期刊。
+```
+
+各目录的 `README.md` 介绍具体用法，`SKILL.md` 定义执行流程、触发条件和交付要求。
+
+## 更新
+
+在本地仓库中拉取最新版本，再重新复制已安装的 Skill 目录。
+
+Windows PowerShell：
+
+```powershell
+git -C "$env:USERPROFILE\xiaoyu-skill" pull --ff-only
+$source = "$env:USERPROFILE\xiaoyu-skill\skills\sci-select"
+$target = "$env:USERPROFILE\.codex\skills\sci-select"
+New-Item -ItemType Directory -Force $target | Out-Null
+Get-ChildItem -LiteralPath $source -Force | Copy-Item -Destination $target -Recurse -Force
+```
+
+macOS 或 Linux：
+
+```bash
+git -C ~/xiaoyu-skill pull --ff-only
+mkdir -p ~/.codex/skills/sci-select
+cp -R ~/xiaoyu-skill/skills/sci-select/. ~/.codex/skills/sci-select/
+```
 
 ## 合并基线
 
-本仓库首次合并自各原项目 2026-09-02 的 GitHub `main` 分支：
+本仓库于 2026-09-02 从各原项目的 GitHub `main` 分支完成首次合并：
 
 | Skill | Commit |
 | --- | --- |
