@@ -1,0 +1,73 @@
+task,type,difficulty,vendor,arm,trial,correct,input,fresh,output,wall,tool_calls,note
+null,null,low,OpenAI,codex-low,1,1,19652,16196,21,64.3,0,任何非空回复即可（用于测固定开销）
+null,null,low,OpenAI,codex-low,2,1,19652,16196,18,65.4,0,任何非空回复即可（用于测固定开销）
+null,null,low,OpenAI,codex-low,3,1,19652,324,21,66.1,0,任何非空回复即可（用于测固定开销）
+null,null,low,OpenAI,codex-high,1,1,21942,19510,30,73.1,0,任何非空回复即可（用于测固定开销）
+null,null,low,OpenAI,codex-high,2,1,21942,19510,56,66.1,0,任何非空回复即可（用于测固定开销）
+null,null,low,OpenAI,codex-high,3,1,21693,19261,38,69.6,0,任何非空回复即可（用于测固定开销）
+null,null,low,智谱,glm-low,1,1,29177,28473,23,17.3,0,任何非空回复即可（用于测固定开销）
+null,null,low,智谱,glm-low,2,1,29176,3064,4,15.3,0,任何非空回复即可（用于测固定开销）
+null,null,low,智谱,glm-low,3,1,29177,3065,26,22.4,0,任何非空回复即可（用于测固定开销）
+null,null,low,智谱,glm-mid,1,0,,,,193.2,0,[33m⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes pre
+null,null,low,智谱,glm-mid,2,0,,,,185.7,0,[33m⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes pre
+null,null,low,智谱,glm-mid,3,0,,,,180.1,0,[33m⚠ claude.ai connectors are disabled because ANTHROPIC_API_KEY or another auth source is set and takes pre
+null,null,low,StepFun,step-low,1,1,30047,30047,37,6.6,0,任何非空回复即可（用于测固定开销）
+null,null,low,StepFun,step-low,2,1,30049,97,43,4.1,0,任何非空回复即可（用于测固定开销）
+null,null,low,StepFun,step-low,3,1,30048,96,26,4.0,0,任何非空回复即可（用于测固定开销）
+null,null,low,StepFun,step-mid,1,1,29727,29407,36,6.2,0,任何非空回复即可（用于测固定开销）
+null,null,low,StepFun,step-mid,2,1,29727,95,83,4.6,0,任何非空回复即可（用于测固定开销）
+null,null,low,StepFun,step-mid,3,1,29726,94,57,5.3,0,任何非空回复即可（用于测固定开销）
+recon-count,recon,low,OpenAI,codex-low,1,0,39695,16399,238,66.7,1,asserts=17(期望16) raises=4(期望4)
+recon-count,recon,low,OpenAI,codex-low,2,1,39644,32732,185,65.8,1,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,OpenAI,codex-low,3,1,39400,30952,217,86.7,1,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,OpenAI,codex-high,1,1,71105,23361,986,87.0,2,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,OpenAI,codex-high,2,1,69745,38897,1076,116.5,2,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,OpenAI,codex-high,3,1,69790,22046,709,86.8,2,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,智谱,glm-low,1,1,59675,22555,66,7.3,0,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,智谱,glm-low,2,1,58587,3163,127,16.4,0,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,智谱,glm-low,3,1,58584,3160,126,8.8,0,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,智谱,glm-mid,1,0,,,,177.9,0,"529 [1305][该模型当前访问量过大，请您稍后再试][20260708162922d43f041d2bd94b61]. This is a server-side issue, usually temporary "
+recon-count,recon,low,智谱,glm-mid,2,0,,,,183.0,0,"529 [1305][该模型当前访问量过大，请您稍后再试][20260708163225c95bb2a92c0b4212]. This is a server-side issue, usually temporary "
+recon-count,recon,low,智谱,glm-mid,3,0,,,,178.1,0,"529 [1305][该模型当前访问量过大，请您稍后再试][202607081635245c3b5d5c7d1c402d]. This is a server-side issue, usually temporary "
+recon-count,recon,low,StepFun,step-low,1,0,61486,1518,419,9.5,0,asserts=19(期望16) raises=4(期望4)
+recon-count,recon,low,StepFun,step-low,2,1,61474,1506,854,10.8,0,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,StepFun,step-low,3,1,61474,1506,657,10.5,0,asserts=16(期望16) raises=4(期望4)
+recon-count,recon,low,StepFun,step-mid,1,0,60834,1506,548,13.1,0,asserts=17(期望16) raises=5(期望4)
+recon-count,recon,low,StepFun,step-mid,2,0,60830,1502,671,9.5,0,asserts=17(期望16) raises=4(期望4)
+recon-count,recon,low,StepFun,step-mid,3,0,60866,1538,560,8.2,0,asserts=18(期望16) raises=5(期望4)
+impl-roman,implement,mid,OpenAI,codex-low,1,1,19723,16267,277,63.8,0,全部通过
+impl-roman,implement,mid,OpenAI,codex-low,2,1,19723,907,281,63.2,0,全部通过
+impl-roman,implement,mid,OpenAI,codex-low,3,1,19723,15243,240,66.5,0,全部通过
+impl-roman,implement,mid,OpenAI,codex-high,1,1,48469,24149,1402,90.0,2,全部通过
+impl-roman,implement,mid,OpenAI,codex-high,2,1,22013,19581,796,71.4,0,全部通过
+impl-roman,implement,mid,OpenAI,codex-high,3,1,48286,23966,1310,88.6,1,全部通过
+impl-roman,implement,mid,智谱,glm-low,1,1,88664,23704,715,15.9,0,全部通过
+impl-roman,implement,mid,智谱,glm-low,2,1,29242,3066,261,9.2,0,全部通过
+impl-roman,implement,mid,智谱,glm-low,3,1,29242,3066,284,8.7,0,全部通过
+impl-roman,implement,mid,智谱,glm-mid,1,0,,,,187.5,0,"529 [1305][该模型当前访问量过大，请您稍后再试][2026070816473013beb915a1f04fb0]. This is a server-side issue, usually temporary "
+impl-roman,implement,mid,智谱,glm-mid,2,0,,,,185.9,0,"529 [1305][该模型当前访问量过大，请您稍后再试][20260708165036135b24a233b04bd0]. This is a server-side issue, usually temporary "
+impl-roman,implement,mid,智谱,glm-mid,3,0,,,,183.6,0,"529 [1305][该模型当前访问量过大，请您稍后再试][202607081653407485bf3f6d6f4b29]. This is a server-side issue, usually temporary "
+impl-roman,implement,mid,StepFun,step-low,1,1,30215,135,337,11.2,0,全部通过
+impl-roman,implement,mid,StepFun,step-low,2,1,30213,30213,816,12.0,0,全部通过
+impl-roman,implement,mid,StepFun,step-low,3,1,60825,601,616,10.5,0,全部通过
+impl-roman,implement,mid,StepFun,step-mid,1,1,29892,132,693,9.8,0,全部通过
+impl-roman,implement,mid,StepFun,step-mid,2,1,29891,131,938,10.1,0,全部通过
+impl-roman,implement,mid,StepFun,step-mid,3,1,29891,131,401,9.3,0,全部通过
+impl-chunk,implement,mid,OpenAI,codex-low,1,1,19714,15234,66,58.9,0,全部通过
+impl-chunk,implement,mid,OpenAI,codex-low,2,1,19714,15234,66,67.4,0,全部通过
+impl-chunk,implement,mid,OpenAI,codex-low,3,1,20742,17286,62,48.6,0,全部通过
+impl-chunk,implement,mid,OpenAI,codex-high,1,1,22004,19572,202,66.4,0,全部通过
+impl-chunk,implement,mid,OpenAI,codex-high,2,1,72443,24699,1110,103.9,2,全部通过
+impl-chunk,implement,mid,OpenAI,codex-high,3,1,22004,19572,154,65.2,0,全部通过
+impl-chunk,implement,mid,智谱,glm-low,1,1,29334,29334,64,7.5,0,全部通过
+impl-chunk,implement,mid,智谱,glm-low,2,1,29334,3158,85,6.2,0,全部通过
+impl-chunk,implement,mid,智谱,glm-low,3,1,29334,3158,113,6.3,0,全部通过
+impl-chunk,implement,mid,智谱,glm-mid,1,0,,,,189.5,0,"529 [1305][该模型当前访问量过大，请您稍后再试][20260708170503cde69b863baa4796]. This is a server-side issue, usually temporary "
+impl-chunk,implement,mid,智谱,glm-mid,2,0,,,,188.9,0,"529 [1305][该模型当前访问量过大，请您稍后再试][20260708170812f5c00867878940e3]. This is a server-side issue, usually temporary "
+impl-chunk,implement,mid,智谱,glm-mid,3,0,,,,181.6,0,"529 [1305][该模型当前访问量过大，请您稍后再试][20260708171113dbc656149f954a4e]. This is a server-side issue, usually temporary "
+impl-chunk,implement,mid,StepFun,step-low,1,1,30204,30204,142,7.7,0,全部通过
+impl-chunk,implement,mid,StepFun,step-low,2,1,30207,127,135,10.4,0,全部通过
+impl-chunk,implement,mid,StepFun,step-low,3,1,30206,126,136,5.3,0,全部通过
+impl-chunk,implement,mid,StepFun,step-mid,1,1,29883,123,134,7.0,0,全部通过
+impl-chunk,implement,mid,StepFun,step-mid,2,1,29884,29884,286,16.5,0,全部通过
+impl-chunk,implement,mid,StepFun,step-mid,3,1,29884,124,140,4.7,0,全部通过

@@ -1,0 +1,106 @@
+task,type,model,trial,correct,prompt,completion,wall,reasoning,note
+extract-amounts,抽取,Qwen3.6-35B,1,0,93,512,9.4,1,"得到 '4,5,12,45,56,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,Qwen3.6-35B,2,0,93,512,7.8,1,"得到 '4,5,12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,Qwen3.6-35B,3,0,93,512,11.1,1,"得到 '3,12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+sentiment-pos,分类,Qwen3.6-35B,1,1,48,391,7.2,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,Qwen3.6-35B,2,1,48,314,8.2,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,Qwen3.6-35B,3,1,48,451,9.8,0,得到 '正面' 期望 '正面'
+sentiment-neg,分类,Qwen3.6-35B,1,1,46,512,8.4,1,得到 '负面' 期望 '负面'
+sentiment-neg,分类,Qwen3.6-35B,2,1,46,310,5.0,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,Qwen3.6-35B,3,1,46,512,8.7,1,得到 '负面' 期望 '负面'
+sentiment-neu,分类,Qwen3.6-35B,1,1,45,512,10.4,1,得到 '中性' 期望 '中性'
+sentiment-neu,分类,Qwen3.6-35B,2,1,45,267,5.1,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,Qwen3.6-35B,3,1,45,305,7.6,0,得到 '中性' 期望 '中性'
+date-normalize,格式,Qwen3.6-35B,1,1,44,269,5.0,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,Qwen3.6-35B,2,1,44,287,4.7,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,Qwen3.6-35B,3,1,44,287,6.4,0,得到 '2026-03-07' 期望 '2026-03-07'
+count-periods,亲自数,Qwen3.6-35B,1,1,53,426,8.0,0,得到 4 期望 4
+count-periods,亲自数,Qwen3.6-35B,2,1,53,438,10.4,0,得到 4 期望 4
+count-periods,亲自数,Qwen3.6-35B,3,1,53,512,8.7,1,得到 4 期望 4
+json-extract,结构化,Qwen3.6-35B,1,1,52,314,6.6,0,name=王芳 age=29 city=成都
+json-extract,结构化,Qwen3.6-35B,2,1,52,512,12.2,1,name=王芳 age=29 city=成都
+json-extract,结构化,Qwen3.6-35B,3,1,52,288,9.1,0,name=王芳 age=29 city=成都
+extract-amounts,抽取,GLM-5.2,1,1,94,461,7.6,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,GLM-5.2,2,1,94,513,9.2,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,GLM-5.2,3,1,94,510,8.8,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+sentiment-pos,分类,GLM-5.2,1,1,50,110,4.5,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,GLM-5.2,2,1,50,224,4.3,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,GLM-5.2,3,1,50,194,3.7,0,得到 '正面' 期望 '正面'
+sentiment-neg,分类,GLM-5.2,1,1,48,217,4.1,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,GLM-5.2,2,1,48,246,4.2,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,GLM-5.2,3,1,48,221,4.0,0,得到 '负面' 期望 '负面'
+sentiment-neu,分类,GLM-5.2,1,1,48,206,4.8,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,GLM-5.2,2,1,48,117,2.7,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,GLM-5.2,3,1,48,161,4.0,0,得到 '中性' 期望 '中性'
+date-normalize,格式,GLM-5.2,1,1,44,139,4.1,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,GLM-5.2,2,1,44,186,3.6,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,GLM-5.2,3,1,44,215,4.1,0,得到 '2026-03-07' 期望 '2026-03-07'
+count-periods,亲自数,GLM-5.2,1,1,54,200,4.4,0,得到 4 期望 4
+count-periods,亲自数,GLM-5.2,2,1,54,189,3.7,0,得到 4 期望 4
+count-periods,亲自数,GLM-5.2,3,1,54,179,4.2,0,得到 4 期望 4
+json-extract,结构化,GLM-5.2,1,1,53,304,5.4,0,name=王芳 age=29 city=成都
+json-extract,结构化,GLM-5.2,2,1,53,349,6.8,0,name=王芳 age=29 city=成都
+json-extract,结构化,GLM-5.2,3,1,53,288,5.3,0,name=王芳 age=29 city=成都
+extract-amounts,抽取,DeepSeek-V4-Pro,1,1,81,136,6.4,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,DeepSeek-V4-Pro,2,1,81,144,6.2,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,DeepSeek-V4-Pro,3,1,81,136,8.9,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+sentiment-pos,分类,DeepSeek-V4-Pro,1,1,42,22,2.2,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,DeepSeek-V4-Pro,2,1,42,22,2.4,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,DeepSeek-V4-Pro,3,1,42,10,2.3,0,得到 '正面' 期望 '正面'
+sentiment-neg,分类,DeepSeek-V4-Pro,1,1,40,22,2.1,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,DeepSeek-V4-Pro,2,1,40,23,1.7,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,DeepSeek-V4-Pro,3,1,40,24,1.9,0,得到 '负面' 期望 '负面'
+sentiment-neu,分类,DeepSeek-V4-Pro,1,1,40,29,2.4,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,DeepSeek-V4-Pro,2,1,40,29,2.6,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,DeepSeek-V4-Pro,3,1,40,29,2.0,0,得到 '中性' 期望 '中性'
+date-normalize,格式,DeepSeek-V4-Pro,1,1,38,38,3.8,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,DeepSeek-V4-Pro,2,1,38,40,3.2,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,DeepSeek-V4-Pro,3,1,38,41,3.0,0,得到 '2026-03-07' 期望 '2026-03-07'
+count-periods,亲自数,DeepSeek-V4-Pro,1,1,46,54,3.8,0,得到 4 期望 4
+count-periods,亲自数,DeepSeek-V4-Pro,2,1,46,40,2.4,0,得到 4 期望 4
+count-periods,亲自数,DeepSeek-V4-Pro,3,1,46,51,3.1,0,得到 4 期望 4
+json-extract,结构化,DeepSeek-V4-Pro,1,1,45,76,6.3,0,name=王芳 age=29 city=成都
+json-extract,结构化,DeepSeek-V4-Pro,2,1,45,80,4.8,0,name=王芳 age=29 city=成都
+json-extract,结构化,DeepSeek-V4-Pro,3,1,45,71,3.7,0,name=王芳 age=29 city=成都
+extract-amounts,抽取,Kimi-K2.6,1,1,84,277,6.4,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,Kimi-K2.6,2,1,84,304,6.9,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,Kimi-K2.6,3,1,84,345,7.6,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+sentiment-pos,分类,Kimi-K2.6,1,1,43,84,3.1,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,Kimi-K2.6,2,1,43,113,3.2,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,Kimi-K2.6,3,1,43,113,2.9,0,得到 '正面' 期望 '正面'
+sentiment-neg,分类,Kimi-K2.6,1,1,43,115,3.1,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,Kimi-K2.6,2,1,43,116,3.1,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,Kimi-K2.6,3,1,43,95,2.7,0,得到 '负面' 期望 '负面'
+sentiment-neu,分类,Kimi-K2.6,1,1,41,114,3.3,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,Kimi-K2.6,2,1,41,119,3.2,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,Kimi-K2.6,3,1,41,117,3.2,0,得到 '中性' 期望 '中性'
+date-normalize,格式,Kimi-K2.6,1,1,40,105,2.8,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,Kimi-K2.6,2,1,40,117,3.3,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,Kimi-K2.6,3,1,40,122,3.1,0,得到 '2026-03-07' 期望 '2026-03-07'
+count-periods,亲自数,Kimi-K2.6,1,1,48,89,2.6,0,得到 4 期望 4
+count-periods,亲自数,Kimi-K2.6,2,1,48,117,3.2,0,得到 4 期望 4
+count-periods,亲自数,Kimi-K2.6,3,1,48,115,3.0,0,得到 4 期望 4
+json-extract,结构化,Kimi-K2.6,1,1,47,200,5.1,0,name=王芳 age=29 city=成都
+json-extract,结构化,Kimi-K2.6,2,1,47,217,5.4,0,name=王芳 age=29 city=成都
+json-extract,结构化,Kimi-K2.6,3,1,47,180,4.8,0,name=王芳 age=29 city=成都
+extract-amounts,抽取,LongCat-2.0,1,1,92,207,12.2,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,LongCat-2.0,2,0,92,512,12.0,1,"得到 '4,5,6,7,12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+extract-amounts,抽取,LongCat-2.0,3,1,92,188,5.4,0,"得到 '12,45,89,256,1200' 期望 '12,45,89,256,1200'"
+sentiment-pos,分类,LongCat-2.0,1,1,44,174,5.4,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,LongCat-2.0,2,1,44,64,3.5,0,得到 '正面' 期望 '正面'
+sentiment-pos,分类,LongCat-2.0,3,1,44,131,4.9,0,得到 '正面' 期望 '正面'
+sentiment-neg,分类,LongCat-2.0,1,1,43,191,6.5,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,LongCat-2.0,2,1,43,188,7.2,0,得到 '负面' 期望 '负面'
+sentiment-neg,分类,LongCat-2.0,3,1,43,127,4.2,0,得到 '负面' 期望 '负面'
+sentiment-neu,分类,LongCat-2.0,1,1,42,128,5.0,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,LongCat-2.0,2,1,42,34,2.4,0,得到 '中性' 期望 '中性'
+sentiment-neu,分类,LongCat-2.0,3,1,42,38,3.9,0,得到 '中性' 期望 '中性'
+date-normalize,格式,LongCat-2.0,1,1,41,55,2.8,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,LongCat-2.0,2,1,41,64,3.7,0,得到 '2026-03-07' 期望 '2026-03-07'
+date-normalize,格式,LongCat-2.0,3,1,41,61,6.1,0,得到 '2026-03-07' 期望 '2026-03-07'
+count-periods,亲自数,LongCat-2.0,1,1,48,33,2.5,0,得到 4 期望 4
+count-periods,亲自数,LongCat-2.0,2,1,48,222,6.3,0,得到 4 期望 4
+count-periods,亲自数,LongCat-2.0,3,1,48,46,3.4,0,得到 4 期望 4
+json-extract,结构化,LongCat-2.0,1,1,48,252,6.8,0,name=王芳 age=29 city=成都
+json-extract,结构化,LongCat-2.0,2,1,48,74,2.8,0,name=王芳 age=29 city=成都
+json-extract,结构化,LongCat-2.0,3,1,48,87,4.2,0,name=王芳 age=29 city=成都

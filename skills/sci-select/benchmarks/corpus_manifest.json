@@ -1,0 +1,362 @@
+[
+  {
+    "case_id": "B001",
+    "doi": "10.3390/su172310834",
+    "stratum": "hydrogeology",
+    "query": "groundwater nitrate hydrochemistry"
+  },
+  {
+    "case_id": "B002",
+    "doi": "10.7717/peerj.19233",
+    "stratum": "hydrogeology",
+    "query": "groundwater nitrate hydrochemistry"
+  },
+  {
+    "case_id": "B003",
+    "doi": "10.3390/w16152105",
+    "stratum": "hydrogeology",
+    "query": "groundwater nitrate hydrochemistry"
+  },
+  {
+    "case_id": "B004",
+    "doi": "10.2174/0115734056246452231011042418",
+    "stratum": "medical-imaging",
+    "query": "cancer radiomics medical imaging"
+  },
+  {
+    "case_id": "B005",
+    "doi": "10.1186/s12880-024-01278-5",
+    "stratum": "medical-imaging",
+    "query": "cancer radiomics medical imaging"
+  },
+  {
+    "case_id": "B006",
+    "doi": "10.35711/aimi.v5.i1.93993",
+    "stratum": "medical-imaging",
+    "query": "cancer radiomics medical imaging"
+  },
+  {
+    "case_id": "B007",
+    "doi": "10.3390/cryst15020152",
+    "stratum": "photovoltaics",
+    "query": "perovskite solar cell stability"
+  },
+  {
+    "case_id": "B008",
+    "doi": "10.1002/solr.202500186",
+    "stratum": "photovoltaics",
+    "query": "perovskite solar cell stability"
+  },
+  {
+    "case_id": "B009",
+    "doi": "10.1002/pip.70058",
+    "stratum": "photovoltaics",
+    "query": "perovskite solar cell stability"
+  },
+  {
+    "case_id": "B010",
+    "doi": "10.3390/land12071298",
+    "stratum": "ecology",
+    "query": "ecosystem services land use change"
+  },
+  {
+    "case_id": "B011",
+    "doi": "10.21523/gcj1.2023070102",
+    "stratum": "ecology",
+    "query": "ecosystem services land use change"
+  },
+  {
+    "case_id": "B012",
+    "doi": "10.3389/fenvs.2025.1557000",
+    "stratum": "ecology",
+    "query": "ecosystem services land use change"
+  },
+  {
+    "case_id": "B013",
+    "doi": "10.62810/jnsr.v2i4.99",
+    "stratum": "agriculture",
+    "query": "smart agriculture crop production"
+  },
+  {
+    "case_id": "B014",
+    "doi": "10.3390/app151810025",
+    "stratum": "agriculture",
+    "query": "smart agriculture crop production"
+  },
+  {
+    "case_id": "B015",
+    "doi": "10.3390/agriculture13020397",
+    "stratum": "agriculture",
+    "query": "smart agriculture crop production"
+  },
+  {
+    "case_id": "B016",
+    "doi": "10.1017/s1351324923000542",
+    "stratum": "clinical-nlp",
+    "query": "clinical natural language processing"
+  },
+  {
+    "case_id": "B017",
+    "doi": "10.2196/64898",
+    "stratum": "clinical-nlp",
+    "query": "clinical natural language processing"
+  },
+  {
+    "case_id": "B018",
+    "doi": "10.53469/jcmp.2024.06(08).67",
+    "stratum": "clinical-nlp",
+    "query": "clinical natural language processing"
+  },
+  {
+    "case_id": "B019",
+    "doi": "10.3390/sexes4010003",
+    "stratum": "work-sociology",
+    "query": "platform workers occupational health qualitative"
+  },
+  {
+    "case_id": "B020",
+    "doi": "10.1097/jom.0000000000003228",
+    "stratum": "work-sociology",
+    "query": "platform workers occupational health qualitative"
+  },
+  {
+    "case_id": "B021",
+    "doi": "10.1093/joccuh/uiae018",
+    "stratum": "work-sociology",
+    "query": "platform workers occupational health qualitative"
+  },
+  {
+    "case_id": "B022",
+    "doi": "10.1186/s40807-024-00120-4",
+    "stratum": "energy",
+    "query": "hybrid energy storage grid integration"
+  },
+  {
+    "case_id": "B023",
+    "doi": "10.1002/est2.70275",
+    "stratum": "energy",
+    "query": "hybrid energy storage grid integration"
+  },
+  {
+    "case_id": "B024",
+    "doi": "10.3389/fenrg.2022.1015083",
+    "stratum": "energy",
+    "query": "hybrid energy storage grid integration"
+  },
+  {
+    "case_id": "B025",
+    "doi": "10.1142/s0219519423500331",
+    "stratum": "neuroscience",
+    "query": "Alzheimer MRI classification"
+  },
+  {
+    "case_id": "B026",
+    "doi": "10.3390/diagnostics13040801",
+    "stratum": "neuroscience",
+    "query": "Alzheimer MRI classification"
+  },
+  {
+    "case_id": "B027",
+    "doi": "10.1088/2631-8695/ade8d5",
+    "stratum": "neuroscience",
+    "query": "Alzheimer MRI classification"
+  },
+  {
+    "case_id": "B028",
+    "doi": "10.3390/min15010092",
+    "stratum": "geochemistry",
+    "query": "sedimentary provenance geochemistry"
+  },
+  {
+    "case_id": "B029",
+    "doi": "10.1130/b38525.1",
+    "stratum": "geochemistry",
+    "query": "sedimentary provenance geochemistry"
+  },
+  {
+    "case_id": "B030",
+    "doi": "10.1002/gj.4884",
+    "stratum": "geochemistry",
+    "query": "sedimentary provenance geochemistry"
+  },
+  {
+    "case_id": "B031",
+    "doi": "10.1093/jjfinec/nbae034",
+    "stratum": "economics",
+    "query": "inflation monetary policy household"
+  },
+  {
+    "case_id": "B032",
+    "doi": "10.21511/imfi.22(3).2025.29",
+    "stratum": "economics",
+    "query": "inflation monetary policy household"
+  },
+  {
+    "case_id": "B033",
+    "doi": "10.35854/1998-1627-2024-4-501-510",
+    "stratum": "economics",
+    "query": "inflation monetary policy household"
+  },
+  {
+    "case_id": "B034",
+    "doi": "10.1111/jcal.13087",
+    "stratum": "education",
+    "query": "student assessment learning analytics"
+  },
+  {
+    "case_id": "B035",
+    "doi": "10.3390/educsci14040413",
+    "stratum": "education",
+    "query": "student assessment learning analytics"
+  },
+  {
+    "case_id": "B036",
+    "doi": "10.56294/ai2025203",
+    "stratum": "education",
+    "query": "student assessment learning analytics"
+  },
+  {
+    "case_id": "B037",
+    "doi": "10.36475/11.3.3",
+    "stratum": "law",
+    "query": "digital privacy data protection law"
+  },
+  {
+    "case_id": "B038",
+    "doi": "10.51473/rcmos.v1i1.2025.957",
+    "stratum": "law",
+    "query": "digital privacy data protection law"
+  },
+  {
+    "case_id": "B039",
+    "doi": "10.60143/ijls.v10.i1.2024.114",
+    "stratum": "law",
+    "query": "digital privacy data protection law"
+  },
+  {
+    "case_id": "B040",
+    "doi": "10.31074/gyntf.2025.2.21.37",
+    "stratum": "linguistics",
+    "query": "multilingual discourse language acquisition"
+  },
+  {
+    "case_id": "B041",
+    "doi": "10.1177/14614456251374181",
+    "stratum": "linguistics",
+    "query": "multilingual discourse language acquisition"
+  },
+  {
+    "case_id": "B042",
+    "doi": "10.1111/lnc3.12497",
+    "stratum": "linguistics",
+    "query": "multilingual discourse language acquisition"
+  },
+  {
+    "case_id": "B043",
+    "doi": "10.15826/elmattech.2023.2.014",
+    "stratum": "catalysis",
+    "query": "heterogeneous catalysis materials"
+  },
+  {
+    "case_id": "B044",
+    "doi": "10.1002/idm2.12140",
+    "stratum": "catalysis",
+    "query": "heterogeneous catalysis materials"
+  },
+  {
+    "case_id": "B045",
+    "doi": "10.1055/a-2129-9076",
+    "stratum": "catalysis",
+    "query": "heterogeneous catalysis materials"
+  },
+  {
+    "case_id": "B046",
+    "doi": "10.1186/s40621-023-00418-9",
+    "stratum": "epidemiology",
+    "query": "population epidemiology risk factors"
+  },
+  {
+    "case_id": "B047",
+    "doi": "10.1186/s43163-023-00456-6",
+    "stratum": "epidemiology",
+    "query": "population epidemiology risk factors"
+  },
+  {
+    "case_id": "B048",
+    "doi": "10.1097/cej.0000000000000790",
+    "stratum": "epidemiology",
+    "query": "population epidemiology risk factors"
+  },
+  {
+    "case_id": "B049",
+    "doi": "10.3389/frobt.2024.1359887",
+    "stratum": "robotics",
+    "query": "autonomous robot navigation"
+  },
+  {
+    "case_id": "B050",
+    "doi": "10.1007/s10514-023-10118-4",
+    "stratum": "robotics",
+    "query": "autonomous robot navigation"
+  },
+  {
+    "case_id": "B051",
+    "doi": "10.3390/s25041248",
+    "stratum": "robotics",
+    "query": "autonomous robot navigation"
+  },
+  {
+    "case_id": "B052",
+    "doi": "10.5802/crphys.140",
+    "stratum": "astronomy",
+    "query": "exoplanet stellar observation"
+  },
+  {
+    "case_id": "B053",
+    "doi": "10.3847/1538-3881/ad5441",
+    "stratum": "astronomy",
+    "query": "exoplanet stellar observation"
+  },
+  {
+    "case_id": "B054",
+    "doi": "10.1051/0004-6361/202451537",
+    "stratum": "astronomy",
+    "query": "exoplanet stellar observation"
+  },
+  {
+    "case_id": "B055",
+    "doi": "10.1007/s10878-023-01063-0",
+    "stratum": "optimization",
+    "query": "combinatorial optimization algorithm"
+  },
+  {
+    "case_id": "B056",
+    "doi": "10.3390/electronics12092105",
+    "stratum": "optimization",
+    "query": "combinatorial optimization algorithm"
+  },
+  {
+    "case_id": "B057",
+    "doi": "10.5269/bspm.77389",
+    "stratum": "optimization",
+    "query": "combinatorial optimization algorithm"
+  },
+  {
+    "case_id": "B058",
+    "doi": "10.1017/gmh.2025.37",
+    "stratum": "psychology",
+    "query": "mental health psychological intervention"
+  },
+  {
+    "case_id": "B059",
+    "doi": "10.69569/jip.2025.122",
+    "stratum": "psychology",
+    "query": "mental health psychological intervention"
+  },
+  {
+    "case_id": "B060",
+    "doi": "10.18282/po3629",
+    "stratum": "psychology",
+    "query": "mental health psychological intervention"
+  }
+]

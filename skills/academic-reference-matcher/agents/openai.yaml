@@ -1,0 +1,4 @@
+interface:
+  display_name: "Academic Reference Matcher"
+  short_description: "Match citations to supplied academic claims"
+  default_prompt: "Use $academic-reference-matcher to verify the citations supporting this supplied academic paragraph."

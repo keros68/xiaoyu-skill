@@ -1,0 +1,4 @@
+interface:
+  display_name: "Abstract-Fig"
+  short_description: "Create editable draw.io manuscript figures with image2 elements and style planning"
+  default_prompt: "Use $abstract-fig to plan the figure style, generate image2 elements, and turn my manuscript idea into an editable boxed manuscript-style draw.io figure."

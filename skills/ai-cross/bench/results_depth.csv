@@ -1,0 +1,501 @@
+task,depth,type,model,thinking,trial,correct,strict,completion,reasoning_chars,wall,finish,failmode,note
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,0,1,1,1,18,0,1.5,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,0,2,1,0,18,0,1.7,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,0,3,1,1,18,0,1.5,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,0,4,1,1,18,0,1.7,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,0,5,1,1,18,0,1.3,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,1,1,1,1,2009,4732,18.6,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,1,2,1,1,1187,2795,11.6,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,1,3,1,1,1190,2810,11.6,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,1,4,1,1,1309,3181,12.5,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Qwen3.6-35B,1,5,1,1,1438,3615,14.3,stop,,"得到 '12,45,89,256,1200'"
+s-senti-pos,shallow,分类,Qwen3.6-35B,0,1,1,1,2,0,0.5,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,0,2,1,1,2,0,0.6,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,0,3,1,1,2,0,0.3,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,0,4,1,1,2,0,0.4,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,0,5,1,1,2,0,0.7,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,1,1,1,1,281,983,5.0,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,1,2,1,1,274,946,3.1,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,1,3,1,1,235,843,3.2,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,1,4,1,1,312,1088,7.7,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Qwen3.6-35B,1,5,1,1,526,1804,6.5,stop,,得到 '正面' 期望 '正面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,0,1,1,1,2,0,0.4,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,0,2,1,1,2,0,0.5,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,0,3,1,1,2,0,0.4,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,0,4,1,1,2,0,0.5,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,0,5,1,1,2,0,0.4,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,1,1,1,1,502,1687,12.5,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,1,2,1,1,461,1660,5.4,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,1,3,1,1,501,1754,12.3,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,1,4,1,1,262,932,5.2,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Qwen3.6-35B,1,5,1,1,407,1380,6.0,stop,,得到 '负面' 期望 '负面'
+s-senti-neu,shallow,分类,Qwen3.6-35B,0,1,1,1,2,0,1.0,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,0,2,1,1,2,0,0.5,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,0,3,1,1,2,0,0.5,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,0,4,1,1,2,0,0.5,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,0,5,1,1,2,0,0.3,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,1,1,1,1,266,974,3.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,1,2,1,1,314,1106,4.6,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,1,3,1,1,330,1173,4.7,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,1,4,1,1,243,889,3.4,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Qwen3.6-35B,1,5,1,1,488,1677,10.8,stop,,得到 '中性' 期望 '中性'
+s-date-norm,shallow,格式,Qwen3.6-35B,0,1,1,1,11,0,0.4,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,0,2,1,1,11,0,0.4,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,0,3,1,1,11,0,0.6,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,0,4,1,1,11,0,0.5,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,0,5,1,1,11,0,0.5,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,1,1,1,1,273,695,2.7,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,1,2,1,1,250,651,2.4,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,1,3,1,1,307,804,2.8,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,1,4,1,1,291,777,2.7,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Qwen3.6-35B,1,5,1,1,279,681,2.6,stop,,得到 '2026-03-07'
+s-json-extract,shallow,结构化,Qwen3.6-35B,0,1,1,1,21,0,1.9,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,0,2,1,1,21,0,0.8,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,0,3,1,1,21,0,1.6,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,0,4,1,1,21,0,1.6,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,0,5,1,1,21,0,1.5,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,1,1,1,1,347,615,22.3,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,1,2,1,1,264,449,4.0,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,1,3,1,1,187,297,4.5,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,1,4,1,1,254,433,3.9,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Qwen3.6-35B,1,5,1,1,340,587,7.4,stop,,name=王芳 age=29 city=成都
+d-recur-11,deep,递推,Qwen3.6-35B,0,1,0,0,4,0,0.6,stop,wrong,得到 988 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,0,2,0,0,4,0,0.6,stop,wrong,得到 916 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,0,3,0,0,4,0,0.6,stop,wrong,得到 470 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,0,4,0,0,4,0,0.5,stop,wrong,得到 128 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,0,5,0,0,4,0,0.5,stop,wrong,得到 956 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,1,1,0,0,4096,7809,67.5,length,truncated_empty,"content 空 (finish=length, reasoning 7809字)"
+d-recur-11,deep,递推,Qwen3.6-35B,1,2,1,1,3990,6879,44.5,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,1,3,0,0,4096,8408,45.5,length,truncated_empty,"content 空 (finish=length, reasoning 8408字)"
+d-recur-11,deep,递推,Qwen3.6-35B,1,4,0,0,4096,7594,71.6,length,truncated_empty,"content 空 (finish=length, reasoning 7594字)"
+d-recur-11,deep,递推,Qwen3.6-35B,1,5,1,1,3839,7270,56.6,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,0,1,0,0,5,0,0.4,stop,wrong,"得到 (23, 6) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,0,2,0,0,6,0,0.6,stop,wrong,"得到 (42, 20) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,0,3,0,0,6,0,0.5,stop,wrong,"得到 (22, 28) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,0,4,0,0,5,0,1.6,stop,wrong,"得到 (32, 2) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,0,5,0,0,5,0,1.5,stop,wrong,"得到 (24, 2) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,1,1,1,1185,2604,28.0,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,2,1,1,1232,2857,30.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,3,1,1,1360,3191,12.1,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,4,1,1,1103,2425,12.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,5,1,1,2369,5696,24.2,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,Qwen3.6-35B,0,1,0,0,10,0,2.3,stop,wrong,得到 戊甲丙丁乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,0,2,0,0,10,0,0.5,stop,wrong,得到 戊甲丙丁乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,0,3,0,0,10,0,0.6,stop,wrong,得到 戊丙丁甲乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,0,4,0,0,10,0,0.6,stop,wrong,得到 戊甲丙丁乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,0,5,0,0,10,0,0.6,stop,wrong,得到 丙丁戊甲乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,1,1,1,2432,5713,25.2,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,2,1,1,2677,6567,29.5,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,3,1,1,1573,3710,20.0,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,4,1,1,1778,4293,38.5,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,5,0,0,4096,9994,39.6,length,truncated_empty,"content 空 (finish=length, reasoning 9994字)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,0,1,1,0,2858,0,63.8,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,0,2,0,0,5,0,0.5,stop,wrong,"得到 (42, 6) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,0,3,0,0,5,0,0.5,stop,wrong,"得到 (69, 1) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,0,4,1,0,2913,0,31.9,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,0,5,0,0,5,0,0.6,stop,wrong,"得到 (30, 0) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,1,0,0,4096,9753,44.5,length,truncated_empty,"content 空 (finish=length, reasoning 9753字)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,2,1,1,3681,8706,41.0,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,3,0,0,4096,10228,48.0,length,truncated_empty,"content 空 (finish=length, reasoning 10228字)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,4,0,0,4096,9510,46.0,length,truncated_empty,"content 空 (finish=length, reasoning 9510字)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,5,0,0,4096,10708,60.8,length,truncated_empty,"content 空 (finish=length, reasoning 10708字)"
+s-extract-amounts,shallow,抽取,GLM-5.2,0,1,1,1,10,0,1.2,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,0,2,1,1,10,0,1.0,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,0,3,1,1,10,0,1.0,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,0,4,1,1,10,0,0.9,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,0,5,1,1,10,0,1.0,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,1,1,1,1,389,635,7.7,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,1,2,1,1,553,921,11.4,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,1,3,1,1,546,893,10.8,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,1,4,1,1,414,666,8.4,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,GLM-5.2,1,5,1,1,447,743,8.3,stop,,"得到 '12,45,89,256,1200'"
+s-senti-pos,shallow,分类,GLM-5.2,0,1,1,1,1,0,0.9,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,0,2,1,1,1,0,1.1,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,0,3,1,1,1,0,0.9,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,0,4,1,1,1,0,1.2,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,0,5,1,1,1,0,0.9,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,1,1,1,1,177,317,3.7,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,1,2,1,1,142,241,3.2,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,1,3,1,1,331,694,6.7,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,1,4,1,1,219,369,4.6,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,GLM-5.2,1,5,1,1,208,363,5.1,stop,,得到 '正面' 期望 '正面'
+s-senti-neg,shallow,分类,GLM-5.2,0,1,1,1,1,0,1.3,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,0,2,1,1,1,0,1.0,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,0,3,1,1,1,0,0.9,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,0,4,1,1,1,0,0.9,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,0,5,1,1,1,0,0.9,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,1,1,1,1,205,345,4.7,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,1,2,1,1,211,355,4.6,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,1,3,1,1,214,362,4.5,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,1,4,1,1,240,414,5.0,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,GLM-5.2,1,5,1,1,229,790,5.3,stop,,得到 '负面' 期望 '负面'
+s-senti-neu,shallow,分类,GLM-5.2,0,1,1,1,1,0,0.9,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,0,2,1,1,1,0,0.9,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,0,3,1,1,1,0,1.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,0,4,1,1,1,0,1.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,0,5,1,1,1,0,1.0,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,1,1,1,1,243,843,5.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,1,2,1,1,247,424,5.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,1,3,1,1,256,959,5.7,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,1,4,1,1,229,391,4.7,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,GLM-5.2,1,5,1,1,150,258,3.5,stop,,得到 '中性' 期望 '中性'
+s-date-norm,shallow,格式,GLM-5.2,0,1,1,1,6,0,0.9,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,0,2,1,1,6,0,1.0,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,0,3,1,1,6,0,0.9,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,0,4,1,1,6,0,1.8,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,0,5,1,1,6,0,1.2,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,1,1,1,1,193,339,5.1,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,1,2,1,1,173,317,6.1,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,1,3,1,1,192,327,4.0,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,1,4,1,1,172,270,4.6,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,GLM-5.2,1,5,1,1,210,376,4.2,stop,,得到 '2026-03-07'
+s-json-extract,shallow,结构化,GLM-5.2,0,1,1,1,19,0,1.7,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,0,2,1,1,19,0,1.3,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,0,3,1,1,14,0,1.8,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,0,4,1,1,19,0,2.2,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,0,5,1,1,19,0,1.9,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,1,1,1,1,297,539,6.4,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,1,2,1,1,253,482,5.5,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,1,3,1,1,846,1618,15.5,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,1,4,1,1,235,447,4.8,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,GLM-5.2,1,5,1,1,300,569,6.1,stop,,name=王芳 age=29 city=成都
+d-recur-11,deep,递推,GLM-5.2,0,1,0,0,2,0,0.9,stop,wrong,得到 518 期望 256
+d-recur-11,deep,递推,GLM-5.2,0,2,0,0,2,0,1.0,stop,wrong,得到 858 期望 256
+d-recur-11,deep,递推,GLM-5.2,0,3,0,0,2,0,0.9,stop,wrong,得到 268 期望 256
+d-recur-11,deep,递推,GLM-5.2,0,4,0,0,2,0,0.9,stop,wrong,得到 762 期望 256
+d-recur-11,deep,递推,GLM-5.2,0,5,0,0,2,0,0.9,stop,wrong,得到 354 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,1,1,1,325,648,10.5,stop,,得到 256 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,2,1,1,328,672,6.6,stop,,得到 256 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,3,1,1,350,778,6.2,stop,,得到 256 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,4,1,1,408,1031,8.3,stop,,得到 256 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,5,1,1,348,733,7.3,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,GLM-5.2,0,1,0,0,3,0,1.2,stop,wrong,"得到 (13, 5) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,0,2,0,0,3,0,0.9,stop,wrong,"得到 (15, 9) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,0,3,0,0,3,0,1.2,stop,wrong,"得到 (26, 13) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,0,4,0,0,3,0,0.9,stop,wrong,"得到 (19, 15) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,0,5,0,0,3,0,0.8,stop,wrong,"得到 (15, 11) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,1,1,1,189,461,4.2,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,2,1,1,182,458,3.9,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,3,1,1,165,391,4.2,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,4,1,1,173,446,4.3,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,5,1,1,351,895,7.0,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,GLM-5.2,0,1,0,0,9,0,0.9,stop,wrong,得到 甲丙丁戊乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,0,2,0,0,9,0,1.1,stop,wrong,得到 丁甲戊乙丙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,0,3,1,1,9,0,0.9,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,0,4,1,1,9,0,1.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,0,5,0,0,9,0,1.6,stop,wrong,得到 丙甲戊丁乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,1,1,1,430,1116,9.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,2,1,1,415,1087,9.6,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,3,1,1,340,829,7.9,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,4,1,1,386,1110,9.8,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,5,1,1,383,929,8.2,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,GLM-5.2,0,1,0,0,3,0,1.0,stop,wrong,"得到 (82, 1) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,0,2,0,0,3,0,4.7,stop,wrong,"得到 (145, 3) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,0,3,0,0,3,0,1.0,stop,wrong,"得到 (122, 2) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,0,4,0,0,3,0,1.0,stop,wrong,"得到 (66, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,0,5,0,0,3,0,0.9,stop,wrong,"得到 (95, 2) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,1,0,0,10487,35177,220.3,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,2,1,1,10867,36701,244.4,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,3,1,1,12061,42704,251.9,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,4,0,0,8493,27858,178.0,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,5,0,0,0,0,0.0,ERROR,api_error,TimeoutError: The read operation timed out
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,0,1,1,1,10,0,2.1,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,0,2,1,1,10,0,1.9,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,0,3,1,1,10,0,1.4,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,0,4,1,1,10,0,1.3,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,0,5,1,1,10,0,1.6,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,1,1,1,1,107,142,5.9,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,1,2,1,1,127,174,4.5,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,1,3,1,1,145,215,5.1,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,1,4,1,1,160,232,5.7,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,DeepSeek-V4-Pro,1,5,1,1,156,226,5.9,stop,,"得到 '12,45,89,256,1200'"
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,0,1,1,1,1,0,2.7,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,0,2,1,1,1,0,2.8,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,0,3,1,1,1,0,3.0,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,0,4,1,1,1,0,2.5,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,0,5,1,1,1,0,3.6,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,1,1,1,1,20,30,3.0,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,1,2,1,1,35,52,5.0,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,1,3,1,1,30,46,3.4,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,1,4,1,1,31,46,9.6,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,DeepSeek-V4-Pro,1,5,1,1,33,52,1.8,stop,,得到 '正面' 期望 '正面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,0,1,1,1,1,0,2.5,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,0,2,1,1,1,0,1.0,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,0,3,1,1,1,0,3.5,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,0,4,1,1,1,0,3.0,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,0,5,1,1,1,0,2.2,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,1,1,1,1,37,58,3.2,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,1,2,1,1,34,52,2.1,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,1,3,1,1,20,30,4.6,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,1,4,1,1,23,34,6.1,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,DeepSeek-V4-Pro,1,5,1,1,23,35,3.2,stop,,得到 '负面' 期望 '负面'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,0,1,1,1,1,0,2.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,0,2,1,1,1,0,0.9,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,0,3,1,1,1,0,1.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,0,4,1,1,1,0,1.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,0,5,1,1,1,0,1.8,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,1,1,1,1,45,70,3.4,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,1,2,1,1,38,56,4.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,1,3,1,1,44,69,3.2,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,1,4,1,1,42,65,4.8,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,DeepSeek-V4-Pro,1,5,1,1,42,65,3.6,stop,,得到 '中性' 期望 '中性'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,0,1,1,1,6,0,1.7,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,0,2,1,1,6,0,2.0,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,0,3,1,1,6,0,3.7,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,0,4,1,1,6,0,1.2,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,0,5,1,1,6,0,1.0,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,1,1,1,1,31,41,3.1,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,1,2,1,1,48,64,4.5,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,1,3,1,1,42,59,20.7,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,1,4,1,1,44,65,3.4,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,DeepSeek-V4-Pro,1,5,1,1,48,65,2.8,stop,,得到 '2026-03-07'
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,0,1,1,1,14,0,2.1,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,0,2,1,1,14,0,1.6,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,0,3,1,1,14,0,1.8,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,0,4,1,1,19,0,1.5,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,0,5,1,1,14,0,3.5,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,1,1,1,1,71,114,3.9,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,1,2,1,1,60,93,3.2,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,1,3,1,1,56,83,11.7,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,1,4,1,1,67,104,4.4,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,DeepSeek-V4-Pro,1,5,1,1,64,97,3.5,stop,,name=王芳 age=29 city=成都
+d-recur-11,deep,递推,DeepSeek-V4-Pro,0,1,0,0,1,0,1.2,stop,wrong,得到 321 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,0,2,0,0,1,0,5.1,stop,wrong,得到 368 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,0,3,0,0,1,0,2.9,stop,wrong,得到 907 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,0,4,0,0,1,0,1.0,stop,wrong,得到 924 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,0,5,0,0,1,0,4.5,stop,wrong,得到 161 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,1,1,1,733,1233,18.0,stop,,得到 256 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,2,1,1,495,868,24.2,stop,,得到 256 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,3,1,1,455,764,12.0,stop,,得到 256 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,4,1,1,351,603,8.9,stop,,得到 256 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,5,1,1,425,760,10.1,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,0,1,1,0,394,0,9.7,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,0,2,0,0,7,0,1.4,stop,wrong,"得到 (26, 9) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,0,3,1,0,255,0,6.8,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,0,4,1,0,258,0,8.1,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,0,5,1,0,283,0,9.8,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,1,1,1,512,629,16.1,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,2,1,1,462,568,12.1,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,3,1,1,413,527,16.0,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,4,1,1,353,440,11.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,5,1,1,536,665,15.7,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,0,1,1,0,423,0,12.5,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,0,2,1,0,551,0,17.4,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,0,3,1,0,458,0,13.0,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,0,4,1,0,583,0,17.3,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,0,5,1,0,533,0,15.7,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,1,1,1,731,913,19.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,2,1,1,640,822,17.6,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,3,1,1,674,873,19.8,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,4,1,1,963,1219,25.7,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,5,1,1,703,927,17.3,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,0,1,0,0,3,0,3.4,stop,wrong,"得到 (260, 3) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,0,2,0,0,3,0,3.4,stop,wrong,"得到 (260, 0) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,0,3,0,0,3,0,2.9,stop,wrong,"得到 (260, 1) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,0,4,0,0,3,0,2.4,stop,wrong,"得到 (56, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,0,5,0,0,3,0,2.3,stop,wrong,"得到 (122, 1) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,1,0,0,1833,2869,53.1,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,2,0,0,4181,6690,121.4,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,3,0,0,2053,3228,61.3,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,4,0,0,2195,3451,57.8,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,5,0,0,8723,13992,234.8,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,0,1,0,0,8,0,1.4,stop,wrong,"得到 '45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,0,2,1,1,10,0,1.3,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,0,3,1,0,10,0,1.4,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,0,4,1,1,10,0,1.3,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,0,5,1,1,10,0,1.2,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,1,1,1,1,252,370,8.2,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,1,2,1,1,257,431,9.1,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,1,3,1,1,371,588,16.1,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,1,4,1,1,264,381,11.4,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,Kimi-K2.6,1,5,1,1,295,459,9.0,stop,,"得到 '12,45,89,256,1200'"
+s-senti-pos,shallow,分类,Kimi-K2.6,0,1,1,1,1,0,0.9,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,0,2,1,1,1,0,1.0,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,0,3,1,1,1,0,0.9,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,0,4,1,1,1,0,1.1,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,0,5,1,1,1,0,1.0,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,1,1,1,1,108,192,6.6,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,1,2,1,1,116,203,4.1,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,1,3,1,1,111,186,3.9,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,1,4,1,1,110,194,3.8,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,Kimi-K2.6,1,5,1,1,113,194,4.7,stop,,得到 '正面' 期望 '正面'
+s-senti-neg,shallow,分类,Kimi-K2.6,0,1,1,1,1,0,2.9,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,0,2,1,1,1,0,1.1,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,0,3,1,1,1,0,1.2,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,0,4,1,1,1,0,1.7,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,0,5,1,1,1,0,1.1,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,1,1,1,1,121,200,4.8,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,1,2,1,1,115,190,4.6,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,1,3,1,1,119,199,4.9,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,1,4,1,1,131,222,5.3,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,Kimi-K2.6,1,5,1,1,118,196,4.7,stop,,得到 '负面' 期望 '负面'
+s-senti-neu,shallow,分类,Kimi-K2.6,0,1,1,1,1,0,1.2,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,0,2,1,1,1,0,0.9,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,0,3,1,1,1,0,1.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,0,4,1,1,1,0,1.5,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,0,5,1,1,1,0,1.0,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,1,1,1,1,133,238,4.9,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,1,2,1,1,107,180,4.2,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,1,3,1,1,144,245,4.8,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,1,4,1,1,81,145,3.3,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,Kimi-K2.6,1,5,1,1,113,199,4.2,stop,,得到 '中性' 期望 '中性'
+s-date-norm,shallow,格式,Kimi-K2.6,0,1,1,1,6,0,1.1,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,0,2,1,1,6,0,1.1,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,0,3,1,1,6,0,1.0,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,0,4,1,1,6,0,1.7,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,0,5,1,1,6,0,1.1,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,1,1,1,1,123,189,6.7,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,1,2,1,1,146,239,7.1,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,1,3,1,1,124,191,4.5,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,1,4,1,1,136,217,5.0,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,Kimi-K2.6,1,5,1,1,96,154,3.3,stop,,得到 '2026-03-07'
+s-json-extract,shallow,结构化,Kimi-K2.6,0,1,1,1,14,0,1.3,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,0,2,1,1,14,0,1.9,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,0,3,1,1,14,0,1.2,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,0,4,1,1,14,0,1.2,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,0,5,1,1,14,0,1.3,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,1,1,1,1,216,419,6.5,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,1,2,1,1,135,253,4.3,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,1,3,1,1,162,314,5.2,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,1,4,1,1,106,191,3.9,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,Kimi-K2.6,1,5,1,1,212,394,8.3,stop,,name=王芳 age=29 city=成都
+d-recur-11,deep,递推,Kimi-K2.6,0,1,0,0,1,0,1.2,stop,wrong,得到 836 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,0,2,0,0,1,0,2.8,stop,wrong,得到 918 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,0,3,0,0,1,0,0.8,stop,wrong,得到 196 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,0,4,0,0,1,0,1.2,stop,wrong,得到 716 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,0,5,0,0,1,0,0.8,stop,wrong,得到 905 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,1,1,1,1054,1770,24.7,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,2,1,1,798,1366,19.6,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,3,1,1,912,1596,22.9,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,4,1,1,822,1412,19.2,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,5,1,1,878,1468,23.8,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,Kimi-K2.6,0,1,1,0,278,0,6.9,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,0,2,1,0,273,0,7.4,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,0,3,1,0,270,0,10.0,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,0,4,1,0,302,0,8.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,0,5,1,0,273,0,7.7,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,1,1,1,359,501,10.3,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,2,1,1,627,845,17.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,3,1,1,337,441,10.6,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,4,1,1,381,485,12.3,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,5,1,1,619,839,17.2,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,Kimi-K2.6,0,1,1,0,419,0,12.4,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,0,2,1,0,492,0,13.2,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,0,3,1,0,437,0,12.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,0,4,1,0,481,0,13.8,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,0,5,1,0,521,0,14.0,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,1,1,1,998,1333,28.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,2,1,1,882,1159,24.9,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,3,1,1,1290,1803,37.6,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,4,1,1,943,1352,24.4,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,5,1,1,966,1325,25.5,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,Kimi-K2.6,0,1,1,0,1973,0,49.8,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,0,2,0,0,993,0,25.5,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,0,3,1,0,1422,0,37.0,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,0,4,1,0,801,0,20.3,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,0,5,0,0,1679,0,42.0,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,1,1,1,4265,7199,114.5,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,2,1,1,2473,4171,65.9,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,3,1,1,3852,6527,102.3,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,4,1,1,5983,9751,160.8,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,5,1,1,6643,11097,172.5,stop,,"得到 (74, 4) 期望 (74, 4)"
+s-extract-amounts,shallow,抽取,LongCat-2.0,0,1,0,0,15,0,1.7,stop,wrong,"得到 '12,45,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,0,2,1,0,18,0,4.4,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,0,3,1,0,18,0,1.9,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,0,4,1,1,18,0,2.2,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,0,5,1,1,18,0,3.1,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,1,1,1,1,695,1005,17.4,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,1,2,1,1,607,907,15.6,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,1,3,1,1,156,164,5.2,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,1,4,1,1,238,281,5.8,stop,,"得到 '12,45,89,256,1200'"
+s-extract-amounts,shallow,抽取,LongCat-2.0,1,5,1,1,540,811,12.6,stop,,"得到 '12,45,89,256,1200'"
+s-senti-pos,shallow,分类,LongCat-2.0,0,1,1,1,2,0,1.5,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,0,2,1,1,2,0,1.1,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,0,3,1,1,2,0,1.4,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,0,4,1,1,2,0,1.1,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,0,5,1,1,2,0,1.3,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,1,1,1,1,25,32,2.4,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,1,2,1,1,30,38,3.3,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,1,3,1,1,57,86,2.6,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,1,4,1,1,93,149,3.0,stop,,得到 '正面' 期望 '正面'
+s-senti-pos,shallow,分类,LongCat-2.0,1,5,1,1,44,64,2.8,stop,,得到 '正面' 期望 '正面'
+s-senti-neg,shallow,分类,LongCat-2.0,0,1,1,1,2,0,1.1,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,0,2,1,1,2,0,1.6,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,0,3,1,1,2,0,1.5,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,0,4,1,1,2,0,1.7,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,0,5,1,1,2,0,1.4,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,1,1,1,1,27,37,1.9,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,1,2,1,1,178,308,5.3,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,1,3,1,1,38,54,3.1,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,1,4,1,1,189,330,6.9,stop,,得到 '负面' 期望 '负面'
+s-senti-neg,shallow,分类,LongCat-2.0,1,5,1,1,68,102,4.2,stop,,得到 '负面' 期望 '负面'
+s-senti-neu,shallow,分类,LongCat-2.0,0,1,1,1,2,0,1.6,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,0,2,1,1,2,0,1.6,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,0,3,1,1,2,0,1.6,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,0,4,1,1,2,0,1.3,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,0,5,1,1,2,0,1.1,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,1,1,1,1,50,73,2.7,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,1,2,1,1,34,44,2.3,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,1,3,1,1,221,387,6.0,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,1,4,1,1,48,70,2.2,stop,,得到 '中性' 期望 '中性'
+s-senti-neu,shallow,分类,LongCat-2.0,1,5,1,1,34,44,2.4,stop,,得到 '中性' 期望 '中性'
+s-date-norm,shallow,格式,LongCat-2.0,0,1,1,1,11,0,2.6,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,0,2,1,1,11,0,2.2,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,0,3,1,1,11,0,1.8,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,0,4,1,1,11,0,1.6,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,0,5,1,1,11,0,1.4,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,1,1,1,1,61,68,3.3,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,1,2,1,1,75,84,3.2,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,1,3,1,1,68,77,3.0,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,1,4,1,1,66,75,3.0,stop,,得到 '2026-03-07'
+s-date-norm,shallow,格式,LongCat-2.0,1,5,1,1,59,65,2.5,stop,,得到 '2026-03-07'
+s-json-extract,shallow,结构化,LongCat-2.0,0,1,1,1,16,0,1.8,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,0,2,1,1,16,0,1.9,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,0,3,1,1,16,0,1.6,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,0,4,1,1,16,0,2.6,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,0,5,1,1,16,0,2.5,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,1,1,1,1,74,97,3.4,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,1,2,1,1,350,627,9.8,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,1,3,1,1,80,97,2.8,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,1,4,1,1,75,97,2.7,stop,,name=王芳 age=29 city=成都
+s-json-extract,shallow,结构化,LongCat-2.0,1,5,1,1,74,99,3.6,stop,,name=王芳 age=29 city=成都
+d-recur-11,deep,递推,LongCat-2.0,0,1,0,0,2,0,1.3,stop,wrong,得到 3 期望 256
+d-recur-11,deep,递推,LongCat-2.0,0,2,0,0,4,0,1.6,stop,wrong,得到 609 期望 256
+d-recur-11,deep,递推,LongCat-2.0,0,3,0,0,4,0,1.3,stop,wrong,得到 415 期望 256
+d-recur-11,deep,递推,LongCat-2.0,0,4,0,0,4,0,1.4,stop,wrong,得到 766 期望 256
+d-recur-11,deep,递推,LongCat-2.0,0,5,0,0,4,0,1.5,stop,wrong,得到 644 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,1,1,1,720,894,14.4,stop,,得到 256 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,2,1,1,685,840,16.0,stop,,得到 256 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,3,1,1,896,1086,18.7,stop,,得到 256 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,4,1,1,737,970,15.5,stop,,得到 256 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,5,1,1,559,696,12.2,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,LongCat-2.0,0,1,0,0,5,0,1.8,stop,wrong,"得到 (8, 10) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,0,2,0,0,5,0,1.3,stop,wrong,"得到 (9, 10) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,0,3,0,0,4,0,1.6,stop,wrong,"得到 (3, 1) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,0,4,0,0,5,0,1.7,stop,wrong,"得到 (7, 11) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,0,5,0,0,6,0,1.4,stop,wrong,"得到 (21, 12) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,1,1,1,326,339,7.4,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,2,1,1,520,565,10.8,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,3,1,1,541,667,13.4,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,4,1,1,589,688,12.3,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,5,1,1,409,442,9.4,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,LongCat-2.0,0,1,0,0,10,0,1.4,stop,wrong,得到 甲丙丁戊乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,0,2,0,0,10,0,1.3,stop,wrong,得到 甲丙丁戊乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,0,3,0,0,10,0,1.5,stop,wrong,得到 甲乙丙丁戊 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,0,4,0,0,10,0,1.3,stop,wrong,得到 甲丙丁戊乙 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,0,5,0,0,10,0,1.4,stop,wrong,得到 甲乙丙丁戊 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,1,1,1,608,717,16.3,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,2,1,1,785,922,19.5,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,3,1,1,943,1191,30.4,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,4,1,1,716,864,18.6,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,5,1,1,803,971,22.6,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,LongCat-2.0,0,1,0,0,6,0,1.7,stop,wrong,"得到 (100, 0) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,0,2,0,0,6,0,1.5,stop,wrong,"得到 (168, 0) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,0,3,0,0,5,0,1.4,stop,wrong,"得到 (88, 6) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,0,4,0,0,6,0,1.8,stop,wrong,"得到 (300, 0) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,0,5,0,0,5,0,1.5,stop,wrong,"得到 (80, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,1,0,0,4096,5582,118.7,length,truncated_empty,"content 空 (finish=length, reasoning 5582字)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,2,1,1,1771,2425,55.6,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,3,0,0,4096,5404,118.4,length,truncated_empty,"content 空 (finish=length, reasoning 5404字)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,4,0,0,4096,11165,95.9,length,truncated_empty,"content 空 (finish=length, reasoning 11165字)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,5,0,0,4096,5616,120.3,length,truncated_empty,"content 空 (finish=length, reasoning 5616字)"

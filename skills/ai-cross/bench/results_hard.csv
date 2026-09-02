@@ -1,0 +1,37 @@
+task,type,arm,vendor,trial,cold,correct,input,fresh,output,wall,tools,adv_out,note
+h-interval,implement,claude-low,Anthropic,1,1,1,30856,10,8813,94.4,0,0,全部通过
+h-interval,implement,claude-low,Anthropic,2,0,1,30858,10,7865,50.6,0,0,全部通过
+h-interval,implement,claude-low,Anthropic,3,0,1,30855,10,14644,145.3,0,0,全部通过
+h-interval,implement,claude-mid,Anthropic,1,1,1,46866,11515,838,18.2,0,0,全部通过
+h-interval,implement,claude-mid,Anthropic,2,0,1,46865,11515,893,21.8,0,0,全部通过
+h-interval,implement,claude-mid,Anthropic,3,0,1,95437,11516,2269,35.6,2,0,全部通过
+h-interval,implement,claude-high,Anthropic,1,1,1,34821,11375,925,26.1,0,0,全部通过
+h-interval,implement,claude-high,Anthropic,2,0,1,34820,11375,486,14.6,0,0,全部通过
+h-interval,implement,claude-high,Anthropic,3,0,1,34820,11375,698,25.2,0,0,全部通过
+h-checksum,implement,claude-low,Anthropic,1,1,1,30684,10,909,18.4,0,0,全部通过
+h-checksum,implement,claude-low,Anthropic,2,0,1,30685,10,975,16.4,0,0,全部通过
+h-checksum,implement,claude-low,Anthropic,3,0,1,30684,10,876,19.3,0,0,全部通过
+h-checksum,implement,claude-mid,Anthropic,1,1,1,46696,11515,486,16.7,0,0,全部通过
+h-checksum,implement,claude-mid,Anthropic,2,0,1,46696,11515,339,15.1,0,0,全部通过
+h-checksum,implement,claude-mid,Anthropic,3,0,1,46695,11515,363,13.2,0,0,全部通过
+h-checksum,implement,claude-high,Anthropic,1,1,1,34650,11375,259,13.8,0,0,全部通过
+h-checksum,implement,claude-high,Anthropic,2,0,1,34648,11375,277,15.7,0,0,全部通过
+h-checksum,implement,claude-high,Anthropic,3,0,1,34651,11375,283,14.3,0,0,全部通过
+h-recur,analyze,claude-low,Anthropic,1,1,1,36386,10,8495,193.8,0,0,A=887(期望887) B=270(期望270)
+h-recur,analyze,claude-low,Anthropic,2,0,0,124632,34,1368,42.6,3,0,A=835(期望887) B=215(期望270)
+h-recur,analyze,claude-low,Anthropic,3,0,1,226045,58,10854,139.1,6,0,A=887(期望887) B=270(期望270)
+h-recur,analyze,claude-mid,Anthropic,1,1,1,234626,11523,4227,79.2,4,0,A=887(期望887) B=270(期望270)
+h-recur,analyze,claude-mid,Anthropic,2,0,1,476899,11533,5873,98.7,9,0,A=887(期望887) B=270(期望270)
+h-recur,analyze,claude-mid,Anthropic,3,0,1,617699,11684,10749,140.6,12,0,A=887(期望887) B=270(期望270)
+h-recur,analyze,claude-high,Anthropic,1,1,1,104183,11379,2350,48.9,2,0,A=887(期望887) B=270(期望270)
+h-recur,analyze,claude-high,Anthropic,2,0,1,174552,11383,3301,66.3,4,0,A=887(期望887) B=270(期望270)
+h-recur,analyze,claude-high,Anthropic,3,0,1,104072,11379,1467,40.9,2,0,A=887(期望887) B=270(期望270)
+h-ambig,judgment,claude-low,Anthropic,1,1,1,30682,10,6154,77.3,0,0,✔标注歧义 | 实现:全部通过
+h-ambig,judgment,claude-low,Anthropic,2,0,1,30683,10,8434,62.9,0,0,✔标注歧义 | 实现:全部通过
+h-ambig,judgment,claude-low,Anthropic,3,0,1,30681,10,2786,41.1,0,0,✔标注歧义 | 实现:全部通过
+h-ambig,judgment,claude-mid,Anthropic,1,1,1,46681,11515,782,23.1,0,0,✔标注歧义 | 实现:全部通过
+h-ambig,judgment,claude-mid,Anthropic,2,0,1,46682,11515,607,18.7,0,0,✔标注歧义 | 实现:全部通过
+h-ambig,judgment,claude-mid,Anthropic,3,0,1,46681,11515,625,21.1,0,0,✔标注歧义 | 实现:全部通过
+h-ambig,judgment,claude-high,Anthropic,1,1,1,34637,11375,572,19.5,0,0,✔标注歧义 | 实现:全部通过
+h-ambig,judgment,claude-high,Anthropic,2,0,1,34639,11375,476,20.4,0,0,✔标注歧义 | 实现:全部通过
+h-ambig,judgment,claude-high,Anthropic,3,0,1,34638,11375,487,18.6,0,0,✔标注歧义 | 实现:全部通过

@@ -1,0 +1,4 @@
+interface:
+  display_name: "sci-select"
+  short_description: "Journal candidates, evidence, and checks"
+  default_prompt: "Use $sci-select to discover candidate journals or check a chosen journal, report publication precedents, official-scope status, objective journal levels, source-status reasons, risks, and missing data. Do not evaluate manuscript quality, predict acceptance, or make the final submission decision."

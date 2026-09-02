@@ -1,0 +1,7 @@
+interface:
+  display_name: "CUGB 博士论文格式"
+  short_description: "Check doctoral thesis Word formatting"
+  default_prompt: "Use $cugb-doctoral-thesis-format to check and format this doctoral thesis DOCX."
+
+policy:
+  allow_implicit_invocation: true

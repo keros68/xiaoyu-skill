@@ -1,0 +1,101 @@
+task,depth,type,model,thinking,trial,correct,strict,completion,reasoning_chars,wall,finish,failmode,note
+d-recur-11,deep,递推,Qwen3.6-35B,1,1,1,1,10287,21774,165.0,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,1,2,1,1,14429,27320,271.9,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,1,3,0,0,16384,36577,241.9,length,truncated_empty,"content 空 (finish=length, reasoning 36577字)"
+d-recur-11,deep,递推,Qwen3.6-35B,1,4,1,1,10367,19344,113.5,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Qwen3.6-35B,1,5,1,1,3083,6004,46.5,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,1,1,1,1122,2605,26.4,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,2,1,1,1371,3071,26.8,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,3,1,1,1093,2520,21.1,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,4,1,1,1219,2827,22.7,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Qwen3.6-35B,1,5,1,1,1776,4140,28.0,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,1,1,1,4323,11036,61.6,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,2,1,1,5185,12295,98.9,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,3,1,1,1602,3941,17.6,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,4,1,1,2818,6468,29.7,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Qwen3.6-35B,1,5,1,1,2281,5563,53.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,1,1,1,3538,8616,82.1,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,2,1,1,4103,10520,48.4,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,3,1,1,4598,11723,71.1,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,4,1,1,5290,12661,111.2,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Qwen3.6-35B,1,5,1,1,4816,12522,113.0,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-recur-11,deep,递推,GLM-5.2,1,1,1,1,312,596,5.2,stop,,得到 256 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,2,1,1,355,746,9.7,stop,,得到 256 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,3,1,1,289,550,7.6,stop,,得到 256 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,4,1,1,329,680,8.6,stop,,得到 256 期望 256
+d-recur-11,deep,递推,GLM-5.2,1,5,1,1,329,670,8.1,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,GLM-5.2,1,1,1,1,159,386,5.9,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,2,1,1,151,346,5.7,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,3,1,1,172,403,6.4,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,4,1,1,155,371,10.2,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,GLM-5.2,1,5,1,1,156,352,21.0,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,GLM-5.2,1,1,1,1,443,1177,8.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,2,1,1,470,1377,15.9,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,3,1,1,508,1252,15.4,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,4,1,1,324,836,8.4,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,GLM-5.2,1,5,1,1,442,1207,12.6,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,GLM-5.2,1,1,0,0,12640,43575,260.0,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,2,1,1,11807,41400,299.7,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,3,0,0,7215,24073,176.8,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,4,0,0,11594,40676,294.1,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,GLM-5.2,1,5,0,0,0,0,0.0,ERROR,api_error,TimeoutError: The read operation timed out
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,1,1,1,445,735,10.4,stop,,得到 256 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,2,1,1,468,788,10.8,stop,,得到 256 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,3,1,1,546,972,12.7,stop,,得到 256 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,4,1,1,484,866,12.2,stop,,得到 256 期望 256
+d-recur-11,deep,递推,DeepSeek-V4-Pro,1,5,1,1,434,713,12.0,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,1,1,1,494,609,12.7,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,2,1,1,537,687,14.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,3,1,1,383,468,9.3,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,4,1,1,625,772,16.9,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,DeepSeek-V4-Pro,1,5,1,1,517,654,11.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,1,1,1,579,713,22.4,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,2,1,1,680,848,15.4,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,3,1,1,766,1007,18.8,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,4,1,1,629,801,17.8,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,DeepSeek-V4-Pro,1,5,1,1,635,836,19.0,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,1,0,0,3375,5191,81.5,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,2,0,0,1264,2007,29.9,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,3,0,0,1763,2774,42.3,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,4,0,0,2627,4140,69.5,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-multihop,deep,多跳算术,DeepSeek-V4-Pro,1,5,0,0,1447,2298,36.2,stop,wrong,"得到 (4, 5) 期望 (74, 4)"
+d-recur-11,deep,递推,Kimi-K2.6,1,1,1,1,827,1390,18.5,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,2,1,1,1037,1744,22.7,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,3,1,1,590,1019,13.9,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,4,1,1,1018,1781,22.1,stop,,得到 256 期望 256
+d-recur-11,deep,递推,Kimi-K2.6,1,5,1,1,638,1091,14.5,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,1,1,1,446,571,9.9,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,2,1,1,546,682,12.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,3,1,1,630,818,15.1,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,4,1,1,394,534,9.5,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,Kimi-K2.6,1,5,1,1,545,708,13.0,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,1,1,1,1123,1597,26.9,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,2,1,1,806,1072,19.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,3,1,1,948,1270,22.7,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,4,1,1,1152,1603,28.1,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,Kimi-K2.6,1,5,1,1,1050,1432,26.0,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,Kimi-K2.6,1,1,1,1,8387,24832,242.6,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,2,1,1,8818,14587,255.9,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,3,1,1,3026,4963,91.3,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,4,1,1,5879,9809,164.4,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,Kimi-K2.6,1,5,1,1,5594,9323,160.8,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-recur-11,deep,递推,LongCat-2.0,1,1,1,1,896,1087,19.9,stop,,得到 256 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,2,1,1,586,726,12.5,stop,,得到 256 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,3,1,1,1015,1266,20.9,stop,,得到 256 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,4,1,1,606,776,13.9,stop,,得到 256 期望 256
+d-recur-11,deep,递推,LongCat-2.0,1,5,1,1,896,1086,17.6,stop,,得到 256 期望 256
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,1,1,1,414,487,10.0,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,2,1,1,564,636,12.6,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,3,1,1,401,463,8.6,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,4,1,1,520,565,10.9,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-statemachine,deep,状态跟踪,LongCat-2.0,1,5,1,1,401,463,8.8,stop,,"得到 (8, 17) 期望 (8, 17)"
+d-seat-csp,deep,约束满足,LongCat-2.0,1,1,1,1,683,818,15.7,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,2,1,1,721,866,17.8,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,3,1,1,854,1054,20.8,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,4,1,1,651,793,16.9,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-seat-csp,deep,约束满足,LongCat-2.0,1,5,1,1,704,852,19.2,stop,,得到 甲乙戊丙丁 期望 甲乙戊丙丁
+d-multihop,deep,多跳算术,LongCat-2.0,1,1,1,1,2706,3500,68.7,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,2,1,1,2431,3139,79.5,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,3,1,1,1960,2627,56.3,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,4,1,1,2908,3899,86.6,stop,,"得到 (74, 4) 期望 (74, 4)"
+d-multihop,deep,多跳算术,LongCat-2.0,1,5,1,1,1685,2172,48.8,stop,,"得到 (74, 4) 期望 (74, 4)"

@@ -1,0 +1,14 @@
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.tmp
+~$*
+.DS_Store
+Thumbs.db
+output/
+tmp/
+precheck-report/
+cugb-format-test/
+docs/wechat-draft.md
+wechat-drafts/

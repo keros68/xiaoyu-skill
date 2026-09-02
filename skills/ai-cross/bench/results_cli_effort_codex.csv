@@ -1,0 +1,25 @@
+task,cli,knob,trial,correct,turns,out_tok,wall,ok,note,raw
+d-recur-11,codex-mini,low,1,1,8,116,74.8,1,得到 256 期望 256,256
+d-recur-11,codex-mini,low,2,1,8,140,67.1,1,得到 256 期望 256,256
+d-recur-11,codex-mini,low,3,0,5,22,59.9,1,得到 399 期望 256,399
+d-recur-11,codex-mini,high,1,0,5,271,64.2,1,得到 472 期望 256,472
+d-recur-11,codex-mini,high,2,1,5,274,67.4,1,得到 256 期望 256,256
+d-recur-11,codex-mini,high,3,0,5,229,66.4,1,得到 984 期望 256,984
+d-statemachine,codex-mini,low,1,0,5,20,60.9,1,"得到 (9, 8) 期望 (8, 17)","9,8"
+d-statemachine,codex-mini,low,2,0,5,22,69.2,1,"得到 (20, 8) 期望 (8, 17)","20,8"
+d-statemachine,codex-mini,low,3,1,5,146,64.7,1,"得到 (8, 17) 期望 (8, 17)","8,17"
+d-statemachine,codex-mini,high,1,1,5,188,67.1,1,"得到 (8, 17) 期望 (8, 17)","8,17"
+d-statemachine,codex-mini,high,2,1,5,166,66.8,1,"得到 (8, 17) 期望 (8, 17)","8,17"
+d-statemachine,codex-mini,high,3,1,5,164,79.0,1,"得到 (8, 17) 期望 (8, 17)","8,17"
+d-seat-csp,codex-mini,low,1,1,5,266,68.0,1,得到 甲乙戊丙丁 期望 甲乙戊丙丁,"甲,乙,戊,丙,丁"
+d-seat-csp,codex-mini,low,2,1,5,290,48.7,1,得到 甲乙戊丙丁 期望 甲乙戊丙丁,"甲,乙,戊,丙,丁"
+d-seat-csp,codex-mini,low,3,1,5,269,83.3,1,得到 甲乙戊丙丁 期望 甲乙戊丙丁,"甲,乙,戊,丙,丁"
+d-seat-csp,codex-mini,high,1,1,5,415,79.6,1,得到 甲乙戊丙丁 期望 甲乙戊丙丁,"甲,乙,戊,丙,丁"
+d-seat-csp,codex-mini,high,2,1,5,290,76.4,1,得到 甲乙戊丙丁 期望 甲乙戊丙丁,"甲,乙,戊,丙,丁"
+d-seat-csp,codex-mini,high,3,1,5,448,74.4,1,得到 甲乙戊丙丁 期望 甲乙戊丙丁,"甲,乙,戊,丙,丁"
+d-multihop,codex-mini,low,1,1,5,106,74.7,1,"得到 (78, 3) 期望 (78, 3)","78,3"
+d-multihop,codex-mini,low,2,1,5,99,70.7,1,"得到 (78, 3) 期望 (78, 3)","78,3"
+d-multihop,codex-mini,low,3,1,5,132,66.4,1,"得到 (78, 3) 期望 (78, 3)","78,3"
+d-multihop,codex-mini,high,1,1,5,152,57.5,1,"得到 (78, 3) 期望 (78, 3)","78,3"
+d-multihop,codex-mini,high,2,1,5,172,72.7,1,"得到 (78, 3) 期望 (78, 3)","78,3"
+d-multihop,codex-mini,high,3,1,5,148,66.1,1,"得到 (78, 3) 期望 (78, 3)","78,3"

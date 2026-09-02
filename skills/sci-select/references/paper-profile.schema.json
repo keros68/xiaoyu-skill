@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sci-select model-neutral paper profile",
+  "type": "object",
+  "required": [
+    "direction_summary",
+    "primary_field",
+    "specialty",
+    "research_object",
+    "research_question",
+    "contribution_type",
+    "target_audience",
+    "methods",
+    "exclusions",
+    "search_queries"
+  ],
+  "properties": {
+    "direction_summary": {
+      "type": "string",
+      "minLength": 3,
+      "description": "One sentence stating the primary field, specialty, and the role of methods."
+    },
+    "title": {
+      "type": "string",
+      "description": "The manuscript title, used to exclude the target paper itself from similar-work evidence when testing published papers."
+    },
+    "primary_field": {
+      "type": "string",
+      "description": "The manuscript's primary field, as stated in direction_summary."
+    },
+    "specialty": {
+      "type": "string",
+      "description": "The manuscript's specialty or sub-field, as stated in direction_summary."
+    },
+    "research_object": {
+      "type": "string",
+      "description": "What is studied."
+    },
+    "research_question": {
+      "type": "string",
+      "description": "What problem is answered."
+    },
+    "contribution_type": {
+      "type": "string",
+      "description": "Applied finding, method development, dataset/resource, review, clinical study, theory, or another explicit type."
+    },
+    "target_audience": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The research community likely to review and use the result."
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tools and methods used; do not promote them to the primary field unless the contribution is methodological."
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Plausible but wrong journal communities that should not drive recall."
+    },
+    "search_queries": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      },
+      "description": "Two or three discriminative queries combining object + problem + contribution, not a copied full abstract."
+    },
+    "scope_terms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional English or bilingual scope keywords used to compare the manuscript against journal titles and aims-and-scope pages; also consumed by the local specialist-title recall channel."
+    }
+  },
+  "additionalProperties": true
+}
