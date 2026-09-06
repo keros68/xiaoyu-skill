@@ -82,9 +82,7 @@ key 留在你原本存放它的地方（CLI 登录态、用户级环境变量、
 
 ## Attribution and Redistribution
 
-This project is the original ai-cross skill by keros68:
-
-https://github.com/keros68/ai-cross
+This is the ai-cross skill copy maintained in the [xiaoyu-skill](https://github.com/keros68/xiaoyu-skill) repository by keros68.
 
 The project is released under the MIT License. Redistribution, forks, modified versions, and repackaged copies must preserve the copyright notice and license text. Please do not present modified copies as the original project or imply endorsement by the original author.
 
