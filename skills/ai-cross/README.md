@@ -71,11 +71,11 @@ key 留在你原本存放它的地方（CLI 登录态、用户级环境变量、
 - `SKILL.md` - 决策核心：路由规则、执行闭环、稳健性规则
 - `references/` - 盘点向导、通道模板、密钥规则、派发设计、实测证据，以及三个只读脚本
 - `agents/` - Claude Code 用的 scout / worker / heavy / advisor
-- `bench/` `tests/` `qoder/` - 基准实验、单元测试、Qoder 宿主适配
+- `tests/` `qoder/` - 单元测试与 Qoder 宿主适配。基准原始材料保存在维护者本地归档，不随公开仓库发布。
 
 ## 已知限制
 
-- `references/evidence.md` 与 `bench/` 的实测数字样本量小（n=3–5，任务多为自造），只作方向性证据，不是精确测量，也不应外推到新模型或新 CLI 版本。
+- `references/evidence.md` 中的基准数字来自维护者本地实验归档，样本量小（n=3–5，任务多为自造），只作方向性证据，不是精确测量，也不应外推到新模型或新 CLI 版本。
 - 模型 ID 和 CLI 参数会漂移。manifest 里超过 30 天未验证的条目派发前先冒烟，第三方端点还要过 `verify_model.py`。
 - 密钥纪律只有 `cc_switch.py` 部分做到代码级，其余是规则，挡不住被改过的副本。建议只从可信来源获取本 skill。
 - Claude Code 和 Codex 是主要支持对象，其他宿主需按各自规则适配，不承诺开箱即用。
