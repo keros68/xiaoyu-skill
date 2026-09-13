@@ -18,6 +18,31 @@ AI_CROSS_PEER=1 codex exec -s read-only --skip-git-repo-check - < prompt.txt
 
 `cc_switch.py exec` 的 cwd 就是调用时的目录，同样先 `cd` 进空目录再调。执行者（本来就要改项目文件的活）不受此限。
 
+**空目录挡不住宿主级指令（2026-09-01 真机实测，claude 2.1.251）**：`claude -p` 即使 `--tools ""` 且 cwd 为空目录，仍会把用户级 `~/.claude/CLAUDE.md` 注入上下文（模型能原样复述其中的专有名词）。盲验的 claude 通道一律加 `--restricted`，实测它挡住用户级指令且鉴权不受影响；**不要**用 `CLAUDE_CONFIG_DIR=<空目录>`，它连凭据一起隔离掉（`Not logged in`，exit 0 但 `is_error=true`）。
+
+```bash
+# ③ 盲验 claude 通道的完整写法（空目录 + 只读白名单 + 挡宿主级指令）
+AI_CROSS_PEER=1 claude -p --model X --tools "" --restricted --output-format json < blind.txt
+```
+
+codex / kimi / pi 的等价开关尚未逐个测出（pi 模板里的 `--no-context-files --no-extensions` 是否也跳过用户级配置未核实）。测不出的通道，留痕里 `isolation` 填 `部分`，不按盲的算。
+
+## 大材料怎么交给被派方（>30KB 必读）
+
+「材料」指要被派方读的**那段内容本身**（一份稿件、几个源码文件拼起来的、你直接粘的一大段文字），不是"文件"这个概念。同一份材料有三种交法，代价差一个数量级——60KB 材料实测，末行埋标记核对是否完整送达（2026-08-24，Windows）：
+
+| 交法 | 命令形态 | 60KB 实测 | 上限 |
+|---|---|---|---|
+| **从文件/stdin 读进去**（首选） | `cc_switch.py exec --task-file f.txt`、`codex exec < f.txt` | **6.8s 单轮**（DeepSeek-flash，25782 tokens）/ 31.6s（codex） | 无 |
+| **内联进命令行** | `kimi -p "…整篇正文…"` | **命令发不出去** | Windows 命令行 ≈32KB 字节（中文约 1 万字） |
+| **只给路径让它自己读** | `kimi -p "读 draft.md，审一下"` | 58.7s | 无上限，但最慢 |
+
+- **32KB 那道墙是操作系统的，不是某个 CLI 弱。** 同样长度的 argv 喂给 `python.exe` 在同一位置失败（实测 32600 字节 ok、32700 字节 `Argument list too long`）。按 **UTF-8 字节**算，不按字符算：10000 汉字（30000 字节）通过、16000 汉字（48000 字节）失败。Linux/macOS 的 argv 约 2MB，**这是 Windows 专属故障**。
+- **有 stdin 或文件入口的通道就绕开了这堵墙**：`claude -p`（prompt 走 stdin，`cc_switch.py --task-file` 即此路）、`codex exec`（`--help` 明载 stdin 作为 `<stdin>` 块附加）、裸 API（材料在请求体里，没有 argv 这回事）。**`kimi` CLI 三者皆无**（见下方 Kimi 段）。
+- **"只给路径让它自己读"是最慢的形态**：模型要多轮调工具去读，每轮重发全部上下文，规模越大越超线性。能内联就别让它自己读——内联 + `--tools ""` + 单轮完成是最省也最快的形态。
+- **换入口不等于能一次吃完。** 入口解决的是"能不能送进去"，送进去之后的时间由解码速度决定（他方报告转述、本机未复现：240KB 单轮内联仍要 8m30s）。超过单轮舒适区就**分块 map-reduce**，别指望找个更大的入口。
+- **症状识别**：进程活着、CPU 近乎为零、stdout 长时间为空 → 看起来像"通道挂了"，实际优先怀疑两件事：**任务形态错了**（让模型自己读大文件）、**额度耗尽**（端点欠费时是挂住不返回、不报错，实测 GLM 挂满 180s 超时）。两者都不是性能问题，别按过载去重试。
+
 ## 大材料怎么交给被派方（>30KB 必读）
 
 「材料」指要被派方读的**那段内容本身**（一份稿件、几个源码文件拼起来的、你直接粘的一大段文字），不是"文件"这个概念。同一份材料有三种交法，代价差一个数量级——60KB 材料实测，末行埋标记核对是否完整送达（2026-08-24，Windows）：
@@ -284,3 +309,46 @@ cat file.txt | aichat -m <provider>:<model> "总结要点"   # 长文本走 stdi
 **免费续期与漂移预警（usage_probe）**：`python <本skill目录>/references/usage_probe.py --days 30` 聚合本机各 CLI 用量日志（只出元数据）。两个用法：①**官方 CLI** 条目若在近 7 天日志里成功出现过，可视作新鲜、免冒烟续期（claude 日志的 model 是响应侧值；第三方端点仍必须 verify_model）；②日志里出现了 manifest/本文件**没有**的模型 ID（如 CLI 升级换了默认模型），就是漂移信号——冒烟确认后走"更新模型清单"流程。实测首跑即抓到 codex 主用模型已从 gpt-5.5 代漂移到 gpt-5.6 代（2026-07-17）。
 
 **用户说「更新模型 / 升级清单」**：重跑盘点流程（`setup.md`）+ 逐 CLI 核对当前模型 ID（能枚举的枚举、不能的查文档或问用户）+ 刷新本文件与 manifest.md 的 ID 和日期。
+
+## `.dispatch/` 留痕契约（aicross-dispatch/1，2026-09-13 定）
+
+skill 与 aicross 控制台共用同一份留痕格式，字段定了不改。每路一份 `<项目>/.dispatch/<YYYYMMDD-HHMMSS>-<agent>-<model>-<角色>.md`，首次创建目录时写入 `.gitignore`（内容一行 `*`）。正文两节：`## 任务全文`（发出去的 prompt 原文）、`## 原始输出`（stdout 全文；stderr 另起 `## stderr`）。**绝不写入任何环境变量值。** 同目录的 `STATE.md` 格式见 SKILL.md 闭环规则第 5 条。
+
+```yaml
+---
+schema: aicross-dispatch/1
+run_id: <uuid>
+stage: 1
+node: <node_id>
+agent: codex
+provider: ""          # pi / cc-switch 时填
+model: gpt-5.6-terra
+vendor: OpenAI
+billing_source: 官方订阅
+role: 验证
+tier: 中
+thinking: 中
+visibility: 盲
+isolation: 完整 | 部分   # 完整 = 空目录 + 宿主级指令已隔离；部分 = 只做到空目录
+workdir: ~/.aicross/runs/<run_id>/<node_id>
+materials: [spec.md, data.csv]
+redacted: 0            # 外发前脱敏命中次数
+truncated: false       # 输出是否撞上上限
+status: ok | error | timeout | identity_mismatch
+started_at: 2026-08-31T09:00:00+08:00
+ended_at: 2026-08-31T09:01:12+08:00
+duration_ms: 72000
+tokens_in: 14238
+tokens_out: 812
+cache_read: 12100
+identity: "zai-coding-cn/glm-5.2"   # 响应体报的真身，拿不到写 ""
+session_id: ""
+exit_code: 0
+error: ""
+---
+```
+
+- `identity` 与 `status: identity_mismatch`：第三方 Anthropic 兼容端点对不认识的模型名会静默降级，响应体 `model` 与请求不符即判失败（`verify_model.py` 同一口径）。
+- `truncated`：输出撞上上限时置位，不静默丢弃——结论被无声截半是判分事故的来源。
+- `redacted`：外发前对 prompt 与材料做脱敏替换的命中次数，六类：私钥块、`Authorization: Bearer`、`password=`、`token/api_key/secret_key/access_key=`、`AKIA…`、带凭据的数据库 URL。
+- 手工派发（skill 侧）至少填 `schema/agent/model/role/visibility/isolation/status/started_at/duration_ms/tokens_in/tokens_out`，其余留空串或 0。
