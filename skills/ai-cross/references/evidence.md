@@ -81,3 +81,20 @@
 | 说谎侦察兵实验：新模型缩小了朴素策略与神谕策略的差距，但未闭合 | 分歧不派第四个模型仲裁；verifier 优先是机器 |
 | 对等协作三类失效：合并冲突随协作深度飙升、抢任务轮询风暴（一次运行 240 万请求换 117 个任务）、目标不兼容时互相破坏（禁账号、杀进程） | 星形拓扑、同目录单写者、被派方互不可见 |
 | 协调能力不随模型能力单调提升 | 档位继承 manifest，不自行判定模型行为 |
+
+## pi 的固定足迹与宿主隔离实测（2026-09-13）
+
+pi 0.x，provider `zai-coding-cn`，模型 glm-5.3-flash，prompt「只回复OK」经 stdin，`--mode json --no-extensions`，读 `message_end.usage.input`。同机对照：`claude -p --tools ""` 12,239、`codex exec` ≈20k（见上文「harness 税与缓存」）。
+
+| pi 配置 | 输入 token |
+|---|---|
+| `--no-tools --no-context-files` | 405 |
+| `--tools read,grep,find,ls --no-context-files` | 1,519 |
+| 默认工具 `--no-context-files` | 1,632 |
+| `--no-tools --no-context-files --system-prompt ""` | **21** |
+
+宿主级指令隔离（同一模型，提问「上下文里除本消息外有无别的说明文字，有则引用第一句」）：
+- 不加 `--no-context-files`：模型原样引用了 `~/.pi/agent/AGENTS.md` 的内容（用户级指令进了上下文），输入 1,079。
+- 加 `--no-context-files`：只剩 pi 自己的一句「You are an expert coding assistant operating inside pi」，输入 47。
+
+结论：① pi 是订阅内底座最小的 harness 通道，带只读工具也只有 claude 的 1/8；纯文本任务加 `--system-prompt ""` 后接近裸 API 地板（21 vs 11），订阅用户不必为省 token 去掏裸 API 的钱。② `--no-context-files` 真能挡住用户级指令，pi 通道的盲验隔离可标「完整」（claude 需 `--restricted`，codex / kimi 尚无实证）。③ 同日另一实证：zai 端点对请求 `glm-4.7` 的应答 `responseModel` 为 `glm-5.3-flash`——真身核对要看响应级 `responseModel`，不能看消息级 `model`（它回显请求别名）。
