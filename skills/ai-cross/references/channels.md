@@ -113,10 +113,11 @@ AGY="C:/Users/keros68/AppData/Local/agy/bin/agy.exe"
 
 # 多行材料只能走 stdin 的 NDJSON（一行一条消息）
 python -c "import json,io;io.open('in.ndjson','w',encoding='utf-8',newline='\n').write(json.dumps({'event':'user','message':{'role':'user','content':open('material.txt',encoding='utf-8').read()}},ensure_ascii=False)+'\n')"
-cat in.ndjson | "$AGY" --model gemini-3.8-flash-low --print-timeout 5m \
+cat in.ndjson | "$AGY" --model gemini-3.8-flash-high --print-timeout 5m \
   --input-format stream-json --output-format stream-json
 ```
 
+- **默认用 3.8 Flash 档，不要用 3.1 Pro**（用户 2026-09-16 指定）：审查与第二意见用 `gemini-3.8-flash-high`，冒烟与琐事用 `-low`。Pro 档留给用户明确点名的场合。
 - **⚠️ 无头模式下连读文件都会被自动拒绝**（2026-09-16 实测）：`view_file` 报「required the "read_file" permission that headless mode cannot prompt for」，`run_command` 同样。实测让它读一个文件，八次工具调用全被拒、烧掉 12.4 万 token、最后 `status: SUCCESS` 但 `response` 是空字符串——**空回答不是模型不会答，是工具全被拒**，别误判成能力问题。
 - **因此它只能当纯文本盲审者：材料全部内联进 prompt，并在 prompt 里明写「不要使用任何工具」。** 这正好满足盲验的隔离要求（它读不到 `.dispatch/`、`STATE.md`、项目 `AGENTS.md`）。实测内联一段代码 + 一个问题：1.3 万 token、2.7 秒，准确指出了埋进去的缺陷。
 - **固定足迹约 1.3 万 token/次**（工具定义 + 系统提示），比 pi 的 405 贵一个量级，但走订阅额度不花钱——对订阅用户按「省额度」而不是「省钱」记账。
