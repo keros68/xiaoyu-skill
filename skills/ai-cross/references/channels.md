@@ -43,22 +43,6 @@ codex / kimi / pi 的等价开关尚未逐个测出（pi 模板里的 `--no-cont
 - **换入口不等于能一次吃完。** 入口解决的是"能不能送进去"，送进去之后的时间由解码速度决定（他方报告转述、本机未复现：240KB 单轮内联仍要 8m30s）。超过单轮舒适区就**分块 map-reduce**，别指望找个更大的入口。
 - **症状识别**：进程活着、CPU 近乎为零、stdout 长时间为空 → 看起来像"通道挂了"，实际优先怀疑两件事：**任务形态错了**（让模型自己读大文件）、**额度耗尽**（端点欠费时是挂住不返回、不报错，实测 GLM 挂满 180s 超时）。两者都不是性能问题，别按过载去重试。
 
-## 大材料怎么交给被派方（>30KB 必读）
-
-「材料」指要被派方读的**那段内容本身**（一份稿件、几个源码文件拼起来的、你直接粘的一大段文字），不是"文件"这个概念。同一份材料有三种交法，代价差一个数量级——60KB 材料实测，末行埋标记核对是否完整送达（2026-08-24，Windows）：
-
-| 交法 | 命令形态 | 60KB 实测 | 上限 |
-|---|---|---|---|
-| **从文件/stdin 读进去**（首选） | `cc_switch.py exec --task-file f.txt`、`codex exec < f.txt` | **6.8s 单轮**（DeepSeek-flash，25782 tokens）/ 31.6s（codex） | 无 |
-| **内联进命令行** | `kimi -p "…整篇正文…"` | **命令发不出去** | Windows 命令行 ≈32KB 字节（中文约 1 万字） |
-| **只给路径让它自己读** | `kimi -p "读 draft.md，审一下"` | 58.7s | 无上限，但最慢 |
-
-- **32KB 那道墙是操作系统的，不是某个 CLI 弱。** 同样长度的 argv 喂给 `python.exe` 在同一位置失败（实测 32600 字节 ok、32700 字节 `Argument list too long`）。按 **UTF-8 字节**算，不按字符算：10000 汉字（30000 字节）通过、16000 汉字（48000 字节）失败。Linux/macOS 的 argv 约 2MB，**这是 Windows 专属故障**。
-- **有 stdin 或文件入口的通道就绕开了这堵墙**：`claude -p`（prompt 走 stdin，`cc_switch.py --task-file` 即此路）、`codex exec`（`--help` 明载 stdin 作为 `<stdin>` 块附加）、裸 API（材料在请求体里，没有 argv 这回事）。**`kimi` CLI 三者皆无**（见下方 Kimi 段）。
-- **"只给路径让它自己读"是最慢的形态**：模型要多轮调工具去读，每轮重发全部上下文，规模越大越超线性。能内联就别让它自己读——内联 + `--tools ""` + 单轮完成是最省也最快的形态。
-- **换入口不等于能一次吃完。** 入口解决的是"能不能送进去"，送进去之后的时间由解码速度决定（他方报告转述、本机未复现：240KB 单轮内联仍要 8m30s）。超过单轮舒适区就**分块 map-reduce**，别指望找个更大的入口。
-- **症状识别**：进程活着、CPU 近乎为零、stdout 长时间为空 → 看起来像"通道挂了"，实际优先怀疑两件事：**任务形态错了**（让模型自己读大文件）、**额度耗尽**（端点欠费时是挂住不返回、不报错，实测 GLM 挂满 180s 超时）。两者都不是性能问题，别按过载去重试。
-
 ## Codex 三档
 
 ```bash
@@ -284,6 +268,28 @@ cat file.txt | aichat -m <provider>:<model> "总结要点"   # 长文本走 stdi
 关思考的参数以 aichat 的 provider 配置为准（`enable_thinking` 等写进 config.yaml 的 `patch` 段）。
 
 多数按量模型无推理强度旋钮；个别推理模型有专用参数，以 provider 文档为准。
+
+## 控制台通道（aicross 在跑时优先走这条，2026-09-15 端到端实测）
+
+aicross 控制台开着的时候，派发交给它执行：对话图、`.dispatch/` 留痕、红绿核对、额度分类与厂商回退都在控制台里，skill 只负责提议和读结果。控制台没开就照常走上面的 CLI 通道——**判据是退出码 3，不是超时、也不是报错文本里有没有"connection"。**
+
+发现方式：发布版启动后写 `~/.aicross/console.json`，开发构建写 `~/.aicross/console.dev.json`（两者互不覆盖）。清单里有 `endpoint`（只监听 127.0.0.1）、`token`、`pid`、`started_at`。用之前先核 `pid` 还活着，死了就当控制台没开。**令牌只放进 `Authorization: Bearer` 头，不回显、不落盘、不进模型上下文**——密钥六铁律在这里同样适用。
+
+```powershell
+aicross dispatch --project D:\work\project --preset economy --text-file D:\tmp\dispatch.txt
+aicross status <run_id> --wait --timeout 600
+aicross adopt <run_id> <node_id>
+aicross cancel <run_id>
+```
+
+- **多行任务文本只能走 `--text-file`**（UTF-8，可带 BOM），`--text` 与 `--text=…` 一律按参数错误拒收。和 `codex exec` 的 argv 换行截断是同一条纪律，这里直接从参数层堵死。
+- 预设别名：`shared` → `builtin-shared`、`economy` → `builtin-economy`、`blind` → `builtin-blind`。**共享模式那一路按设计是只读的**，要改文件的任务派 `economy`（2026-09-15 真机踩过：派 `shared` 让它改文件，跑完文件没动）。
+- 退出码：0 成功 / 1 业务失败或等待超时 / 2 参数与编码错 / 3 控制台未运行、清单无效、PID 已结束或端点不可达。**只有 3 才回退到原有 CLI 通道**；1 和 2 是这次请求本身的问题，原样重试没有意义。
+- 同时在飞默认 3 路，超限返回 409（用户可在设置的「通道在飞上限」调）。G1 拒绝也是 409，原因在 `reason`。界面未就绪或 5 秒内没回执返回 503。
+- `status` 的节点状态保留图上的原词：`draft` / `pending` / `done` / `failed` / `quota_exhausted`。**额度用尽不折算成 failed**，有恢复时间时在 `quota_resets_at`——对应「限额即换家」：读到 `quota_exhausted` 就换厂商派，不要等配额回来。
+- 首个 `dispatch` 响应里的 `graph_id` 与 `node_ids` 是空的（保持既有契约），真实图 id 与节点摘要要从 `status` 读。
+- 开发态用同样的参数：`cargo run -- dispatch …`，读的是 `console.dev.json`。
+- 协议全文（HTTP 接口、请求体形状、状态码表、直接调 HTTP 的 PowerShell 写法）在 aicross 仓库的 `docs/CONSOLE-CHANNEL.md`，那边是权威；本节只记 skill 侧怎么用、什么时候回退。
 
 ## 复用与维护
 

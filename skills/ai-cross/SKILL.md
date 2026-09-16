@@ -2,7 +2,7 @@
 name: ai-cross
 description: 多模型分工与跨厂商交叉验证 skill：把任务派给合适的模型分工执行，用不同厂商的模型互相核查关键产出，按档位分层派发以节省订阅额度。适用场景：用户要求派发任务、分层执行、多模型协作、对关键产出做交叉验证、盘点或接入可用模型，或提到 dispatch、派工。不适用场景：单模型环境下的普通任务（没有派发需求时不要触发）、没有 shell 执行能力的纯聊天宿主。
 metadata:
-  version: 1.13.5
+  version: 1.14.0
 ---
 
 # ai-cross — 多模型分工与跨厂商交叉验证
@@ -41,12 +41,15 @@ metadata:
 
 | 通道 | 载体 | 计费 | 宿主适用性 |
 |---|---|---|---|
+| **aicross 控制台** | `aicross dispatch/status/adopt/cancel`（本机回环 + 令牌） | 按控制台里选的模型 | 全部宿主，需控制台在跑 |
 | 内部 subagent | scout/worker/heavy | Claude 订阅 | **仅 Claude Code 宿主** |
 | 外部 agent CLI | `codex exec` / `kimi` / `pi` 等（gemini/qoder CLI 已下线，见 channels.md） | 各自订阅 | 全部宿主 |
 | 外部 coding plan | `claude -p` + 按进程环境变量覆写（GLM/Kimi 等） | coding plan 订阅 | 全部宿主 |
 | 外部 cc-switch 桥 | `cc_switch.py exec` | 对应 provider | 全部宿主 |
 | **裸 API 直调** | 主 agent 直接 `curl` OpenAI/Anthropic 兼容端点 | API 按量 | 全部宿主 |
 | 外部 aichat | `aichat -m <provider>:<model>`（裸 API 的 CLI 封装） | API 按量 | 全部宿主 |
+
+**aicross 控制台**：控制台在跑就优先走它——图、留痕、红绿核对、额度分类与厂商回退都在控制台里完成，skill 只提议和读结果。是否在跑看 `~/.aicross/console.json`（开发构建是 `console.dev.json`）里的 `pid` 还活着；**只有退出码 3 才回退到下面的 CLI 通道**。用法与边界见 `references/channels.md`「控制台通道」。
 
 **裸 API 直调**：无系统提示无工具，token 地板实测 11（对比 `claude -p --tools ""` 12k、不收窄工具时 31k）。但它是**真金白银的按量计费**，在订阅/coding plan 之外——只有按量用户、或需要保住订阅额度做重活时才划算；订阅用户的日常任务直接用订阅内通道，别为省"已付过的 token"去掏钱。命令模板见 `references/channels.md`，**带凭据出网的护栏见 `references/security.md`**（密钥六铁律 + 只读隔离）。
 
