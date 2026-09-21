@@ -1,5 +1,7 @@
 <div align="center">
 
+简体中文 | [English](README.en.md)
+
 # xiaoyu-skill
 
 面向科研工作的开源 Agent Skill 合集：文献引用 · 期刊选刊 · 论文格式 · 学术制图 · 多模型协作
