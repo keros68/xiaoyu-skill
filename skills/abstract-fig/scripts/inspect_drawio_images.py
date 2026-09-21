@@ -1,141 +1,135 @@
 #!/usr/bin/env python3
-"""Inspect embedded image elements in a draw.io file.
+"""Inspect draw.io image embedding; flag large images for visual review.
 
-This is a lightweight QA helper for Abstract-Fig. It checks
-whether a draw.io file contains separate embedded image cells rather than a
-single pasted full figure or element sheet.
+Vector-only figures are valid. These structural diagnostics cannot certify
+rendering, scientific accuracy, or full editability.
 """
-
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import re
 import sys
+import urllib.parse
 import xml.etree.ElementTree as ET
+import zlib
 from pathlib import Path
 
 
 def _float_attr(node: ET.Element | None, name: str) -> float | None:
     if node is None:
         return None
-    value = node.attrib.get(name)
-    if value is None:
-        return None
     try:
-        return float(value)
-    except ValueError:
+        return float(node.attrib[name])
+    except (KeyError, ValueError):
         return None
+
+
+def _models(root: ET.Element) -> list[tuple[str, ET.Element]]:
+    if root.tag == "mxGraphModel":
+        pages = [("1", root)]
+    elif root.tag == "mxfile":
+        pages = []
+        for index, diagram in enumerate(root.findall("diagram"), 1):
+            model = diagram.find("mxGraphModel")
+            if model is None:
+                payload = (diagram.text or "").strip()
+                if not payload:
+                    raise ValueError(f"Page {index} has no graph model")
+                if payload.startswith("<"):
+                    model = ET.fromstring(payload)
+                else:
+                    raw = base64.b64decode("".join(payload.split()), validate=True)
+                    encoded = zlib.decompress(raw, -15).decode("utf-8")
+                    model = ET.fromstring(urllib.parse.unquote(encoded))
+            pages.append((diagram.get("name") or str(index), model))
+    else:
+        raise ValueError("Expected mxfile or mxGraphModel")
+    if not pages or any(m.tag != "mxGraphModel" or m.find("root") is None for _, m in pages):
+        raise ValueError("No valid graph model found")
+    return pages
 
 
 def inspect_drawio(drawio_path: Path, elements_dir: Path | None = None) -> dict:
-    text = drawio_path.read_text(encoding="utf-8")
-    root = ET.fromstring(text)
-
+    pages = _models(ET.fromstring(drawio_path.read_text(encoding="utf-8-sig")))
     image_cells = []
-    page_width = 0.0
-    page_height = 0.0
-
-    for diagram in root.iter("diagram"):
-        model = diagram.find("mxGraphModel")
-        if model is not None:
-            try:
-                page_width = max(page_width, float(model.attrib.get("pageWidth", "0")))
-                page_height = max(page_height, float(model.attrib.get("pageHeight", "0")))
-            except ValueError:
-                pass
-
-    for cell in root.iter("mxCell"):
-        style = cell.attrib.get("style", "")
-        if "image=" not in style:
-            continue
-        geom = cell.find("mxGeometry")
-        width = _float_attr(geom, "width")
-        height = _float_attr(geom, "height")
-        x = _float_attr(geom, "x")
-        y = _float_attr(geom, "y")
-        image_cells.append(
-            {
-                "id": cell.attrib.get("id"),
-                "x": x,
-                "y": y,
-                "width": width,
-                "height": height,
-                "embedded": "data:image" in style,
-                "mentions_sheet": bool(re.search(r"element[_ -]?sheet|full[_ -]?figure", style, re.I)),
+    text_count = 0
+    warnings = []
+    for page_index, (page_name, model) in enumerate(pages, 1):
+        pw = _float_attr(model, "pageWidth") or 0
+        ph = _float_attr(model, "pageHeight") or 0
+        for cell in model.iter("mxCell"):
+            if cell.get("vertex") == "1" and cell.get("value", "").strip():
+                text_count += 1
+            style = cell.get("style", "")
+            match = re.search(r"(?:^|;)image=([^;]*)", style)
+            if not match:
+                continue
+            geom = cell.find("mxGeometry")
+            width = _float_attr(geom, "width")
+            height = _float_attr(geom, "height")
+            large = bool(pw > 0 and ph > 0 and (width or 0) >= pw * .55 and (height or 0) >= ph * .55)
+            sheet = bool(re.search(r"element[_ -]?sheet|full[_ -]?figure", match.group(1), re.I))
+            item = {
+                "id": cell.get("id"), "page_index": page_index, "page_name": page_name,
+                "x": _float_attr(geom, "x"), "y": _float_attr(geom, "y"),
+                "width": width, "height": height,
+                "embedded": match.group(1).strip().startswith("data:image/"),
+                "mentions_sheet": sheet, "large": large,
             }
-        )
-
-    png_files = []
-    if elements_dir is not None and elements_dir.exists():
-        png_files = sorted(p.name for p in elements_dir.glob("*.png"))
-
-    large_threshold = 0.55
-    large_cells = []
-    for cell in image_cells:
-        width = cell.get("width") or 0
-        height = cell.get("height") or 0
-        if page_width and page_height and width >= page_width * large_threshold and height >= page_height * large_threshold:
-            large_cells.append(cell["id"])
-
+            image_cells.append(item)
+            label = f"page {page_index}, cell {cell.get('id')}"
+            if large:
+                warnings.append(f"Review {label}: large image; distinguish a legitimate map/photo from a flattened diagram.")
+            if sheet:
+                warnings.append(f"Review {label}: image reference mentions an element sheet or full figure.")
+            if pw <= 0 or ph <= 0 or width is None or height is None:
+                warnings.append(f"Review {label}: missing page/image dimensions; size could not be assessed.")
+    png_files = sorted(p.name for p in elements_dir.glob("*.png")) if elements_dir and elements_dir.is_dir() else []
     return {
-        "drawio": str(drawio_path),
+        "drawio": str(drawio_path), "page_count": len(pages),
         "elements_dir": str(elements_dir) if elements_dir else None,
-        "element_png_count": len(png_files),
-        "element_png_files": png_files,
-        "image_cell_count": len(image_cells),
-        "embedded_image_cell_count": sum(1 for c in image_cells if c["embedded"]),
-        "nonembedded_image_cell_count": sum(1 for c in image_cells if not c["embedded"]),
-        "large_image_cell_ids": large_cells,
+        "element_png_count": len(png_files), "element_png_files": png_files,
+        "text_cell_count": text_count, "image_cell_count": len(image_cells),
+        "embedded_image_cell_count": sum(c["embedded"] for c in image_cells),
+        "nonembedded_image_cell_count": sum(not c["embedded"] for c in image_cells),
+        "large_image_cell_ids": [c["id"] for c in image_cells if c["large"]],
         "sheet_like_image_cell_ids": [c["id"] for c in image_cells if c["mentions_sheet"]],
-        "image_cells": image_cells,
+        "warnings": warnings, "image_cells": image_cells,
     }
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Inspect draw.io embedded image cells.",
-        epilog=(
-            "Exit codes: 0 = OK; 1 = drawio file not found; "
-            "2 = fewer than --min-images image cells; "
-            "3 = non-embedded (non data:image) image cells found; "
-            "4 = large image cells that may be a pasted full figure/sheet; "
-            "5 = image cells that look like an element sheet/full figure; "
-            "6 = drawio file is not valid XML."
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="Inspect embedded draw.io images; vector-only files are valid.",
+        epilog="Exit codes: 0 = structural checks passed (review warnings); 1 = read error; "
+               "2 = fewer than explicitly requested --min-images; 3 = external image reference; "
+               "6 = invalid or unsupported draw.io XML/page data. Visual review is still required.",
     )
     parser.add_argument("drawio", type=Path)
     parser.add_argument("--elements-dir", type=Path, default=None)
-    parser.add_argument("--min-images", type=int, default=3)
-    args = parser.parse_args()
-
+    parser.add_argument("--min-images", type=int, default=0, help="Optional design-specific minimum; default 0.")
+    args = parser.parse_args(argv)
+    if args.min_images < 0:
+        parser.error("--min-images must be non-negative")
     try:
         report = inspect_drawio(args.drawio, args.elements_dir)
-    except FileNotFoundError:
-        print(f"Error: drawio file not found: {args.drawio}", file=sys.stderr)
+    except OSError as exc:
+        print(f"Error reading {args.drawio}: {exc}", file=sys.stderr)
         return 1
-    except ET.ParseError:
-        print(
-            f"Error: {args.drawio} is not valid XML - check the .drawio was saved correctly",
-            file=sys.stderr,
-        )
+    except (ET.ParseError, ValueError, zlib.error) as exc:
+        print(f"Invalid draw.io file {args.drawio}: {exc}", file=sys.stderr)
         return 6
-
     print(json.dumps(report, ensure_ascii=False, indent=2))
-
     if report["image_cell_count"] < args.min_images:
         print(f"FAIL: expected at least {args.min_images} image cells.", file=sys.stderr)
         return 2
     if report["nonembedded_image_cell_count"]:
-        print("FAIL: found image cells that are not embedded data images.", file=sys.stderr)
+        print("FAIL: image references are not embedded; portable delivery requires embedded assets.", file=sys.stderr)
         return 3
-    if report["large_image_cell_ids"]:
-        print("FAIL: found large image cells that may be a pasted full figure/sheet.", file=sys.stderr)
-        return 4
-    if report["sheet_like_image_cell_ids"]:
-        print("FAIL: found image cells that look like an element sheet/full figure.", file=sys.stderr)
-        return 5
+    for warning in report["warnings"]:
+        print(f"REVIEW: {warning}", file=sys.stderr)
     return 0
 
 

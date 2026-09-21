@@ -1,80 +1,65 @@
 # Abstract-Fig
 
-Abstract-Fig 是一个 Codex agent skill，用于把论文内容做成可继续编辑的 draw.io 图件：图形摘要、正文概念模型、机制图、方法流程图、研究/技术路线图和综合示意图。
-
-科学场景由 image2 生成的主题元素承担：元素表拆成独立透明 PNG 逐个嵌入，文字框、箭头、边框和标签保留为 draw.io 对象，拿到文件后仍可拖拽、改字、换元素、调版面。
-
-> 中文为主，English version below.
+将论文内容组织成可编辑科研图件，支持图形摘要、方法框架、概念与机制图、研究路线图和综合示意图。先确定展示内容和模块关系，再选择真实项目素材、矢量示意或可选的生成插画。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-SKILL.md-green.svg)](SKILL.md)
-[![draw.io](https://img.shields.io/badge/draw.io-editable%20.drawio-orange.svg)](https://app.diagrams.net/)
 
-## 运行要求
+## 适用场景
 
-完整流程依赖 Codex 里的 image2 生图能力，所以这个 skill 面向 Codex。其他 agent 可以把 `SKILL.md` 和 `references/` 当流程参考，但缺少生图与图片处理能力时，「生成元素 → 拆分元素 → 嵌入 draw.io」这条链跑不下来。
+- 从论文主线和现有材料规划配图，区分核心内容与图注细节。
+- 按用户提供的案例调整信息密度、模块组合、字号、配色和图例。
+- 修改等大框堆叠、层级不清、内容空泛或字号过小的现有图件。
+- 将方法或科学关系组织成可继续编辑的图形。
 
-## 使用场景
+## 工作方式
 
-- 已有论文主线、审稿意见或修改建议，要转成正文概念图或 graphical abstract。
-- 普通流程图太像模板，想加入含水层介质、河流、田块、监测井、仪器、地貌等论文主题元素。
-- 把已有草图或 draw.io 文件改成适合期刊正文的 boxed manuscript style。
+1. 明确图件要回答的问题，选择必须展示的内容。
+2. 根据先后、并行、比较、汇合或验证关系组合模块，分配主次面积。
+3. 从案例提取版式原则，结合真实素材和目标版面选择表现方式。
+4. 绘制并在实际使用尺寸下检查，交付可编辑源文件和预览。
 
-## 功能
+默认使用 draw.io，也可按要求采用 PowerPoint 等可编辑格式。无需 image2 即可使用项目影像、数据生成的图表和矢量对象；只有需要生成概念插画时才调用相应工具。具体导出和原生渲染能力取决于运行环境。
 
-**图件类型选型**：判断图件类型并套用对应的版式和箭头用法。路线图按纯图形构建，默认不走 image2 元素流程。
+观测影像、实验照片、地图边界和定量结果应来自可追溯来源。生成插画用于概念表达，不替代观测证据。文字、箭头和结构尽量保持可编辑；嵌入位图内部仍是像素内容。
 
-**生图前的方案确认**：调用 image2 之前先给出一版绘制方案（核心信息、阅读路径、拟生成元素、推荐风格），再让你选择按方案继续、展开风格菜单还是自己写要求。元素风格、版式和角色配色都有预置选项，见 `references/`。
+## 使用
 
-**元素生成与拆分**：先列 6-12 个可复用元素，元素表拆出的透明 PNG 放进 `elements` 文件夹，已有的干净元素优先复用。图片以 data URI 内嵌，`.drawio` 不依赖本地图片路径。
-
-**论文风格与措辞约束**：默认 boxed manuscript style，白底、细描边、克制填色。过强的过程判断会降级为证据支持得住的说法；中文、希腊字母和化学式上下标不降级成 ASCII。
-
-**交付前自检**：按 `references/qa-checklist.md` 检查 A4 页宽下的标签可读性、压盖、箭头指向和术语强度。
-
-交付物是一个 `.drawio` 文件加一个透明 PNG 元素文件夹。默认不导出 PNG、SVG、PDF；先在 draw.io 里调到满意，再按期刊要求导出。
-
-## 快速开始
-
-在 Codex 里发送：
+将 `skills/abstract-fig` 安装到 agent 的技能目录，在支持的环境中用 `$abstract-fig` 调用，例如：
 
 ```text
-请从 GitHub 安装这个 skill，并在之后需要制作论文 graphical abstract、概念模型图或可编辑 draw.io 投稿图时优先使用它：
-https://github.com/keros68/xiaoyu-skill/tree/main/skills/abstract-fig
+使用 $abstract-fig，结合正文和这个案例，先梳理展示内容与模块关系，再调整图1。优先使用已有影像和可编辑矢量元素，保留旧版，交付源文件和预览。
 ```
 
-装完重启或新开窗口，用 `$abstract-fig` 触发，例如「使用 $abstract-fig 根据这篇论文主线做一张可编辑 draw.io 图形摘要」。
-
-手动安装：
+手动安装示例：
 
 ```bash
 git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
 cp -R ~/xiaoyu-skill/skills/abstract-fig ~/.codex/skills/abstract-fig
 ```
 
-做好的 `.drawio` 文件拖进 [draw.io 官方编辑器](https://app.diagrams.net/) 即可继续编辑；网页询问保存位置时选本地存储。
+draw.io 文件可拖入 [官方编辑器](https://app.diagrams.net/) 继续修改。投稿用 PDF、SVG、PNG 按用户要求或既有工作流导出。
 
-## 校验脚本
+## 文件检查
 
 ```bash
-python scripts/inspect_drawio_images.py <figure.drawio> --elements-dir <elements_dir>
+python scripts/inspect_drawio_images.py figure.drawio
+python -m unittest discover -s tests -v
 ```
 
-确认拆出来的 PNG 真的变成了多个内嵌图片单元。少于 `--min-images`（默认 3）、有外链图片或整页大图时以非零退出码报告失败，各码含义见 `--help`。只用 Python 3 标准库。
+脚本仅依赖 Python 3.10+ 标准库，支持未压缩、压缩和多页 draw.io。纯矢量图、单张图片图均可通过；外链图片会报告可移植性错误。大图片提示人工检查，不自动认定为整图栅格化。
+
+`--min-images N` 仅用于某个设计确实需要指定数量图片时，默认值为 0。`--elements-dir` 可选，用于列出 PNG 素材。退出码：0 为结构检查通过（仍需查看警告），1 为读取错误，2 为未达到显式数量要求，3 为外链图片，6 为无效或不支持的图文件数据。
+
+结构检查不能证明科学结论、视觉质量或完整可编辑性。应在目标编辑器中检查成品；只有其他程序生成的预览时，需要说明尚未核验原生渲染。
 
 ## 文件结构
 
-- `SKILL.md` - 主说明、默认约定和工作流。
-- `references/` - 图件类型、方案与风格菜单、元素生成与拆分、嵌入与布局、论文图风格与配色、路线图模板、交付检查清单。
-- `scripts/inspect_drawio_images.py` - 检查 `.drawio` 是否嵌入了多个独立图片元素。
-- `agents/openai.yaml` - 显示名与默认提示词。
-
-## 边界
-
-- 嵌入的是 PNG 元素，元素内部不能像矢量图那样逐笔修改；可编辑的是它的位置、大小和替换关系。
-- 元素质量取决于 image2 的生成和拆分效果，复杂背景、阴影和细线可能要手动清理边缘和色晕。
-- 图形摘要、机制图和概念模型在没有生图能力时不会降级成纯图形版本，而是直接告知无法满足。
-- 措辞约束只做过强表述的降级提示，不判断结论是否成立。科学术语、图注和投稿格式仍需作者复核。
+- `SKILL.md`：任务定位、内容规划、素材选择与执行流程。
+- `references/`：模块组合、案例分析、版式、可选生图、格式操作与验收。
+- `scripts/inspect_drawio_images.py`：图片嵌入与尺寸诊断。
+- `tests/`：纯矢量、单图、外链和压缩文件等行为检查。
+- `agents/openai.yaml`：技能显示信息与默认提示词。
 
 ## Attribution and Redistribution
 
@@ -86,14 +71,10 @@ The project is released under the MIT License. Redistribution, forks, modified v
 
 ## English
 
-Abstract-Fig is a Codex agent skill that turns manuscript content into editable draw.io figures: graphical abstracts, concept models, mechanism diagrams, workflow figures, research roadmaps, and synthesis figures. It proposes a design brief and a style first, then generates an image2 element sheet, splits it into separate transparent PNGs, and embeds each as its own draw.io image object, while text boxes, arrows, frames, and labels stay editable. The deliverable is a `.drawio` file plus an elements folder; PNG/SVG/PDF exports are not produced unless you ask. The full pipeline needs image2 or an equivalent image-generation setup.
+Abstract-Fig plans and creates editable scientific figures from manuscript content. It selects essential information, organizes module relationships, and chooses project observations, native vector schematics, or optional generated illustrations. Image generation is not required.
 
-Copy `skills/abstract-fig` from the `xiaoyu-skill` repository into `~/.codex/skills/abstract-fig`, then trigger it with `$abstract-fig`. Open finished files in the official draw.io editor: https://app.diagrams.net/
+Draw.io is the default; an explicitly requested editable format can be used instead. Deliver the editable source and a preview, with publication exports as requested. Check the intended output size and the actual editor rendering when available. The bundled inspector accepts vector-only, single-image, compressed, and multi-page draw.io files; large images require visual review rather than automatic rejection.
 
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
----
-
-**同系列 Agent Skills**：[sci-select](../sci-select/)（选刊+投稿前审查） · [academic-reference-matcher](../academic-reference-matcher/)（文献引用） · [cugb-doctoral-thesis-format](../cugb-doctoral-thesis-format/)（学位论文格式） · [ai-cross](../ai-cross/)（多模型交叉验证）｜[返回总览](../../)

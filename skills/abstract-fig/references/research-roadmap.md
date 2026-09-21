@@ -2,7 +2,7 @@
 
 Use this reference when the figure is a research or technical roadmap: a diagram of project phases, timeline, milestones, or per-stage methodology, typically for a thesis proposal, grant application, or project report.
 
-A research roadmap is a variant of the **Workflow Figure** (see `figure-types.md`), not a mechanism diagram or a body concept model. It defaults to shape-only draw.io construction and is exempt from the image2 Required Gate in `image2-element-workflow.md` by default. Only pull in image2 elements if the user explicitly asks for a more pictorial, graphical-abstract-style treatment.
+A research roadmap is a workflow variant (see `figure-types.md`). Native editable shapes often suit it; use real assets or optional illustrations when they explain the planned work. Choose phase, branch, or feedback relationships from the actual proposal.
 
 Trigger words: 技术路线图, 研究路线(图), 开题报告路线图, 课题路线图, technical roadmap, research roadmap.
 
@@ -83,13 +83,15 @@ Color reference:
 | Transition arrow (orange) | #ffe6cc | #d79b00 |
 | Dashed frame | none | #000000 |
 
-## Layout Heuristics
+## Optional Layout Examples
 
-- Canvas width: 800-1000px, height scales with the number of stages.
+The coordinates and colors below are examples, not requirements. Set the canvas and type for the intended output width.
+
+- Example canvas width: 800-1000px, height scales with the content.
 - Three-column layout: left stage labels (x 20-60) | main content area (x 80-720) | right labels if needed (x 730-800).
 - Per-stage frame height: 150-200px for a simple stage, 200-300px for a medium stage, 300-450px for a complex stage.
 
-## Content Mapping (abstract/proposal text -> roadmap blocks)
+## Possible Content Mapping (adapt labels to the proposal)
 
 | Source text element | Maps to roadmap block |
 |----------------------|------------------------|
@@ -98,12 +100,12 @@ Color reference:
 | Research process (步骤/阶段/流程) | "Research framework" block (研究框架) |
 | Research conclusions (策略/建议/贡献) | "Response strategy" block (应对策略) |
 
-Node text length: keep each node label to 4-12 characters. Add or remove nodes to match the source content's actual complexity — do not pad or trim to hit a fixed node count.
+Use concise labels that preserve meaning. Do not force content into the names above or pad the diagram to a fixed node count.
 
 ## QA
 
 Follow the shared checklist in `qa-checklist.md`, plus these roadmap-specific checks:
 
 - No `XXXX`-style placeholder text remains in any node.
-- Every stage has both a vertical stage label and a matching dashed frame.
-- Adjacent stages are connected by a transition arrow.
+- Stage grouping is recognizable; vertical labels and dashed frames are optional.
+- Connect stages only where a dependency exists; preserve parallel branches and distinguish planned outputs from achieved results.

@@ -1,97 +1,37 @@
-# Boxed Manuscript Style
+# Manuscript Layout and Visual Hierarchy
 
-Use this reference when the user wants a manuscript-ready figure in the style of a paper graphical abstract, JoH-style concept model, mechanism synthesis, or reviewer-facing conceptual diagram.
+Use when composing or refining manuscript figures. Follow the supplied reference and journal requirements where available; the principles below do not mandate a particular visual theme.
 
-This style is the default for academic paper figures unless the user explicitly asks for a modern infographic, dashboard, poster, or slide look.
+## Hierarchy and density
 
-## Core Look
-
-- Use a white or near-white canvas, not large tinted dashboard panels.
-- Let text boxes carry the scientific claims; let image elements act as visual anchors.
-- Prefer thin stroked boxes, restrained fills, and clear arrows over decorative cards.
-- Use strong hierarchy: column headings, boxed mechanism statements, evidence boxes, interpreted output boxes.
-- Keep the design closer to a journal figure than a presentation slide.
+- Give the key scientific content the most useful space. A real image, map, or model diagram can carry the main explanation; text boxes need not dominate it.
+- Align repeated or comparable objects. Let unrelated modules differ in width, height, and internal arrangement.
+- Prefer a neutral canvas with deliberate emphasis. Large colored headings, pastel cards, or heavily rounded boxes should have a clear grouping purpose.
+- Use local whitespace for separation, labels, and connectors. Remove unused strips and gaps that isolate elements or shrink the scientific content.
+- Dense figures should combine related content and share labels or legends. Do not gain density by shrinking every label.
 
 ## Typography
 
-- For manuscript-style figures, prefer a serif journal look such as Times New Roman, Cambria, or Georgia when available.
-- Use bold serif headings for column/layer titles.
-- Use sentence case for most labels; avoid marketing-style title case everywhere.
-- Keep text large enough for A4: main headings should dominate; box text should remain readable after scaling.
-- Use formatted chemical notation when appropriate, such as `NO<sub>3</sub><sup>-</sup>`.
+Choose a consistent font family suited to the manuscript or reference. Serif and sans-serif are both valid. Distinguish headings, ordinary labels, and notes through a small number of sizes and weights.
 
-Use sans-serif only when the source manuscript or user clearly prefers a modern infographic style.
+Judge size at the intended output width, including single-column and double-column use. For example, a 12 pt label on a 300 mm canvas becomes 7.2 pt at 180 mm. Use journal specifications when given; otherwise choose comfortably readable sizes and inspect at actual size. A large pixel count does not fix small physical text.
 
-## Box System
+Shorten labels, remove repetition, or enlarge the module before reducing type. Avoid arbitrary line limits; a clear three-line label can be better than two tiny lines. Place text outside image details that readers need to inspect.
 
-Use boxed text as the main organizing device:
+## Color and frames
 
-- Large unboxed column or layer headings at the top or left.
-- Medium boxed claims near the relevant image element.
-- Thin colored borders to encode roles.
-- Very light fills only when they help separate status classes.
-- Consistent box sizes for same-role outputs.
+Keep a stable meaning for each categorical color across the figure and related panels. Separate the colors encoding data from colors used for grouping or emphasis. A grayscale or limited palette can work; pastel colors are not inherently more scientific.
 
-Role colors:
+Use enough contrast between text, background, and frames. Check low-contrast or grayscale viewing where relevant. Do not recolor source observations to match the decoration. For comparative quantitative panels, color scales and limits must be scientifically comparable and declared.
 
-- blue: reference, recharge, water, stable condition
-- red/orange: human input, exceedance, disturbance
-- green: redox, attenuation, reducing condition, ecological or land cover context
-- yellow/gold: conditional reference, uncertainty, sensitivity
-- gray: mapped prior, context, covariate, boundary condition
+Use thin solid frames for separation, dashed enclosures when useful for grouping, and restrained rounding for selected labels. Choose these treatments intentionally; there is no universal requirement that dashed lines mean uncertainty or that each module has a border.
 
-Avoid:
+## Connections and legends
 
-- oversized rounded dashboard cards
-- heavy pastel panel backgrounds
-- icon-only explanations
-- many small floating badges
-- legends that look like slide decorations
-- decorative chart widgets when a boxed statement is clearer
+Connectors express sequence, input, comparison, aggregation, or feedback. Distinguish semantic arrows from group borders. Use line weight or routing to clarify major and secondary paths without creating a maze. State non-obvious line conventions when necessary.
 
-## Layout Patterns
+Attach a group-level arrow to the group. Avoid long detours over unrelated panels, arrows through text, and connections suggesting unsupported causality.
 
-Graphical abstract:
+Place a shared legend next to the panels it serves; put a panel-specific legend with its own panel. Match symbol order, spacing, and alignment to the visual content. Combine legends where encodings are genuinely shared, not merely to put every legend in one global corner.
 
-```text
-Column heading -> Column heading -> Column heading
-image + boxed claim -> media/framework + evidence box -> status/output boxes
-bottom take-home line
-```
-
-For a paper-style graphical abstract, prefer semantic column headings such as:
-
-```text
-Surface input + recharge | Hydrochemical screening | NO3 status
-```
-
-This often works better than a large slide-like title plus subtitle.
-
-Body concept model:
-
-```text
-Setting / prior context
-Data-resolved process domain
-Evidence / screening
-Interpreted status
-```
-
-Use horizontal separators or row headings to make the layers visible.
-
-## Element Placement
-
-- Put image elements inside or next to boxed claims.
-- Avoid making images fill the whole panel unless the setting itself is the message.
-- Every important image should have a nearby editable label or claim box.
-- If an image is only decorative, remove it.
-- Keep arrows connected to boxes or groups, not to ambiguous parts of an illustration.
-
-## Style Check
-
-Before calling the figure done, compare it against this target:
-
-- Could this sit inside a journal manuscript without looking like a slide dashboard?
-- Are the main claims readable from the boxes alone?
-- Do pictorial elements support the claims rather than replacing them?
-- Is there enough boxed text structure to guide the reader?
-- Are fills and borders restrained enough that the white background still dominates?
+A final pass should compare hierarchy, content density, and legend placement with the user's example, while retaining the study's own scientific structure.

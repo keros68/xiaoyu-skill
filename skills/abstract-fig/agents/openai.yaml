@@ -1,4 +1,4 @@
 interface:
   display_name: "Abstract-Fig"
-  short_description: "Create editable draw.io manuscript figures with image2 elements and style planning"
-  default_prompt: "Use $abstract-fig to plan the figure style, generate image2 elements, and turn my manuscript idea into an editable boxed manuscript-style draw.io figure."
+  short_description: "Plan and build editable scientific figures"
+  default_prompt: "Use $abstract-fig to select the essential content, organize module relationships, and create an editable scientific figure with a preview. Choose real project assets, vector schematics, or optional generated illustrations according to the content and my reference style."
