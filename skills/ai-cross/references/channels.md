@@ -99,14 +99,14 @@ kimi --version && kimi -p "只回复OK" -m kimi-code/kimi-for-coding-highspeed
 
 ## Antigravity CLI（命令是 `agy`，2026-09-16 接入）
 
-Google Antigravity 的命令行端，可执行文件 `C:\Users\keros68\AppData\Local\agy\bin\agy.exe`（v1.2.3 实测），配置与会话在 `~/.gemini/antigravity-cli/`。**命令名是 `agy` 不是 `antigravity`**，PATH 里可能没有，按绝对路径调。
+Google Antigravity 的命令行端，Windows 上作者本机安装在 `%LOCALAPPDATA%\agy\bin\agy.exe`（v1.2.3 实测），配置与会话在 `~/.gemini/antigravity-cli/`。**命令名是 `agy` 不是 `antigravity`**，PATH 里可能没有，按盘点时记入 manifest 的绝对路径调。
 
-**为什么值得优先用**：额度是订阅式窗口，不按次扣钱。`~/.gemini/antigravity-cli/metrik-antigravity-quota.json` 是本机事实源，四个窗口（`gemini_5h` / `gemini_weekly` / `3p_5h` / `3p_weekly`）各给 `remainingPercent` 与 `resetsAtMs`——派发前读它判断还剩多少，别手抄。
+**为什么值得优先用**：额度是订阅式窗口，不按次扣钱。装了 metrik 时，`~/.gemini/antigravity-cli/metrik-antigravity-quota.json` 是额度事实源，四个窗口（`gemini_5h` / `gemini_weekly` / `3p_5h` / `3p_weekly`）各给 `remainingPercent` 与 `resetsAtMs`——派发前读它判断还剩多少，别手抄。
 
-**模型清单读 `agy models`**（2026-09-16 实测三家权重）：Gemini 3.8/3.7/3.6 Flash 各 high/medium/low、Gemini 3.1 Pro high/low；Claude Sonnet 4.6、Claude Opus 4.6（Thinking）；GPT-OSS 120B。**独立性按权重厂商算**：Gemini 是这台机器上原本没有的新厂商轴，交叉验证价值最高；Claude 档与 Claude Code 同厂、GPT-OSS 与 codex 同源，都不算独立第二意见。
+**模型清单读 `agy models`**（2026-09-16 实测三家权重）：Gemini 3.8/3.7/3.6 Flash 各 high/medium/low、Gemini 3.1 Pro high/low；Claude Sonnet 4.6、Claude Opus 4.6（Thinking）；GPT-OSS 120B。**独立性按权重厂商算**：manifest 里没有 Google 系厂商时，Gemini 是新的厂商轴，交叉验证价值最高；Claude 档与 Claude Code 同厂、GPT-OSS 与 codex 同源，都不算独立第二意见。
 
 ```bash
-AGY="C:/Users/keros68/AppData/Local/agy/bin/agy.exe"
+AGY="$LOCALAPPDATA/agy/bin/agy.exe"   # 以 manifest 记录的路径为准
 
 # 单行任务：--print 必须带值
 "$AGY" --model gemini-3.8-flash-low --output-format json --print="一句话任务"
@@ -117,7 +117,7 @@ cat in.ndjson | "$AGY" --model gemini-3.8-flash-high --print-timeout 5m \
   --input-format stream-json --output-format stream-json
 ```
 
-- **默认用 3.8 Flash 档，不要用 3.1 Pro**（用户 2026-09-16 指定）：审查与第二意见用 `gemini-3.8-flash-high`，冒烟与琐事用 `-low`。Pro 档留给用户明确点名的场合。
+- **默认档写在 manifest**。未指定时从 `agy models` 里取当前最新的 Flash 系列：审查与第二意见用它的 high，冒烟与琐事用 low；Pro 档额度消耗更大，留给用户明确点名的场合。作者本机 2026-09-16 的设定是 `gemini-3.8-flash-high` / `-low`。
 - **⚠️ 无头模式下连读文件都会被自动拒绝**（2026-09-16 实测）：`view_file` 报「required the "read_file" permission that headless mode cannot prompt for」，`run_command` 同样。实测让它读一个文件，八次工具调用全被拒、烧掉 12.4 万 token、最后 `status: SUCCESS` 但 `response` 是空字符串——**空回答不是模型不会答，是工具全被拒**，别误判成能力问题。
 - **因此它只能当纯文本盲审者：材料全部内联进 prompt，并在 prompt 里明写「不要使用任何工具」。** 这正好满足盲验的隔离要求（它读不到 `.dispatch/`、`STATE.md`、项目 `AGENTS.md`）。实测内联一段代码 + 一个问题：1.3 万 token、2.7 秒，准确指出了埋进去的缺陷。
 - **固定足迹约 1.3 万 token/次**（工具定义 + 系统提示），比 pi 的 405 贵一个量级，但走订阅额度不花钱——对订阅用户按「省额度」而不是「省钱」记账。
@@ -154,7 +154,7 @@ AI_CROSS_PEER=1 pi --provider zai-coding-cn --model glm-4.7 -p --no-tools \
 - **kimi 的 ACP 入口（2026-09-14 实证，kimi 0.42 `kimi acp`，JSON-RPC over stdio）**：`initialize` 回 `agentCapabilities.loadSession=true`、`sessionCapabilities.{list,resume,close,delete,fork}`；`session/new` 回 `configOptions`（不是规范里的 `models.availableModels`）：`model`（值为完整别名 `kimi-code/k3-256k` 等四个）、`thinking`（low/high/max）、`mode`（default/plan/auto/yolo）。**`plan` 不是只读档**（09-14 晚真机纠正）：plan 模式要求回合以 ExitPlanMode/AskUserQuestion 收尾，一问一答的验证者会在那里空转到超时（12 次工具调用、9 次权限请求后仍不结束）；ACP 下的只读只能靠客户端对 `session/request_permission` 按 kind 拒写放读（`default` 模式，永不 `auto`/`yolo`）。`kimi -p` 一次性路径仍无只读档。切换用 `session/set_config_option`。**`session/prompt` 的结果只有 `{stopReason}`，不报用量**，通知流里也没有 token 字段——ACP 走 kimi 时用量按「不报」记。权限请求形状（09-14 真机）：`session/request_permission` 的 `toolCall` **不带 `kind`**，只有 `title`（如 `Write`、`Bash`）和 content 文本；读文件在 default 模式下不请求权限、自动放行——所以客户端只要把「来问的」一律拒就是只读档，不能指望 kind 字段。
 - **真身看 `responseModel`**（2026-09-13 实证）：请求 `zai-coding-cn/glm-4.7`，事件 `message.model` 回显 `glm-4.7`，`responseModel` 却是 `glm-5.3-flash`——端点静默换了模型。程序化消费必须比对 `responseModel`，不符按 identity_mismatch 处理。
 - **已知路由别名要放行、静默换模要报**（2026-09-14 实证）：DeepSeek 官方 provider 请求 `deepseek/deepseek-v4-flash`，`responseModel` 返回 `deepseek/deepseek-flash`——这是官方公开的统一路由（用户 09-13 说明：官方现在统一叫 `deepseek-flash`，旧名自动路由），不是降级。真身核对维护一张明示的别名表（provider、请求 id、响应 id），命中即通过并记实际 id；表外的一律按 identity_mismatch 处理（zai 的 glm-4.7→glm-5.3-flash 就属于表外）。同日另一条：`qwen-token-plan-cn` 下 qwen3.8-max 前一天可用、次日 403 `AccessDenied.Unpurchased`，聚合订阅的权限会漂，派前冒烟不能省。
-- **⚠️ DeepSeek 官方 provider 是本机唯一按次真扣钱的通道**（用户 2026-09-16 明确：「真金白银，没有订阅」）。其余通道（GLM、Kimi、qwen plan、codex、Claude、Antigravity）都在订阅或 plan 额度内。**排序规则：先用订阅内的，DeepSeek 排最后**——跨厂商盲审的第二家默认改用 Antigravity 上的 Gemini（见上一节，新厂商轴、订阅额度）；只有这些都不可用、或确实需要 DeepSeek 特有视角时才派它，并在汇报里写明为什么非它不可。
+- **⚠️ 按次计费的通道排最后**：先用订阅/plan 内的通道，按次真扣钱的排最后，派它时在汇报里写明为什么非它不可；哪些通道按次计费以 manifest 为准。作者本机（2026-09-16）只有 DeepSeek 官方 provider 按次扣钱，其余（GLM、Kimi、qwen plan、codex、Claude、Antigravity）都在订阅或 plan 额度内，所以跨厂商盲审的第二家默认用 Antigravity 上的 Gemini。
 - **provider 三个（2026-09-13 `pi --list-models`）**：`deepseek`（DeepSeek 官方：v4-flash / v4-flash-vision-exp / v4-pro）、`qwen-token-plan-cn`（18 个）、`zai-coding-cn`（10 个，含 glm-5.3 / 5.3-flash / 5.3-highspeed）。**`--list-models` 有 ≠ 有权限**：qwen plan 下的 deepseek-v4-flash 实测 403 `AccessDenied.Unpurchased`，派 DeepSeek 走官方 `deepseek` provider；错误在 `message_end` 的 `stopReason: "error"` + `errorMessage`，不在 stderr。
 - **`qwen-token-plan-cn` 经 pi 派发可用**（用户确认，2026-08-30）：走 pi 自己的 harness 就是该 plan 的正常用法，不属于「千问 Token Plan 合规注」拦的裸 key 脚本调用。它是**聚合型订阅**：一个计费源下挂 deepseek / glm / kimi / MiniMax / qwen 多家权重——独立性按权重厂商算（deepseek-v4-flash 与 glm-5.2 可互为交叉验证），额度按 `qwen-token-plan-cn` 一个源算（熔断一起没），manifest 里厂商列与额度归属列分开填（见 setup.md「聚合型订阅」）。
 - **真身核对**：`--mode json` 的每条消息事件都带 `provider`/`model` 字段，可直接比对响应是否命中请求的模型（本机实测 `--model glm-4.7` 请求 → 响应 `provider":"zai-coding-cn","model":"glm-4.7"` 一致，未观察到静默降级；但只测了一个模型，不代表全体型号都不降级）。
@@ -300,7 +300,9 @@ cat file.txt | aichat -m <provider>:<model> "总结要点"   # 长文本走 stdi
 
 多数按量模型无推理强度旋钮；个别推理模型有专用参数，以 provider 文档为准。
 
-## 控制台通道（aicross 在跑时优先走这条，2026-09-15 端到端实测）
+## 控制台通道（可选；aicross 在跑时优先走这条，2026-09-15 端到端实测）
+
+aicross 是作者的桌面派发程序，未公开发布；没有安装时跳过本节，`~/.aicross/` 不存在即视为控制台未开。
 
 aicross 控制台开着的时候，派发交给它执行：对话图、`.dispatch/` 留痕、红绿核对、额度分类与厂商回退都在控制台里，skill 只负责提议和读结果。控制台没开就照常走上面的 CLI 通道——**判据是退出码 3，不是超时、也不是报错文本里有没有"connection"。**
 

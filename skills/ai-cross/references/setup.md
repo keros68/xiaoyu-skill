@@ -20,7 +20,7 @@
 **这些动作是"探测"，不是"盲扫"，默认直接执行**：在同一条消息里告知用户"正在只读检测本机模型入口"即满足知情原则（白名单见 `security.md`），无需停下等许可。它们不登录、不发模型请求、不读密钥明文、零费用。
 
 1. **CLI 存在检测**（只跑 `--version`，不存在就跳过，报错不算失败）：
-   `claude --version`、`codex --version`、`kimi --version`、`pi --version`、`qoder --version`、`aichat --version`、`codebuddy --version`、`hermes --version`。kimi 在 Windows 装完可能不进 PATH，补试全路径 `~/.kimi-code/bin/kimi.exe`。
+   `claude --version`、`codex --version`、`kimi --version`、`pi --version`、`qoder --version`、`aichat --version`、`codebuddy --version`、`hermes --version`。kimi 在 Windows 装完可能不进 PATH，补试全路径 `~/.kimi-code/bin/kimi.exe`。Antigravity 的命令是 `agy`：先试 `agy --version`，Windows 上不在 PATH 时补试 `%LOCALAPPDATA%\agy\bin\agy.exe --version`；都没有就看 `~/.gemini/antigravity-cli/` 是否存在，存在则把“装了但找不到可执行文件”列进确认表，请用户给出路径。
 2. **cc-switch 只读桥**（`~/.cc-switch/cc-switch.db` 存在才跑）：
    ```
    python <本skill目录>/references/cc_switch.py list
@@ -191,6 +191,8 @@ clients:
 ```
 
 - 验证失败的勾选项也记入（标"不可用 + 原因"），避免下次重复试错。
+- 「额度归属」写明计费方式；按次真扣钱、没有订阅或 plan 兜底的写「按次」（如 `DeepSeek API 按次`），路由据此把它排在最后。
+- CLI 不在 PATH 时（如 `agy`），在「通道」列记绝对路径，派发命令按它调用。
 - 末尾写明独立**厂商**数及解锁的强度。源仅用于计费提示与独立性判断，不作强度门槛。
 - **「来源」列必填，三选一**：`读:<命令或路径>`（有本地事实源，派发前实读）/ `文档(日期)`（抄自厂商文档）/ `申报(日期)`（用户口述）。**标了 `读:` 的行不得静默用表里的值**——读失败时可以拿它顶上，但必须当场告知用户"未实读、用的是 N 天前的记录值"（规则见 `channels.md`「不得静默降级用旧值」）。这一列存在的意义是：**让"这个 ID 是哪来的"在路由时可见**，而不是等静默降级发生后再去追。
 - **聚合型订阅**（一份额度里含多家权重，如千问 Token Plan 含 GLM/DeepSeek/Kimi/MiniMax）：厂商列按**权重厂商**分行填，额度归属列填**聚合平台名**。这类源的权重独立性成立（可交叉验证）、计费独立性不成立（熔断一起没），两者不能合并成一列——合了会误判为"有 N 个独立源"。

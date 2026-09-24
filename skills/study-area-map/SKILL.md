@@ -7,7 +7,7 @@ description: Use when building a study-area location or setting map for a paper 
 
 This skill covers what is specific to maps: projection, window, relief, panel composition, and map furniture. `relief_basemap.R` is self-contained — it sets `LW`, `LW_DAT`, `TXT_PT`, `TXT_GG`, registers a font and supplies `theme_map_pub()`, but only where those names are not already defined, so a house-style preamble loaded alongside it still wins.
 
-The two overlap at rfigure.skill's *China Maps And Site Distributions* section. This skill goes further there, and corrects one measured error in it — see **Composition**.
+This skill overlaps with rfigure.skill's *China Maps And Site Distributions* section, goes further there, and corrects one measured error in it — see **Composition**.
 
 ## Reference implementation
 

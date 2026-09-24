@@ -2,7 +2,7 @@
 name: ai-cross
 description: 多模型分工与跨厂商交叉验证 skill：把任务派给合适的模型分工执行，用不同厂商的模型互相核查关键产出，按档位分层派发以节省订阅额度。适用场景：用户要求派发任务、分层执行、多模型协作、对关键产出做交叉验证、盘点或接入可用模型，或提到 dispatch、派工。不适用场景：单模型环境下的普通任务（没有派发需求时不要触发）、没有 shell 执行能力的纯聊天宿主。
 metadata:
-  version: 1.16.0
+  version: 1.16.1
 ---
 
 # ai-cross — 多模型分工与跨厂商交叉验证
@@ -68,7 +68,7 @@ metadata:
 
 | 通道 | 载体 | 计费 | 宿主适用性 |
 |---|---|---|---|
-| **aicross 控制台** | `aicross dispatch/status/adopt/cancel`（本机回环 + 令牌） | 按控制台里选的模型 | 全部宿主，需控制台在跑 |
+| aicross 控制台（可选） | `aicross dispatch/status/adopt/cancel`（本机回环 + 令牌） | 按控制台里选的模型 | 全部宿主，需已安装且在跑 |
 | 内部 subagent | scout/worker/heavy | Claude 订阅 | **仅 Claude Code 宿主** |
 | 外部 agent CLI | `codex exec` / `kimi` / `pi` / `agy` 等（gemini/qoder CLI 已下线，见 channels.md） | 各自订阅 | 全部宿主 |
 | 外部 coding plan | `claude -p` + 按进程环境变量覆写（GLM/Kimi 等） | coding plan 订阅 | 全部宿主 |
@@ -76,11 +76,11 @@ metadata:
 | **裸 API 直调** | 主 agent 直接 `curl` OpenAI/Anthropic 兼容端点 | API 按量 | 全部宿主 |
 | 外部 aichat | `aichat -m <provider>:<model>`（裸 API 的 CLI 封装） | API 按量 | 全部宿主 |
 
-**aicross 控制台**：控制台在跑就优先走它——图、留痕、红绿核对、额度分类与厂商回退都在控制台里完成，skill 只提议和读结果。是否在跑看 `~/.aicross/console.json`（开发构建是 `console.dev.json`）里的 `pid` 还活着；**只有退出码 3 才回退到下面的 CLI 通道**。用法与边界见 `references/channels.md`「控制台通道」。
+**aicross 控制台（可选）**：作者的桌面派发程序，未公开发布；没装就跳过本段。控制台在跑就优先走它——图、留痕、红绿核对、额度分类与厂商回退都在控制台里完成，skill 只提议和读结果。是否在跑看 `~/.aicross/console.json`（开发构建是 `console.dev.json`）里的 `pid` 还活着；**只有退出码 3 才回退到下面的 CLI 通道**。用法与边界见 `references/channels.md`「控制台通道」。
 
-**Antigravity（`agy`）**：订阅式额度窗口，`agy models` 下有 Gemini 3.x、Claude 4.6、GPT-OSS 120B 三家权重——**Gemini 是本机原本没有的厂商轴，交叉验证优先用它**。无头模式下连读文件都会被自动拒绝，所以只能当纯文本盲审者：材料全内联、明写不用工具（这正合盲验隔离）。绝不加 `--dangerously-skip-permissions`。见 `references/channels.md`「Antigravity CLI」。
+**Antigravity（`agy`）**：订阅式额度窗口，`agy models` 下有 Gemini 3.x、Claude 4.6、GPT-OSS 120B 三家权重——**manifest 里没有 Google 系厂商时，Gemini 能补一个新的厂商轴，交叉验证优先考虑它**。无头模式下连读文件都会被自动拒绝，所以只能当纯文本盲审者：材料全内联、明写不用工具（这正合盲验隔离）。绝不加 `--dangerously-skip-permissions`。见 `references/channels.md`「Antigravity CLI」。
 
-**按次计费的排最后**：本机只有 DeepSeek 官方 provider 是真扣钱的，其余都在订阅或 plan 额度内。跨厂商盲审的第二家默认用 Antigravity 的 Gemini，DeepSeek 只在别家都不可用或确需其视角时才派，并写明理由。
+**按次计费的排最后**：盘点时在 manifest 里标出哪些通道按次真扣钱（没有订阅或 plan 兜底），这类通道排在订阅/plan 通道之后，只在别家都不可用或确需其视角时才派，并写明理由。作者本机的例子：只有 DeepSeek 官方 provider 按次扣钱，跨厂商盲审的第二家默认用 Antigravity 的 Gemini。
 
 **裸 API 直调**：无系统提示无工具，token 地板实测 11（对比 `claude -p --tools ""` 12k、不收窄工具时 31k）。但它是**真金白银的按量计费**，在订阅/coding plan 之外——只有按量用户、或需要保住订阅额度做重活时才划算；订阅用户的日常任务直接用订阅内通道，别为省"已付过的 token"去掏钱。命令模板见 `references/channels.md`，**带凭据出网的护栏见 `references/security.md`**（密钥六铁律 + 只读隔离）。
 
@@ -295,7 +295,7 @@ metadata:
    ## 当前状态
    阶段: review 第 2/3 轮 ｜ 更新: 2026-07-08 21:00
    ## 已完成
-   - [x] 实现 (GLM/glm-5.1) → .dispatch/…-implement.md
+   - [x] 实现 (GLM/glm-5.2) → .dispatch/…-implement.md
    - [x] 交叉审查 R1 (codex/gpt-5.4) → NEEDS_FIX，见 …-review-r1.md
    ## 进行中
    - [ ] 修正 R2：待重跑全部自测后送审
