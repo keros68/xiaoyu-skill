@@ -2,12 +2,14 @@
 
 用 R 绘制论文研究区区位图的 Claude Code 技能。基于 ggplot2、sf、terra。
 
-负责快速搭出框架：投影、窗口、面板对齐、地形合成、图廓件。配色、留白、标注位置与要素取舍出图后自行调整。
+负责快速搭出框架：投影、窗口、地形底图、专题图层、面板对齐、图廓件。配色、留白、标注位置与要素取舍出图后自行调整。
 
 ## 功能
 
 - 多级定位面板（国家、省、研究区），各级图框等宽
 - 分层设色地形底图，山影按相乘合成，分级边界和饱和度都保留
+- 专题图层：土地利用等分类栅格、分级设色的连续变量、分级符号的采样点
+- 一张定位图配多幅专题图，共用窗口，经纬度只标外侧，图例放在面板下方的图例条
 - 缩放引线，虚线锥连接相邻两级面板
 - 图内图例、针形指北针、比例尺
 - 投影窗口、DEM 缺值、图廓件压框、角框压盖陆地、强调色撞色、色带可分辨性，均自带断言
@@ -29,6 +31,7 @@ cp -R ~/xiaoyu-skill/skills/study-area-map ~/.claude/skills/study-area-map
 SK <- "~/.claude/skills/study-area-map/reference/"
 source(paste0(SK, "relief_basemap.R"))
 source(paste0(SK, "palettes.R"))
+source(paste0(SK, "thematic.R"))        # 需要专题图层时
 
 CRS_M <- "+proj=aea +lat_1=39.3 +lat_2=40.4 +lat_0=39.85 +lon_0=113.3 +datum=WGS84 +units=m +no_defs"
 
@@ -61,7 +64,11 @@ ggplot() +
 
 ## 示例
 
-`example/` 下两个脚本可以照着改，各出 300 dpi 成品与 150 dpi 预览两版。
+`example/` 下三个脚本可以照着改，各出 300 dpi 成品与 150 dpi 预览两版；仓库只保存预览版。
+
+一张两级矢量定位图配四幅专题图：地形、土地利用、采样点、土壤有机碳。四幅共用一个窗口，面板等大，图例放在各面板下方。土地利用、采样点和有机碳是固定随机种子生成的模拟数据，只用于演示版式：
+
+![专题组图示例](example/taiyuan_thematic_preview.png)
 
 三级版，`SCS_INSET <- FALSE`，窗口取全部要素，南海落在正图内，三级引线齐全：
 
@@ -75,7 +82,7 @@ ggplot() +
 
 ![两级区位图示例](example/taiyuan_locator_preview.png)
 
-示例需要三样数据：覆盖 N37–N38 / E111–E113 的 ASTER 压缩瓦片、含市县两级的行政区划 shp，以及自动下载的 GEBCO。脚本开头的路径改成自己的即可。压缩瓦片不必解包，`vsizip_tiles()` 会读归档拼出 GDAL 虚拟路径。
+示例需要三样数据（专题图层为模拟数据，不另需）：覆盖 N37–N38 / E111–E113 的 ASTER 压缩瓦片、含市县两级的行政区划 shp，以及自动下载的 GEBCO。脚本开头的路径改成自己的即可。压缩瓦片不必解包，`vsizip_tiles()` 会读归档拼出 GDAL 虚拟路径。
 
 ## 自备数据
 
@@ -132,8 +139,11 @@ GEBCO 为 0.05°，约 5 km，用于国家级面板合适，用于省级面板�
 
 | 文件 | 内容 |
 |---|---|
-| `reference/relief_basemap.R` | `ensure_font()` `theme_map_pub()` `inscribed_window()` `bbox_union()` `vsizip_tiles()` `fit_aspect()` `win_aspect()` `load_dem()` `locate_na()` `relief_rgb()` `north_needle()` `elev_legend_block()` `legend_backing()` `assert_inside()` `assert_window()` `inset_is_clear()` `assert_inset_clear()` `widen_for_inset()` `pad_win()` `pad_until_clear()` `inset_aspect()` `corner_inset()` `credit_footer()` `check_cn_content()` `pin_panel()` `panel_margins()` `with_font_device()` `box_in()` `add_leaders()` `FRAME_PAD` `CN_REQUIRED_POINTS` |
+| `reference/relief_basemap.R` | `ensure_font()` `theme_map_pub()` `shade_factor()` `inscribed_window()` `bbox_union()` `vsizip_tiles()` `fit_aspect()` `win_aspect()` `load_dem()` `locate_na()` `relief_rgb()` `north_needle()` `elev_legend_block()` `legend_backing()` `assert_inside()` `assert_window()` `inset_is_clear()` `assert_inset_clear()` `widen_for_inset()` `pad_win()` `pad_until_clear()` `inset_aspect()` `corner_inset()` `credit_footer()` `check_cn_content()` `pin_panel()` `panel_margins()` `with_font_device()` `box_in()` `add_leaders()` `FRAME_PAD` `CN_REQUIRED_POINTS` |
 | `reference/palettes.R` | `pal_hypso()` `elev_breaks()` `elev_labels()` `preview_hypso()` `check_ramp()` `simulate_cvd()` `to_gray()` `assert_accent_unique()` `PAL_SURROUND` `BRK_SURROUND` |
+| `reference/thematic.R` | `class_rgb()` `graduated_sizes()` `legend_rows_block()` `assert_within_reserved()` `mm_win()` `legend_panel()` |
+
+各环节的原理与实测数据在 `guides/` 下，按窗口与投影、地形底图、专题图层、拼版与引线、图廓件、数据来源分为六篇。
 
 两处做法与常见写法不同。
 

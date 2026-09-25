@@ -2,3 +2,6 @@
 .RData
 .Rproj.user/
 Rplots.pdf
+# 示例成品图可由脚本重新生成，仓库只保存预览版
+example/*.png
+!example/*_preview.png

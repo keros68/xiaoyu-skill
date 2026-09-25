@@ -190,6 +190,18 @@ locate_na <- function(d, win) {
 
 # --------------------------------------------------------------- relief ------
 
+# Per-cell brightness multiplier from a hillshade, normalised so it averages 1.
+# Multiplying a colour by it darkens shaded slopes and lightens lit ones without
+# shifting hue, which is what lets relief sit under classed colours.
+shade_factor <- function(d, strength = 0.45, alt = 40, azim = 315) {
+  sh <- shade(terrain(d, "slope",  unit = "radians"),
+              terrain(d, "aspect", unit = "radians"), angle = alt, direction = azim)
+  shv <- as.vector(values(sh)[, 1])
+  shn <- shv / mean(shv, na.rm = TRUE) * 0.5      # mean -> 0.5 so f averages 1
+  shn[is.na(shn)] <- 0.5
+  1 + strength * pmin(pmax((shn - 0.5) * 2, -1), 1)
+}
+
 # Classed hypsometric tint MULTIPLIED by hillshade, emitted as an RGB raster.
 #
 # Multiplying is the whole point. Drawing a hypsometric raster over a hillshade
@@ -204,14 +216,9 @@ locate_na <- function(d, win) {
 relief_rgb <- function(d, brks, cols, strength = 0.45, wash = 0,
                        alt = 40, azim = 315) {
   stopifnot(length(brks) == length(cols) + 1)
-  sh <- shade(terrain(d, "slope",  unit = "radians"),
-              terrain(d, "aspect", unit = "radians"), angle = alt, direction = azim)
-  v   <- as.vector(values(d)[, 1])
-  shv <- as.vector(values(sh)[, 1])
-  ok  <- !is.na(v)
-  shn <- shv / mean(shv, na.rm = TRUE) * 0.5      # mean -> 0.5 so f averages 1
-  shn[is.na(shn)] <- 0.5
-  f <- 1 + strength * pmin(pmax((shn - 0.5) * 2, -1), 1)
+  v  <- as.vector(values(d)[, 1])
+  ok <- !is.na(v)
+  f  <- shade_factor(d, strength, alt, azim)
 
   cm  <- grDevices::col2rgb(cols) * (1 - wash) + 255 * wash
   idx <- findInterval(v, brks, rightmost.closed = TRUE, all.inside = TRUE)
@@ -279,11 +286,12 @@ north_needle <- function(win, ax = 0.055, ay = 0.928, h = 0.060, slim = 0.22,
 #   anchor      c(x_right, y_bottom) of the backing, as fractions
 #
 # `labs` must have length(cols) - 1 entries, one per interior class boundary.
-# Blank alternate entries or they run together at 8 pt.
+# Blank alternate entries or they run together at 8 pt. backing = FALSE drops the
+# white box, for a block drawn outside the map in legend_panel().
 elev_legend_block <- function(win, cols, labs, panel_h_mm,
                               title = "Elevation (m)",
                               x = c(0.630, 0.945), anchor = c(0.972, 0.032),
-                              pad_mm = 1.0, bar_mm = 2.6) {
+                              pad_mm = 1.0, bar_mm = 2.6, backing = TRUE) {
   stopifnot(length(labs) == length(cols) - 1)
   f   <- frac_fun(win)
   mm  <- function(v) v / panel_h_mm                 # mm -> fraction of height
@@ -299,10 +307,11 @@ elev_legend_block <- function(win, cols, labs, panel_h_mm,
 
   nb <- length(cols)
   sw <- seq(x[1], x[2], length.out = nb + 1)
-  list(
+  c(if (backing) list(
     annotate("rect", xmin = f$fx(bx[1]), xmax = f$fx(bx[2]),
              ymin = f$fy(y0), ymax = f$fy(y1),
-             fill = "white", alpha = 0.88, colour = "grey35", linewidth = LW * 0.6),
+             fill = "white", alpha = 0.88, colour = "grey35", linewidth = LW * 0.6)),
+    list(
     annotate("rect", xmin = f$fx(sw[-(nb + 1)]), xmax = f$fx(sw[-1]),
              ymin = f$fy(y_bar[1]), ymax = f$fy(y_bar[2]), fill = cols, colour = NA),
     annotate("rect", xmin = f$fx(sw[1]), xmax = f$fx(sw[nb + 1]),
@@ -311,7 +320,7 @@ elev_legend_block <- function(win, cols, labs, panel_h_mm,
     annotate("text", x = f$fx(mean(x)), y = f$fy(y_title), label = title,
              size = TXT_GG, family = "Arial", colour = "black"),
     annotate("text", x = f$fx(sw[2:nb]), y = f$fy(y_tick), label = labs,
-             size = TXT_GG * 0.92, family = "Arial", colour = "black"))
+             size = TXT_GG * 0.92, family = "Arial", colour = "black")))
 }
 
 # Translucent white backing for a hand-placed in-panel block.

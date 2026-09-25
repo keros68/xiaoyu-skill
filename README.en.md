@@ -31,7 +31,7 @@ Each skill is a self-contained directory with a `SKILL.md` that defines its trig
 | Journals & Submission | [`sci-select`](skills/sci-select/) | SCI journal candidate discovery, metric and risk lookup, pre-submission compliance checks (incl. CAS partition) | Python; internet access for public data | [keros68/sci-select](https://github.com/keros68/sci-select) |
 | Thesis Formatting | [`cugb-doctoral-thesis-format`](skills/cugb-doctoral-thesis-format/) | DOCX format pre-check and final review for China University of Geosciences (Beijing) doctoral theses | Python (DOCX processing) | [keros68/cugb-doctoral-thesis-format](https://github.com/keros68/cugb-doctoral-thesis-format) |
 | Scientific Figures | [`abstract-fig`](skills/abstract-fig/) | Editable graphical abstracts, concept/mechanism diagrams, and research roadmaps in draw.io | draw.io viewer/editor; image generation optional | [keros68/abstract-fig](https://github.com/keros68/abstract-fig) |
-| Scientific Figures | [`study-area-map`](skills/study-area-map/) | Study-area locator maps, shaded-relief basemaps, and multi-panel map compositions | R (ggplot2 + sf + terra) | [keros68/study-area-map.skill](https://github.com/keros68/study-area-map.skill) |
+| Scientific Figures | [`study-area-map`](skills/study-area-map/) | Study-area locator maps, shaded-relief basemaps, thematic layers such as land use and sampling sites, and multi-panel map compositions | R (ggplot2 + sf + terra) | [keros68/study-area-map.skill](https://github.com/keros68/study-area-map.skill) |
 | Multi-Model Orchestration | [`ai-cross`](skills/ai-cross/) | Multi-model task dispatch, tiered execution, and cross-vendor verification | Access to models from multiple providers; shell-capable host | — |
 
 ## Quick Start

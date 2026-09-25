@@ -68,13 +68,13 @@ elev_breaks <- function(d, n = 6, probs = c(0.02, 0.98),
   c(-1e5, inner, 1e5)
 }
 
-# Tick labels for elev_legend(): one per interior boundary, blanking all but
+# Tick labels for elev_legend_block(): one per interior boundary, blanking all but
 # every `every`-th. Six classes with five 8 pt labels run together into
 # "10001250150017502000".
 elev_labels <- function(brks, every = 2) {
   inner <- brks[-c(1, length(brks))]
   lab <- format(inner, trim = TRUE, big.mark = "")
-  lab[seq_along(lab) %% every != 1] <- ""
+  lab[(seq_along(lab) - 1) %% every != 0] <- ""
   lab
 }
 
