@@ -5,24 +5,26 @@ description: Plan, create, or revise editable scientific graphical abstracts, co
 
 # Abstract-Fig
 
-Turn manuscript content into a figure whose scientific message, module relationships, and visual hierarchy are clear at its intended publication size. Keep the source editable. Draw.io is the default; follow an explicit request for PowerPoint or another suitable editable format.
+Turn manuscript content into a figure whose scientific message, module relationships, and visual hierarchy are clear at its intended publication size. Keep the source editable. Draw.io is the default; follow an explicit request or an established project route for script-generated SVG (Inkscape), PowerPoint, or another suitable editable format.
 
 ## Working contract
 
 - Preserve the previous figure and edit a versioned copy or keep a recoverable backup.
+- When the user has edited a version by hand, treat that file as the base: change identified elements only and keep the user's font, proportions, alignment, and wording.
 - Use manuscript evidence and actual project materials. Preserve scientific meaning, numerical values, uncertainty, and the distinction between observations and schematics.
 - Keep text, connectors, and structural objects editable. Embed reused images; explain that pixels within a raster remain raster content.
 - Deliver the editable source and a rendered preview. Export submission PDF/SVG/PNG when requested or part of the established manuscript workflow.
 - Image generation is optional. Neither image count nor use of a particular tool is a completion criterion.
 - Apply user instructions and existing design decisions before defaults. A local adjustment does not require redesigning the whole figure.
+- Check the journal's policy before using generated imagery. Where generative-AI imagery is not accepted, a draft with generated elements is a design sketch and those elements must be replaced before submission.
 
 ## Workflow
 
 ### 1. Define the communication task
 
-Identify the figure's role, the research question it supports, and what readers should understand from it. Consult [figure-types.md](references/figure-types.md) when the role is unclear. Distinguish a method framework from a graphical abstract or a results synthesis; they need different information density.
+Identify the figure's role, the research question it supports, and what readers should understand from it. Consult [figure-types.md](references/figure-types.md) when the role is unclear. Distinguish a method framework from a graphical abstract or a results synthesis; they need different information density. For a graphical abstract, read [graphical-abstract.md](references/graphical-abstract.md) before drawing.
 
-Read the relevant manuscript passages, captions, existing figure, and available assets. For each proposed module, identify its purpose, essential content, supporting source, and connection to other modules. Omit implementation inventories and details better carried by the caption. Do not reproduce the section list as a row of boxes.
+Read the relevant manuscript passages, captions, existing figure, and available assets. When the user keeps a reference collection or supplies examples, inspect them first and identify their layout family; follow that family unless the content cannot fit it. For each proposed module, identify its purpose, essential content, supporting source, and connection to other modules. Omit implementation inventories and details better carried by the caption. Do not reproduce the section list as a row of boxes.
 
 ### 2. Choose the content and module arrangement
 
@@ -46,9 +48,9 @@ Only when generating illustrations, read [image2-element-workflow.md](references
 
 ### 4. Build the figure
 
-Use [boxed-manuscript-style.md](references/boxed-manuscript-style.md) for hierarchy, typography, lines, and legends. For draw.io assembly, read [drawio-element-workflow.md](references/drawio-element-workflow.md). For proposal or project roadmaps, consult [research-roadmap.md](references/research-roadmap.md).
+Use [boxed-manuscript-style.md](references/boxed-manuscript-style.md) for hierarchy, typography, lines, and legends. For draw.io assembly, read [drawio-element-workflow.md](references/drawio-element-workflow.md); for script-generated SVG edited in Inkscape, read [svg-inkscape-workflow.md](references/svg-inkscape-workflow.md). For proposal or project roadmaps, consult [research-roadmap.md](references/research-roadmap.md).
 
-Shorten text before reducing font size. Put detail in the caption where appropriate. Preserve Chinese, Greek letters, subscripts, superscripts, units, and other scientific notation. Calibrate wording and arrows to the evidence; a process relationship is not automatically a demonstrated causal mechanism.
+Shorten text before reducing font size. Put detail in the caption where appropriate. Preserve Chinese, Greek letters, subscripts, superscripts, units, and other scientific notation; write subscripts as real formatting, not Unicode subscript characters. Calibrate wording and arrows to the evidence; a process relationship is not automatically a demonstrated causal mechanism.
 
 ### 5. Inspect the actual deliverable
 

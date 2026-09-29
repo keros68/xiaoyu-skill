@@ -4,7 +4,7 @@ Choose the role from what the figure must explain, not from the intended drawing
 
 | Role | Main task | Include | Usually omit |
 |---|---|---|---|
-| Graphical abstract | Communicate the core contribution quickly | Study object, essential approach, principal finding or contribution | Full method inventory, detailed result tables |
+| Graphical abstract | Communicate the core contribution quickly | Study setting, real evidence (maps, photographs, data plots), key numbers, principal finding | Full method inventory, detailed result tables, a repeat of the manuscript's concept figure |
 | Method/research framework | Explain how the research question is addressed | Inputs, key operations, comparisons, reference evidence, outputs | Software inventories and incidental implementation steps |
 | Concept or mechanism model | Explain relationships or an interpretation | Relevant entities, processes, evidence links and uncertainty | Unsupported causal arrows or decorative landscapes |
 | Research/technical roadmap | Explain planned phases and dependencies | Work packages, relationships, milestones when applicable | Claims that planned results are already observed |
@@ -12,4 +12,4 @@ Choose the role from what the figure must explain, not from the intended drawing
 
 A figure can combine roles when that helps the reader, but distinguish observed results from planned or hypothetical work. Raster-free concept models and image-rich method diagrams are both valid.
 
-For module combinations and area allocation, read `style-decision-gate.md`. For proposal/project roadmaps, use `research-roadmap.md`. Do not require a three-panel horizontal graphical abstract or a fixed number of conceptual layers.
+For graphical abstracts, read `graphical-abstract.md`. For module combinations and area allocation, read `style-decision-gate.md`. For proposal/project roadmaps, use `research-roadmap.md`. Do not require a three-panel horizontal graphical abstract or a fixed number of conceptual layers.

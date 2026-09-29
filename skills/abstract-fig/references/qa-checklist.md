@@ -20,10 +20,19 @@ Apply checks relevant to the changed content. Keep scientific correctness, visua
 - Spacing separates groups without leaving unnecessary blank bands. Quantitative charts and maps retain their scales and units.
 - Palette, typography, and line conventions form a coherent figure and follow the supplied reference where useful.
 
+## Graphical abstract
+
+- Journal requirements checked: required or optional, size, formats, generative-AI policy. Requirements are kept apart from recommendations.
+- Every number is read from archived results and matches the manuscript; rounding follows the manuscript.
+- Message sentence and category labels match the manuscript title, main figures, and evidence strength.
+- Panels from different data subsets on a shared axis are marked.
+- No sample points, coordinates, site codes, or raw file names when the data are not public; photographs carry no EXIF.
+- Any generated element is disclosed or replaced as the journal policy requires.
+
 ## Actual file and delivery
 
 - Inspect a rendering from the chosen editor/exporter when available. Report when only an alternative preview could be checked.
-- Verify editable text and structural objects, image embedding, and preservation of scientific notation.
+- Verify editable text and structural objects, image embedding, and preservation of scientific notation. Extract text from the exported PDF to confirm subscripts and key numbers survive.
 - Review unusually large embedded images: a photograph or map may be legitimate; a flattened whole diagram may defeat the requested editability.
 - Vector-only figures and figures with one image are valid when appropriate. There is no required raster count.
 - Preserve the prior version and provide the editable source plus preview. Include requested publication exports.

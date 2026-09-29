@@ -16,6 +16,10 @@ Choose a consistent font family suited to the manuscript or reference. Serif and
 
 Judge size at the intended output width, including single-column and double-column use. For example, a 12 pt label on a 300 mm canvas becomes 7.2 pt at 180 mm. Use journal specifications when given; otherwise choose comfortably readable sizes and inspect at actual size. A large pixel count does not fix small physical text.
 
+Left-align module titles, row labels, and legends. Centre standalone items inside a box (a list of criteria, a caption under a map, a short statistic). Keep inner padding so text does not touch frames.
+
+When a label is lengthened, check that its container still holds it; a long title can be clipped at the canvas edge.
+
 Shorten labels, remove repetition, or enlarge the module before reducing type. Avoid arbitrary line limits; a clear three-line label can be better than two tiny lines. Place text outside image details that readers need to inspect.
 
 ## Color and frames

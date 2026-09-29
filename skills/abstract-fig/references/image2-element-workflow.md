@@ -1,6 +1,6 @@
 # Optional Generated Illustrations
 
-Read only when a conceptual scene or object would be clearer with a generated illustration and no suitable existing asset is available. Image2 or another available image-generation tool is optional; it is not a prerequisite for any figure role.
+Read only when a conceptual scene or object would be clearer with a generated illustration and no suitable existing asset is available. For a journal figure, check the publisher's generative-AI policy first; some publishers do not accept generated imagery in graphical abstracts, and the result is then a design sketch whose generated elements must be replaced. Image2 or another available image-generation tool is optional; it is not a prerequisite for any figure role.
 
 ## Appropriate use
 

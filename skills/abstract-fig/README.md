@@ -11,6 +11,7 @@
 - 按用户提供的案例调整信息密度、模块组合、字号、配色和图例。
 - 修改等大框堆叠、层级不清、内容空泛或字号过小的现有图件。
 - 将方法或科学关系组织成可继续编辑的图形。
+- 制作期刊图形摘要：先查期刊规格与生成式 AI 政策，按用户收藏的案例确定版式，以真实地图、照片和数据图为主体，数字与正文逐条核对。
 
 ## 工作方式
 
@@ -19,7 +20,7 @@
 3. 从案例提取版式原则，结合真实素材和目标版面选择表现方式。
 4. 绘制并在实际使用尺寸下检查，交付可编辑源文件和预览。
 
-默认使用 draw.io，也可按要求采用 PowerPoint 等可编辑格式。无需 image2 即可使用项目影像、数据生成的图表和矢量对象；只有需要生成概念插画时才调用相应工具。具体导出和原生渲染能力取决于运行环境。
+默认使用 draw.io，也可按要求或项目既有流程采用脚本生成的 SVG（Inkscape 编辑）、PowerPoint 等可编辑格式。用户手改过的版本作为底稿，只改指出的元素。无需 image2 即可使用项目影像、数据生成的图表和矢量对象；只有需要生成概念插画时才调用相应工具。具体导出和原生渲染能力取决于运行环境。
 
 观测影像、实验照片、地图边界和定量结果应来自可追溯来源。生成插画用于概念表达，不替代观测证据。文字、箭头和结构尽量保持可编辑；嵌入位图内部仍是像素内容。
 
@@ -56,7 +57,7 @@ python -m unittest discover -s tests -v
 ## 文件结构
 
 - `SKILL.md`：任务定位、内容规划、素材选择与执行流程。
-- `references/`：模块组合、案例分析、版式、可选生图、格式操作与验收。
+- `references/`：模块组合、案例分析、版式、图形摘要、可选生图、draw.io 与 SVG/Inkscape 操作、验收。
 - `scripts/inspect_drawio_images.py`：图片嵌入与尺寸诊断。
 - `tests/`：纯矢量、单图、外链和压缩文件等行为检查。
 - `agents/openai.yaml`：技能显示信息与默认提示词。
@@ -73,7 +74,7 @@ The project is released under the MIT License. Redistribution, forks, modified v
 
 Abstract-Fig plans and creates editable scientific figures from manuscript content. It selects essential information, organizes module relationships, and chooses project observations, native vector schematics, or optional generated illustrations. Image generation is not required.
 
-Draw.io is the default; an explicitly requested editable format can be used instead. Deliver the editable source and a preview, with publication exports as requested. Check the intended output size and the actual editor rendering when available. The bundled inspector accepts vector-only, single-image, compressed, and multi-page draw.io files; large images require visual review rather than automatic rejection.
+Draw.io is the default; script-generated SVG edited in Inkscape, PowerPoint, or another requested editable format can be used instead. For graphical abstracts, check the journal's requirements and generative-AI policy, follow the layout family of the user's references, and build the figure around real maps, photographs, and data plots. Deliver the editable source and a preview, with publication exports as requested. Check the intended output size and the actual editor rendering when available. The bundled inspector accepts vector-only, single-image, compressed, and multi-page draw.io files; large images require visual review rather than automatic rejection.
 
 ## License
 

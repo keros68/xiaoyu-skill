@@ -38,8 +38,12 @@ Do not copy its scientific claims, software logos, fixed panel count, or exact p
 
 If a draft looks generic, diagnose the cause first: equal emphasis on unequal work, repetitive boxes, unsupported decorative imagery, weak subject-specific evidence, excessive title bars, or unreadably small labels. More generated art is not the default remedy.
 
+If a draft looks machine-made, check for over-regularization: strict symmetry, equal module sizes, every text centred, every object snapped to one grid, a canvas reshaped to a recommended ratio, or a font swapped for a default. Revert those changes toward the accepted version and fix only the identified problems.
+
+Tinted backgrounds or dashed frames that group related items (observations, criteria, continuous variables) are a valid grouping device when each tint has one meaning. Keep data colors separate from grouping tints.
+
 ## Brief and execution
 
 For a major redesign, provide a short brief: figure role and message; included content; module relationships and relative sizes; available assets; intended width and style. One or two layout alternatives are useful only when they represent real scientific or reading-path choices.
 
-Use the user's supplied case or established preferences to proceed. Ask when a missing source or conflicting interpretation prevents a sound decision, rather than requiring a routine A/B/C approval step. New material should not silently expand the scientific scope.
+Settle the layout family with the user's references before iterating on details; most rejected versions come from guessing the family. Use the user's supplied case or established preferences to proceed. Ask when a missing source or conflicting interpretation prevents a sound decision, rather than requiring a routine A/B/C approval step. New material should not silently expand the scientific scope.
