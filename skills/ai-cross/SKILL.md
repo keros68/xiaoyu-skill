@@ -2,7 +2,7 @@
 name: ai-cross
 description: 多模型分工与跨厂商交叉验证 skill：把任务派给合适的模型分工执行，用不同厂商的模型互相核查关键产出，按档位分层派发以节省订阅额度。适用场景：用户要求派发任务、分层执行、多模型协作、对关键产出做交叉验证、盘点或接入可用模型，或提到 dispatch、派工。不适用场景：单模型环境下的普通任务（没有派发需求时不要触发）、没有 shell 执行能力的纯聊天宿主。
 metadata:
-  version: 1.16.1
+  version: 1.17.0
 ---
 
 # ai-cross — 多模型分工与跨厂商交叉验证
@@ -68,7 +68,7 @@ metadata:
 
 | 通道 | 载体 | 计费 | 宿主适用性 |
 |---|---|---|---|
-| aicross 控制台（可选） | `aicross dispatch/status/adopt/cancel`（本机回环 + 令牌） | 按控制台里选的模型 | 全部宿主，需已安装且在跑 |
+| aicross 引擎（可选） | `aicross dispatch/status/adopt/cancel`（本机命令行，后台执行，不需要窗口） | 按 aicross 的角色设置 | 全部宿主，需已安装 |
 | 内部 subagent | scout/worker/heavy | Claude 订阅 | **仅 Claude Code 宿主** |
 | 外部 agent CLI | `codex exec` / `kimi` / `pi` / `agy` 等（gemini/qoder CLI 已下线，见 channels.md） | 各自订阅 | 全部宿主 |
 | 外部 coding plan | `claude -p` + 按进程环境变量覆写（GLM/Kimi 等） | coding plan 订阅 | 全部宿主 |
@@ -76,7 +76,7 @@ metadata:
 | **裸 API 直调** | 主 agent 直接 `curl` OpenAI/Anthropic 兼容端点 | API 按量 | 全部宿主 |
 | 外部 aichat | `aichat -m <provider>:<model>`（裸 API 的 CLI 封装） | API 按量 | 全部宿主 |
 
-**aicross 控制台（可选）**：作者的桌面派发程序，未公开发布；没装就跳过本段。控制台在跑就优先走它——图、留痕、红绿核对、额度分类与厂商回退都在控制台里完成，skill 只提议和读结果。是否在跑看 `~/.aicross/console.json`（开发构建是 `console.dev.json`）里的 `pid` 还活着；**只有退出码 3 才回退到下面的 CLI 通道**。用法与边界见 `references/channels.md`「控制台通道」。
+**aicross 引擎（可选）**：作者的派发程序，未公开发布；`aicross` 不在 PATH 上就跳过本段。装了就优先走它——盲审隔离、真身核对、留痕、修正轮与厂商回退都由它在后台执行，不需要打开窗口，skill 只提议、发起和读结果。**只有退出码 3 才回退到下面的 CLI 通道**。用法与边界见 `references/channels.md`「aicross 引擎通道」。
 
 **Antigravity（`agy`）**：订阅式额度窗口，`agy models` 下有 Gemini 3.x、Claude 4.6、GPT-OSS 120B 三家权重——**manifest 里没有 Google 系厂商时，Gemini 能补一个新的厂商轴，交叉验证优先考虑它**。无头模式下连读文件都会被自动拒绝，所以只能当纯文本盲审者：材料全内联、明写不用工具（这正合盲验隔离）。绝不加 `--dangerously-skip-permissions`。见 `references/channels.md`「Antigravity CLI」。
 
@@ -287,7 +287,7 @@ metadata:
    - **可独立验证的量（数值、公式、代码输出）必须由编排者独立核验**（跑 numpy/跑测试），不采信被派模型的自述。核验不了的才进"分歧并列"。
    - 发现某通道推导质量差 → 记入 manifest 备注，降为备选或排除。
 3. **被派 agent 在反问 ≠ 它给出了答案**（实测踩过）：外部 CLI 可能返回"请补充规格/需要你确认"，而不是任务产出。**子 agent 没有向用户提问的通道，只有编排者有。** 收到反问时：先自查是不是**输入没送到**（见稳健性规则第一条），能补的信息直接补齐重派；补不了则把问题**升级给用户**，绝不把反问文本当成结果落库。
-4. **留痕（可复查）**：每次外部派发和每轮 review，把「任务全文 + 通道/模型 + 完整原始输出 + 结论 + 耗时」存为 `<项目>/.dispatch/<日期时间>-<agent>-<model>-<角色>.md`（key 绝不写入），文件头带机器可读 frontmatter，字段见 `references/channels.md`「`.dispatch/` 留痕契约」（与 aicross 控制台共用，`schema: aicross-dispatch/1`）。汇总报告引用这些文件路径，用户想复查任何一路直接打开即可。
+4. **留痕（可复查）**：每次外部派发和每轮 review，把「任务全文 + 通道/模型 + 完整原始输出 + 结论 + 耗时」存为 `<项目>/.dispatch/<日期时间>-<agent>-<model>-<角色>.md`（key 绝不写入），文件头带机器可读 frontmatter，字段见 `references/channels.md`「`.dispatch/` 留痕契约」（与 aicross 引擎共用，`schema: aicross-dispatch/1`）。汇总报告引用这些文件路径，用户想复查任何一路直接打开即可。
    - **`.dispatch/` 治理**：首次创建时在该目录写入 `.gitignore`（内容一行 `*`），防止任务原文与模型输出被误 commit——留痕里最容易泄漏的不是 key，是源码摘录、科研数据与用户材料。留痕视同项目敏感材料，外发前须用户明确授权；保留期由用户定，skill 不自动清理。
 5. **状态可恢复**：多轮闭环（review→修→再审）或全力模式跑到一半，可能因会话中断、额度耗尽、通道 529 而断。每轮结束前把进度写入 `<项目>/.dispatch/STATE.md`；重启时先读它，不要从头再来。留痕是**事后可审计**，STATE 是**事中可恢复**，两者不可互相替代。
 

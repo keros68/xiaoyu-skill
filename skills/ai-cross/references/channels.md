@@ -300,29 +300,28 @@ cat file.txt | aichat -m <provider>:<model> "总结要点"   # 长文本走 stdi
 
 多数按量模型无推理强度旋钮；个别推理模型有专用参数，以 provider 文档为准。
 
-## 控制台通道（可选；aicross 在跑时优先走这条，2026-09-15 端到端实测）
+## aicross 引擎通道（可选；装了 aicross 就优先走这条，2026-10-01 端到端实测）
 
-aicross 是作者的桌面派发程序，未公开发布；没有安装时跳过本节，`~/.aicross/` 不存在即视为控制台未开。
-
-aicross 控制台开着的时候，派发交给它执行：对话图、`.dispatch/` 留痕、红绿核对、额度分类与厂商回退都在控制台里，skill 只负责提议和读结果。控制台没开就照常走上面的 CLI 通道——**判据是退出码 3，不是超时、也不是报错文本里有没有"connection"。**
-
-发现方式：发布版启动后写 `~/.aicross/console.json`，开发构建写 `~/.aicross/console.dev.json`（两者互不覆盖）。清单里有 `endpoint`（只监听 127.0.0.1）、`token`、`pid`、`started_at`。用之前先核 `pid` 还活着，死了就当控制台没开。**令牌只放进 `Authorization: Bearer` 头，不回显、不落盘、不进模型上下文**——密钥六铁律在这里同样适用。
+aicross 是作者的派发程序，未公开发布；命令 `aicross` 不在 PATH 上就跳过本节。它在本机后台执行整条流水线：拉起各家 CLI、盲审隔离、真身核对、`.dispatch/` 留痕、修正轮、红绿核对、额度切备选；**不需要打开它的窗口**。skill 只负责提议、发起和读结果。
 
 ```powershell
 aicross dispatch --project D:\work\project --preset economy --text-file D:\tmp\dispatch.txt
-aicross status <run_id> --wait --timeout 600
+aicross status <run_id>
+aicross status <run_id> --wait --timeout 540
 aicross adopt <run_id> <node_id>
 aicross cancel <run_id>
 ```
 
+- **派发前先征得用户同意**（G1）：在对话里给一行建议——模式、几路、各派给谁——用户同意才调 `dispatch`。
 - **多行任务文本只能走 `--text-file`**（UTF-8，可带 BOM），`--text` 与 `--text=…` 一律按参数错误拒收。和 `codex exec` 的 argv 换行截断是同一条纪律，这里直接从参数层堵死。
-- 预设别名：`shared` → `builtin-shared`、`economy` → `builtin-economy`、`blind` → `builtin-blind`。**共享模式那一路按设计是只读的**，要改文件的任务派 `economy`（2026-09-15 真机踩过：派 `shared` 让它改文件，跑完文件没动）。
-- 退出码：0 成功 / 1 业务失败或等待超时 / 2 参数与编码错 / 3 控制台未运行、清单无效、PID 已结束或端点不可达。**只有 3 才回退到原有 CLI 通道**；1 和 2 是这次请求本身的问题，原样重试没有意义。
-- 同时在飞默认 3 路，超限返回 409（用户可在设置的「通道在飞上限」调）。G1 拒绝也是 409，原因在 `reason`。界面未就绪或 5 秒内没回执返回 503。
-- `status` 的节点状态保留图上的原词：`draft` / `pending` / `done` / `failed` / `quota_exhausted`。**额度用尽不折算成 failed**，有恢复时间时在 `quota_resets_at`——对应「限额即换家」：读到 `quota_exhausted` 就换厂商派，不要等配额回来。
-- 首个 `dispatch` 响应里的 `graph_id` 与 `node_ids` 是空的（保持既有契约），真实图 id 与节点摘要要从 `status` 读。
-- 开发态用同样的参数：`cargo run -- dispatch …`，读的是 `console.dev.json`。
-- 协议全文（HTTP 接口、请求体形状、状态码表、直接调 HTTP 的 PowerShell 写法）在 aicross 仓库的 `docs/CONSOLE-CHANNEL.md`，那边是权威；本节只记 skill 侧怎么用、什么时候回退。
+- 预设别名：`shared` → `builtin-shared`、`economy` → `builtin-economy`、`blind` → `builtin-blind`。**共享模式那一路按设计是只读的**，要改文件的任务派 `economy`。
+- `dispatch` 做完派发前检查就起后台进程并立即返回 `{ run_id, accepted, graph_id, node_ids }`；检查不通过退出 1，原因在 `reason`。
+- **派出去之后不要在宿主里长时间干等**：先把 run id 和各路派给了谁告诉用户、对话照常继续；要结果时再查。Codex 里前台等长命令会反复回发上下文，150 秒的等待实测耗约 18 万输入 token；Claude Code 单条命令上限 10 分钟，`--wait` 的 `--timeout` 取 540 以内，没结束就再查一次。
+- `status` 的节点状态保留图上的原词：`draft` / `pending` / `done` / `failed` / `quota_exhausted`。**额度用尽不折算成 failed**，有恢复时间时在 `quota_resets_at`——对应「限额即换家」：读到 `quota_exhausted` 就换厂商派，不要等配额回来。run 为 `failed` 且原因是「引擎进程已退出」或「引擎进程未能启动」时，按失败处理，不自动重派。
+- 收尾时在对话里汇总：共同结论、分歧、各自独有发现；用户在对话里说采纳哪一路时再调 `adopt`。
+- 退出码：0 成功 / 1 业务失败或等待超时 / 2 参数与编码错 / 3 引擎不可用（引擎目录不可确定、run 目录不可写、后台进程起不来）。**只有 3 才回退到上面的 CLI 通道**；1 和 2 是这次请求本身的问题，原样重试没有意义。
+- 同时在飞默认最多 3 个 run；派发设置在 `~/.aicross/dispatch-settings.json`。
+- 协议全文（run 文件字段、存活判定、并发写规则）在 aicross 仓库的 `docs/CONSOLE-CHANNEL.md`，那边是权威；本节只记 skill 侧怎么用、什么时候回退。
 
 ## 复用与维护
 
@@ -356,7 +355,7 @@ aicross cancel <run_id>
 
 ## `.dispatch/` 留痕契约（aicross-dispatch/1，2026-09-13 定）
 
-skill 与 aicross 控制台共用同一份留痕格式，字段定了不改。每路一份 `<项目>/.dispatch/<YYYYMMDD-HHMMSS>-<agent>-<model>-<角色>.md`，首次创建目录时写入 `.gitignore`（内容一行 `*`）。正文两节：`## 任务全文`（发出去的 prompt 原文）、`## 原始输出`（stdout 全文；stderr 另起 `## stderr`）。**绝不写入任何环境变量值。** 同目录的 `STATE.md` 格式见 SKILL.md 闭环规则第 5 条。
+skill 与 aicross 引擎共用同一份留痕格式，字段定了不改。每路一份 `<项目>/.dispatch/<YYYYMMDD-HHMMSS>-<agent>-<model>-<角色>.md`，首次创建目录时写入 `.gitignore`（内容一行 `*`）。正文两节：`## 任务全文`（发出去的 prompt 原文）、`## 原始输出`（stdout 全文；stderr 另起 `## stderr`）。**绝不写入任何环境变量值。** 同目录的 `STATE.md` 格式见 SKILL.md 闭环规则第 5 条。
 
 ```yaml
 ---
