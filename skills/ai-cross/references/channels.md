@@ -310,6 +310,7 @@ aicross status <run_id>
 aicross status <run_id> --wait --timeout 540
 aicross adopt <run_id> <node_id>
 aicross cancel <run_id>
+aicross open <run_id>        # 查看器：一次派发一页，各路并排、可采纳
 ```
 
 - **派发前先征得用户同意**（G1）：在对话里给一行建议——模式、几路、各派给谁——用户同意才调 `dispatch`。
@@ -318,7 +319,7 @@ aicross cancel <run_id>
 - `dispatch` 做完派发前检查就起后台进程并立即返回 `{ run_id, accepted, graph_id, node_ids }`；检查不通过退出 1，原因在 `reason`。
 - **派出去之后不要在宿主里长时间干等**：先把 run id 和各路派给了谁告诉用户、对话照常继续；要结果时再查。Codex 里前台等长命令会反复回发上下文，150 秒的等待实测耗约 18 万输入 token；Claude Code 单条命令上限 10 分钟，`--wait` 的 `--timeout` 取 540 以内，没结束就再查一次。
 - `status` 的节点状态保留图上的原词：`draft` / `pending` / `done` / `failed` / `quota_exhausted`。**额度用尽不折算成 failed**，有恢复时间时在 `quota_resets_at`——对应「限额即换家」：读到 `quota_exhausted` 就换厂商派，不要等配额回来。run 为 `failed` 且原因是「引擎进程已退出」或「引擎进程未能启动」时，按失败处理，不自动重派。
-- 收尾时在对话里汇总：共同结论、分歧、各自独有发现；用户在对话里说采纳哪一路时再调 `adopt`。
+- 收尾时在对话里汇总：共同结论、分歧、各自独有发现，并提示用户可用 `aicross open <run_id>` 在查看器里看各路全文与 diff、直接点采纳；用户在对话里说采纳哪一路时再调 `adopt`。`open` 立即返回，不等窗口关闭。
 - 退出码：0 成功 / 1 业务失败或等待超时 / 2 参数与编码错 / 3 引擎不可用（引擎目录不可确定、run 目录不可写、后台进程起不来）。**只有 3 才回退到上面的 CLI 通道**；1 和 2 是这次请求本身的问题，原样重试没有意义。
 - 同时在飞默认最多 3 个 run；派发设置在 `~/.aicross/dispatch-settings.json`。
 - 协议全文（run 文件字段、存活判定、并发写规则）在 aicross 仓库的 `docs/CONSOLE-CHANNEL.md`，那边是权威；本节只记 skill 侧怎么用、什么时候回退。
