@@ -306,20 +306,23 @@ aicross 是作者的派发程序，未公开发布；命令 `aicross` 不在 PAT
 
 ```powershell
 aicross dispatch --project D:\work\project --preset economy --text-file D:\tmp\dispatch.txt
+aicross dispatch --project D:\work\project --preset economy --text-file D:\tmp\dispatch.txt --accept-file D:\tmp\accept.md
 aicross status <run_id>
 aicross status <run_id> --wait --timeout 540
 aicross adopt <run_id> <node_id>
 aicross cancel <run_id>
 aicross open <run_id>        # 查看器：一次派发一页，各路并排、可采纳
+aicross recover <run_id> [--rollback]   # 引擎中断后核对；--rollback 恢复改了一半的项目文件
 ```
 
 - **派发前先征得用户同意**（G1）：在对话里给一行建议——模式、几路、各派给谁——用户同意才调 `dispatch`。
 - **多行任务文本只能走 `--text-file`**（UTF-8，可带 BOM），`--text` 与 `--text=…` 一律按参数错误拒收。和 `codex exec` 的 argv 换行截断是同一条纪律，这里直接从参数层堵死。
+- **验收条件走 `--accept-file`**（可选，UTF-8，超过 64 KB 截断）：写本次的验收条件（验证命令、只许改哪些文件、契约约束）。只有盲验收、盲审节点在隔离目录里收到 `ACCEPT.md` 并逐条判断，执行者不收，执行要求照常写在任务文本里。盲验收的隔离目录同时有改后的项目只读副本 `project/`，`REQUEST.md` 头部记项目与 worktree 的提交号。
 - 预设别名：`shared` → `builtin-shared`、`economy` → `builtin-economy`、`blind` → `builtin-blind`。**共享模式那一路按设计是只读的**，要改文件的任务派 `economy`。
 - `dispatch` 做完派发前检查就起后台进程并立即返回 `{ run_id, accepted, graph_id, node_ids }`；检查不通过退出 1，原因在 `reason`。
 - **每次 `dispatch` 都是独立的一张图，派发之间不共享上下文**：对上一次结果的追问、返工，要把必要的前情（上一次的结论、要改的点、相关文件）写进这次的任务文本。
 - **派出去之后不要在宿主里长时间干等**：先把 run id 和各路派给了谁告诉用户、对话照常继续；要结果时再查。Codex 里前台等长命令会反复回发上下文，150 秒的等待实测耗约 18 万输入 token；Claude Code 单条命令上限 10 分钟，`--wait` 的 `--timeout` 取 540 以内，没结束就再查一次。
-- `status` 的节点状态保留图上的原词：`draft` / `pending` / `done` / `failed` / `quota_exhausted`。**额度用尽不折算成 failed**，有恢复时间时在 `quota_resets_at`——对应「限额即换家」：读到 `quota_exhausted` 就换厂商派，不要等配额回来。run 为 `failed` 且原因是「引擎进程已退出」或「引擎进程未能启动」时，按失败处理，不自动重派。
+- `status` 的节点状态保留图上的原词：`draft` / `pending` / `done` / `failed` / `quota_exhausted`。**额度用尽不折算成 failed**，有恢复时间时在 `quota_resets_at`——对应「限额即换家」：读到 `quota_exhausted` 就换厂商派，不要等配额回来。run 为 `failed` 且原因是「引擎进程已退出」或「引擎进程未能启动」时，按失败处理，不自动重派；先跑 `aicross recover <run_id>` 看哪些节点停在半路、单写者改了哪些文件，告诉用户，用户同意后再 `aicross recover <run_id> --rollback` 把项目文件恢复到派发前。
 - 收尾时在对话里汇总：共同结论、分歧、各自独有发现，并提示用户可用 `aicross open <run_id>` 在查看器里看各路全文与 diff、直接点采纳；用户在对话里说采纳哪一路时再调 `adopt`。`open` 立即返回，不等窗口关闭。
 - 退出码：0 成功 / 1 业务失败或等待超时 / 2 参数与编码错 / 3 引擎不可用（引擎目录不可确定、run 目录不可写、后台进程起不来）。**只有 3 才回退到上面的 CLI 通道**；1 和 2 是这次请求本身的问题，原样重试没有意义。
 - 同时在飞默认最多 3 个 run；派发设置在 `~/.aicross/dispatch-settings.json`。
