@@ -317,6 +317,7 @@ aicross open <run_id>        # 查看器：一次派发一页，各路并排、�
 - **多行任务文本只能走 `--text-file`**（UTF-8，可带 BOM），`--text` 与 `--text=…` 一律按参数错误拒收。和 `codex exec` 的 argv 换行截断是同一条纪律，这里直接从参数层堵死。
 - 预设别名：`shared` → `builtin-shared`、`economy` → `builtin-economy`、`blind` → `builtin-blind`。**共享模式那一路按设计是只读的**，要改文件的任务派 `economy`。
 - `dispatch` 做完派发前检查就起后台进程并立即返回 `{ run_id, accepted, graph_id, node_ids }`；检查不通过退出 1，原因在 `reason`。
+- **每次 `dispatch` 都是独立的一张图，派发之间不共享上下文**：对上一次结果的追问、返工，要把必要的前情（上一次的结论、要改的点、相关文件）写进这次的任务文本。
 - **派出去之后不要在宿主里长时间干等**：先把 run id 和各路派给了谁告诉用户、对话照常继续；要结果时再查。Codex 里前台等长命令会反复回发上下文，150 秒的等待实测耗约 18 万输入 token；Claude Code 单条命令上限 10 分钟，`--wait` 的 `--timeout` 取 540 以内，没结束就再查一次。
 - `status` 的节点状态保留图上的原词：`draft` / `pending` / `done` / `failed` / `quota_exhausted`。**额度用尽不折算成 failed**，有恢复时间时在 `quota_resets_at`——对应「限额即换家」：读到 `quota_exhausted` 就换厂商派，不要等配额回来。run 为 `failed` 且原因是「引擎进程已退出」或「引擎进程未能启动」时，按失败处理，不自动重派。
 - 收尾时在对话里汇总：共同结论、分歧、各自独有发现，并提示用户可用 `aicross open <run_id>` 在查看器里看各路全文与 diff、直接点采纳；用户在对话里说采纳哪一路时再调 `adopt`。`open` 立即返回，不等窗口关闭。
