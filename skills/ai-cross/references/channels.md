@@ -11,10 +11,14 @@
 AI_CROSS_PEER=1 claude -p --model X --tools "" < blind.txt
 AI_CROSS_PEER=1 codex exec -s read-only --skip-git-repo-check - < blind.txt
 
-# ② 必须带工具（要读多个文件/跑代码）：原始材料拷进空目录，在那里跑
-mkdir -p /tmp/blind-$$ && cp <原始材料...> /tmp/blind-$$/ && cd /tmp/blind-$$
+# ② 必须带工具（要读多个文件/跑代码）：原始材料拷进空目录，在那里跑，读回结果后删掉
+d="${AICROSS_HOME:-$HOME/.aicross}/scratch/$(date +%Y%m%d-%H%M%S)-blind"
+mkdir -p "$d" && cp <原始材料...> "$d"/ && cd "$d"
 AI_CROSS_PEER=1 codex exec -s read-only --skip-git-repo-check - < prompt.txt
+cd - && rm -rf "$d"
 ```
+
+**一次性文件统一放 `scratch/`**：派发用的任务文本、验收条件、`blind.txt`、盲验空目录，一律建在 `${AICROSS_HOME:-~/.aicross}/scratch/` 下，按「日期时间-用途」命名，结果读回后删除；不往系统临时目录、盘符根目录或项目目录里散放。`AICROSS_HOME` 与 aicross 引擎共用，未设时落在 `~/.aicross`。
 
 `cc_switch.py exec` 的 cwd 就是调用时的目录，同样先 `cd` 进空目录再调。执行者（本来就要改项目文件的活）不受此限。
 
@@ -305,8 +309,8 @@ cat file.txt | aichat -m <provider>:<model> "总结要点"   # 长文本走 stdi
 aicross 是作者的派发程序，未公开发布；命令 `aicross` 不在 PATH 上就跳过本节。它在本机后台执行整条流水线：拉起各家 CLI、盲审隔离、真身核对、`.dispatch/` 留痕、修正轮、红绿核对、额度切备选；**不需要打开它的窗口**。skill 只负责提议、发起和读结果。
 
 ```powershell
-aicross dispatch --project D:\work\project --preset economy --text-file D:\tmp\dispatch.txt
-aicross dispatch --project D:\work\project --preset economy --text-file D:\tmp\dispatch.txt --accept-file D:\tmp\accept.md
+aicross dispatch --project D:\work\project --preset economy --text-file $env:AICROSS_HOME\scratch\dispatch.txt
+aicross dispatch --project D:\work\project --preset economy --text-file $env:AICROSS_HOME\scratch\dispatch.txt --accept-file $env:AICROSS_HOME\scratch\accept.md
 aicross status <run_id>
 aicross status <run_id> --wait --timeout 540
 aicross adopt <run_id> <node_id>
@@ -325,7 +329,7 @@ aicross recover <run_id> [--rollback]   # 引擎中断后核对；--rollback 恢
 - `status` 的节点状态保留图上的原词：`draft` / `pending` / `done` / `failed` / `quota_exhausted`。**额度用尽不折算成 failed**，有恢复时间时在 `quota_resets_at`——对应「限额即换家」：读到 `quota_exhausted` 就换厂商派，不要等配额回来。run 为 `failed` 且原因是「引擎进程已退出」或「引擎进程未能启动」时，按失败处理，不自动重派；先跑 `aicross recover <run_id>` 看哪些节点停在半路、单写者改了哪些文件，告诉用户，用户同意后再 `aicross recover <run_id> --rollback` 把项目文件恢复到派发前。
 - 收尾时在对话里汇总：共同结论、分歧、各自独有发现，并提示用户可用 `aicross open <run_id>` 在查看器里看各路全文与 diff、直接点采纳；用户在对话里说采纳哪一路时再调 `adopt`。`open` 立即返回，不等窗口关闭。
 - 退出码：0 成功 / 1 业务失败或等待超时 / 2 参数与编码错 / 3 引擎不可用（引擎目录不可确定、run 目录不可写、后台进程起不来）。**只有 3 才回退到上面的 CLI 通道**；1 和 2 是这次请求本身的问题，原样重试没有意义。
-- 同时在飞默认最多 3 个 run；派发设置在 `~/.aicross/dispatch-settings.json`。
+- 同时在飞默认最多 3 个 run；数据目录是 `AICROSS_HOME`（未设时 `~/.aicross`），派发设置在其下 `dispatch-settings.json`，运行记录在 `runs/`，超过 30 天未改动的在下次派发时删除。
 - 协议全文（run 文件字段、存活判定、并发写规则）在 aicross 仓库的 `docs/CONSOLE-CHANNEL.md`，那边是权威；本节只记 skill 侧怎么用、什么时候回退。
 
 ## 复用与维护
