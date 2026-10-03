@@ -309,8 +309,9 @@ cat file.txt | aichat -m <provider>:<model> "总结要点"   # 长文本走 stdi
 aicross 是作者的派发程序，未公开发布；命令 `aicross` 不在 PATH 上就跳过本节。它在本机后台执行整条流水线：拉起各家 CLI、盲审隔离、真身核对、`.dispatch/` 留痕、修正轮、红绿核对、额度切备选；**不需要打开它的窗口**。skill 只负责提议、发起和读结果。
 
 ```powershell
-aicross dispatch --project D:\work\project --preset economy --text-file $env:AICROSS_HOME\scratch\dispatch.txt
-aicross dispatch --project D:\work\project --preset economy --text-file $env:AICROSS_HOME\scratch\dispatch.txt --accept-file $env:AICROSS_HOME\scratch\accept.md
+$s = if ($env:AICROSS_HOME) { "$env:AICROSS_HOME\scratch" } else { "$HOME\.aicross\scratch" }
+aicross dispatch --project D:\work\project --preset economy --text-file $s\dispatch.txt
+aicross dispatch --project D:\work\project --preset economy --text-file $s\dispatch.txt --accept-file $s\accept.md
 aicross status <run_id>
 aicross status <run_id> --wait --timeout 540
 aicross adopt <run_id> <node_id>
