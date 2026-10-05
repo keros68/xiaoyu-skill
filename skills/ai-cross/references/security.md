@@ -11,6 +11,7 @@
 
 ## 只读探测白名单（告知即可执行，无需逐项请示）
 
+- `references/inventory.py detect`：把下面几项一次跑完，另加 `agy models`、`pi --list-models` 两条只读枚举；不写任何文件，输出只含版本、路径、模型 ID 与 cc-switch 端点，不含 key；
 - `<cli> --version` 存在检测：不登录、不发模型请求、零费用；
 - `references/cc_switch.py list`：只读 cc-switch db，token 从不输出，只给 `has_token` 布尔；
 - `references/usage_probe.py`：只出调用元数据（次数/时间/目录存在性），不读对话内容；
@@ -27,6 +28,8 @@
 - 本地配置文件（cc-switch db、settings.json、env 变量、aichat config）都是明文静态存储，任何本机进程可读。
 
 ## 代码级落实
+
+`inventory.py` 的写入只有一处：`save` / `set` 改它自己的 manifest（`${AICROSS_HOME:-~/.aicross}/skill/manifest.json`），里面是通道名、模型 ID、端点、冒烟结果与备注，没有 key。读 kimi 的 `config.toml` 时只扫 `[models]` 段，不解析同文件里的登录凭据段（`tests/test_inventory.py` 覆盖）。
 
 `cc_switch.py` 是铁律的代码化：
 

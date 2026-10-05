@@ -186,7 +186,7 @@ AI_CROSS_PEER=1 pi --provider zai-coding-cn --model glm-4.7 -p --no-tools \
 只对 **Anthropic 协议端点**有效（GLM/Kimi/DeepSeek-anthropic 等）；GPT 走 codex、Gemini 走 gemini，不要硬塞进 claude CLI。覆写是否成功盖过 OAuth 因 CLI 版本而异，接入时务必冒烟测试确认走到了第三方端点。
 
 **⚠️ 冒烟判据必须是「回答的是不是它」，不是「有没有回答」（2026-07-09 实测，血泪）**：GLM 的 Anthropic 兼容端点对**格式合法但它不提供**的模型名（如任何 Anthropic 官方 ID、`haiku`/`sonnet`/`opus` 别名）**不报错，而是静默用 `glm-4.7` 应答**；只有完全无法解析的名字才吃 400。后果：你以为在用 opus 档，其实拿到的是最便宜模型的回答，全程零报错。
-- **冒烟不能只看"有回复"**——必须直接打 `{base}/v1/messages`，比对**响应体的 `model` 字段**与请求是否一致；不一致即静默降级，结论记入 `manifest.md`。现成工具：`python <本skill目录>/references/verify_model.py --provider "<cc-switch里的名字>"`（只读 cc-switch 取端点，逐档打端点比对真身；也可 `--models "a,b,c"` 测指定 ID）。**连官方文档给的 ID 也要过这一关**——实测出现过文档说可用、该账号却 400 的情况（如某些 1M 长上下文版按套餐开通）。
+- **冒烟不能只看"有回复"**——必须直接打 `{base}/v1/messages`，比对**响应体的 `model` 字段**与请求是否一致；不一致即静默降级，结论记入 manifest（`inventory.py set --smoke`）。现成工具：`python <本skill目录>/references/verify_model.py --provider "<cc-switch里的名字>"`（只读 cc-switch 取端点，逐档打端点比对真身；也可 `--models "a,b,c"` 测指定 ID）。**连官方文档给的 ID 也要过这一关**——实测出现过文档说可用、该账号却 400 的情况（如某些 1M 长上下文版按套餐开通）。
 - CLI 的 `modelUsage` 记的是**请求值**不是服务端返回值，**不能**用来判断真身。
 
 **已验证（claude 2.1.204 实测，2026-07-08）**：子进程覆写 `ANTHROPIC_BASE_URL`+token 时，CLI 明确以注入 auth 源**优先于 claude.ai 登录**（会打印一行提示说明这点）；实测宿主会话登录、`~/.claude/settings.json`（env 保持 `{}`）、宿主进程环境三者均不受影响；被重定向的子进程与走官方订阅的子进程可**并发共存、互不干扰**。隔离是操作系统进程级的，前提是覆写只按子进程传、不写全局配置（见上条铁律）。
@@ -335,7 +335,7 @@ aicross recover <run_id> [--rollback]   # 引擎中断后核对；--rollback 恢
 
 ## 复用与维护
 
-**一次配好，永久复用**：API key（用户级环境变量 `setx`）、aichat config.yaml、manifest.md 三者都持久化，跨会话跨重启有效。之后每次派工自动读取，用户无需重输。每次派工"重新设置"的只有子进程那次性环境变量——自动、隐形，且正是隔离安全的来源，不算重复配置。key 过期/轮换时重跑一次 `setx` 即可（当前 shell 需重启才见新值，新开的 shell 直接生效）。
+**一次配好，永久复用**：API key（用户级环境变量 `setx`）、aichat config.yaml、manifest（`${AICROSS_HOME:-~/.aicross}/skill/manifest.json`，由 `inventory.py` 读写，各宿主共用）三者都持久化，跨会话跨重启、跨 skill 更新有效。之后每次派工自动读取，用户无需重输。每次派工"重新设置"的只有子进程那次性环境变量——自动、隐形，且正是隔离安全的来源，不算重复配置。key 过期/轮换时重跑一次 `setx` 即可（当前 shell 需重启才见新值，新开的 shell 直接生效）。
 
 **模型 ID 漂移**（模型在迭代，如 glm-4.6→GLM-4.7→GLM-5.2、gpt-5.4→5.5）：
 - **权威来源分两类**：有本地事实源的（codex `models_cache.json`、kimi `config.toml`、cc-switch 映射、aichat `--list-models`）**运行时读，本文件只记"去哪读"**；没有事实源的（如 coding plan 端点在售 ID）才把值记在本文件。本文件模板里出现的具体 ID 都是**示例快照**，以事实源/官方文档当前值为准。漂了改这里即可，skill 其余逻辑不动。
@@ -355,13 +355,13 @@ aicross recover <run_id> [--rollback]   # 引擎中断后核对；--rollback 恢
 
 **本地有事实源的值不手抄**：kimi 的 `~/.kimi-code/config.toml [models]` 段、cc-switch 的档位→模型映射（`cc_switch.py list`）、aichat 的 `--list-models`、`~/.claude/settings.json` / `~/.codex/config.toml` 的用户偏好——这些派发前**运行时读**，本文件与 manifest 只记"去哪读"和实测结论，不当值的权威来源。值不会过期，因为根本不存。
 
-**⛔ 不得静默降级用旧值**（原则落地，2026-08-14 补）：manifest 每行带**来源**列——`读:<命令/路径>` / `文档(日期)` / `申报(日期)`。标了 `读:` 的行，派发前按该来源实读；读失败（CLI 没装、配置被删、命令报错）时**可以**用 manifest 的记录值顶上，但必须在路由决策行或汇总里当场说明「事实源读取失败，用的是 <日期> 的记录值，未实读」。理由：模型 ID 漂移本身不致命，**漂移变成静默故障才致命**——记录值一旦被无声当成实读值，静默降级（GLM 那种）就查不出来了。
+**⛔ 不得静默降级用旧值**（原则落地，2026-08-14 补）：manifest 每个条目带**来源**——`读:<命令/路径>` / `申报(日期)`。标了 `读:` 的条目，拿不准模型 ID 是否还在时跑 `inventory.py detect` 实读；读失败（CLI 没装、配置被删、命令报错）时**可以**用 manifest 的记录值顶上，但必须在路由决策行或汇总里当场说明「事实源读取失败，用的是 <日期> 的记录值，未实读」。理由：模型 ID 漂移本身不致命，**漂移变成静默故障才致命**——记录值一旦被无声当成实读值，静默降级（GLM 那种）就查不出来了。
 
-**过期检测（TTL + 冒烟）**：manifest 每行的冒烟日期就是新鲜度。派发前扫一眼：目标通道条目**超过 30 天**未验证 → 先跑该档最便宜冒烟；第三方 Anthropic 兼容端点还必须过 `verify_model.py` 真身核对（防静默降级），通过后刷新 manifest 日期再派。失败才进入上面的漂移处理流程。原则：**自动化的是"发现过期"，改配置必须用户确认**——端点会谎报（静默降级实测在案），唯一可信的更新依据是冒烟，自动改写配置只会把谎报固化进配置。
+**过期检测（TTL + 冒烟）**：manifest 每个条目的冒烟日期就是新鲜度，`inventory.py show` 与 `pick` 的输出会标出**超过 30 天**未验证的条目（「派发前先冒烟」）。遇到就先跑该档最便宜冒烟；第三方 Anthropic 兼容端点还必须过 `verify_model.py` 真身核对（防静默降级），通过后 `inventory.py set --smoke <条目>=ok` 刷新日期再派。失败才进入上面的漂移处理流程。原则：**自动化的是"发现过期"，改配置必须用户确认**——端点会谎报（静默降级实测在案），唯一可信的更新依据是冒烟，自动改写配置只会把谎报固化进配置。
 
 **免费续期与漂移预警（usage_probe）**：`python <本skill目录>/references/usage_probe.py --days 30` 聚合本机各 CLI 用量日志（只出元数据）。两个用法：①**官方 CLI** 条目若在近 7 天日志里成功出现过，可视作新鲜、免冒烟续期（claude 日志的 model 是响应侧值；第三方端点仍必须 verify_model）；②日志里出现了 manifest/本文件**没有**的模型 ID（如 CLI 升级换了默认模型），就是漂移信号——冒烟确认后走"更新模型清单"流程。实测首跑即抓到 codex 主用模型已从 gpt-5.5 代漂移到 gpt-5.6 代（2026-07-17）。
 
-**用户说「更新模型 / 升级清单」**：重跑盘点流程（`setup.md`）+ 逐 CLI 核对当前模型 ID（能枚举的枚举、不能的查文档或问用户）+ 刷新本文件与 manifest.md 的 ID 和日期。
+**用户说「更新模型 / 升级清单」**：重跑盘点流程（`setup.md` 第 1–3 步：`inventory.py detect` → 用户确认改动 → `save` → 冒烟）；没有事实源的通道查文档或问用户，并刷新本文件里对应的 ID 和日期。
 
 ## `.dispatch/` 留痕契约（aicross-dispatch/1，2026-09-13 定）
 

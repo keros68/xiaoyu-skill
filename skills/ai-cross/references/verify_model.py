@@ -110,9 +110,9 @@ def main():
     print("-" * 70)
     if downgraded or errored:
         print(f"结论：{downgraded} 个静默降级、{errored} 个错误。请纠正对应档位的模型 ID，"
-              f"并把可用 ID 记入 manifest.md。")
+              f"并用 inventory.py set --smoke 把结果记入 manifest。")
         sys.exit(8)
-    print("结论：全部一致，无静默降级。可放心把这些 ID 记入 manifest.md。")
+    print("结论：全部一致，无静默降级。可用 inventory.py set --smoke <条目>=ok 记入 manifest。")
     sys.exit(0)
 
 

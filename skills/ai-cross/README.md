@@ -23,7 +23,9 @@ ai-cross 是给 AI agent 用的 skill：按任务类型把工作派给不同档�
 
 ## 功能
 
-**盘点。** 只读探测本机已装的 agent CLI、cc-switch 供应商清单和各 CLI 的用量日志（不登录、不发模型请求、不输出密钥），摆成一张表让用户勾选一次，确认后才冒烟；结果写进 skill 目录下的 `manifest.md`（厂商 × 档位矩阵与冒烟日期），路由按它走。
+**盘点。** `references/inventory.py` 只读探测本机已装的 agent CLI、各家的模型清单和 cc-switch 供应商（不登录、不发模型请求、不输出密钥），摆成一张表让用户确认一次，确认后才冒烟。模型 ID 逐个对照探测结果，写错的拒收。清单存在用户主目录下的 `~/.aicross/skill/manifest.json`（设了 `AICROSS_HOME` 则在其下），各宿主共用一份，skill 更新不影响它：每台机器盘点一次。
+
+**默认人选。** 没点名派给谁时由脚本选：审查者自动避开被审产出的厂商，订阅内的先于按次计费的；宿主是聚合型、底层模型不确定时，改选两家外部厂商互审。用户说"以后审查都先用某家""以后实现都派某家"时改默认值，之后不用再指定。
 
 **路由与分层。** 分级标准是 `SKILL.md` 的路由表：任务类型决定档位与推理强度两个旋钮，档位语义继承 manifest（哪个模型算低/中/高由用户自己标）。每次派发前先输出一行路由决策行（通道/模型、档位、thinking、理由）供当场纠正。需要精确数值的任务，prompt 要求模型写代码执行，编排者再独立核验，不采信模型自述的计算结果。
 
@@ -54,22 +56,25 @@ Windows 上 `~` 即 `C:\Users\<用户名>`，装完新开会话生效。其他�
 使用 $ai-cross 盘点模型
 ```
 
-盘点后可选跑一次演示派发：内置的含缺陷代码（不读你的项目文件）发给两家厂商盲审，给出共识、分歧和 token 账单。之后是真实任务：
+盘点后可选跑一次演示派发：内置的含缺陷代码（不读你的项目文件）发给两家厂商盲审，给出共识、分歧和 token 账单。之后日常只需要这几句话：
 
-```text
-使用 $ai-cross：实现 XX 功能，完成后让另一家厂商的模型交叉审查。
-```
+| 说 | 发生什么 |
+|---|---|
+| 让别家审一下 / 交叉验证一下 | 用默认审查者，派发前给一行建议，同意才发 |
+| 这次让 Gemini 审 | 只改这一次 |
+| 以后审查都先用 Gemini / 以后实现都派 GLM | 改默认值，以后都生效 |
+| 重新盘点 | 模型或订阅变了之后重跑 |
 
 ## 凭据处理
 
-key 留在你原本存放它的地方（CLI 登录态、用户级环境变量、cc-switch 数据库），ai-cross 只在派发那一刻引用。代码层做到的：`cc_switch.py` 只读打开 cc-switch 数据库，不改数据、不用它的全局切换机制（那会写 `~/.claude/settings.json`，污染宿主的官方登录），`list` 只输出端点、档位映射和 `has_token` 布尔，`exec` 在脚本自己的进程里读 token 注入子进程环境变量，不进命令行 argv、不回到 agent 的上下文（`tests/test_cc_switch.py` 的 6 个用例覆盖这几条）；`verify_model.py` 只把 token 放进发往你自己那个端点的请求头；`usage_probe.py` 只出模型 ID、次数与时间戳，不读对话内容。
+key 留在你原本存放它的地方（CLI 登录态、用户级环境变量、cc-switch 数据库），ai-cross 只在派发那一刻引用。代码层做到的：`cc_switch.py` 只读打开 cc-switch 数据库，不改数据、不用它的全局切换机制（那会写 `~/.claude/settings.json`，污染宿主的官方登录），`list` 只输出端点、档位映射和 `has_token` 布尔，`exec` 在脚本自己的进程里读 token 注入子进程环境变量，不进命令行 argv、不回到 agent 的上下文（`tests/test_cc_switch.py` 的 6 个用例覆盖这几条）；`verify_model.py` 只把 token 放进发往你自己那个端点的请求头；`usage_probe.py` 只出模型 ID、次数与时间戳，不读对话内容；`inventory.py` 探测时只读各配置里的模型字段，写入的只有它自己的 manifest（`tests/test_inventory.py` 覆盖）。
 
 其余是 `references/security.md` 里约束 agent 行为的规则，不是代码强制：key 不写进 manifest 与 `.dispatch/` 留痕、输出里一律打码、读凭据库前先告知用户、`ANTHROPIC_BASE_URL` 与 `ANTHROPIC_AUTH_TOKEN` 只按子进程传而不写进全局配置。
 
 ## 仓库结构
 
 - `SKILL.md` - 决策核心：路由规则、执行闭环、稳健性规则
-- `references/` - 盘点向导、通道模板、密钥规则、派发设计、实测证据，以及三个只读脚本
+- `references/` - 盘点向导、通道模板、密钥规则、派发设计、实测证据，以及四个脚本（盘点 `inventory.py`、cc-switch 桥、真身核对、用量痕迹）
 - `agents/` - Claude Code 用的 scout / worker / heavy / advisor
 - `tests/` `qoder/` - 单元测试与 Qoder 宿主适配。基准原始材料保存在维护者本地归档，不随公开仓库发布。
 
@@ -90,7 +95,7 @@ The project is released under the MIT License. Redistribution, forks, modified v
 
 ai-cross is a skill for AI agents: it routes each task to a model tier chosen by task type, has models from a different vendor cross-check important outputs, and writes every dispatch to `.dispatch/` for later review. It is not a majority-voting tool: verifiable facts are validated by running code or tests, and unresolved disagreements are presented side by side. Cross-vendor review needs at least two vendors; with one, tiered dispatch still works and the inventory report says so explicitly.
 
-Install by cloning into `~/.claude/skills/ai-cross`, then run `Use $ai-cross to inventory my available models.` The first run read-only detects installed CLIs, cc-switch providers and local usage logs (no login, no model calls, no keys printed), asks you to confirm once, smoke-tests each entry, and writes `manifest.md`.
+Install by cloning into `~/.claude/skills/ai-cross`, then run `Use $ai-cross to inventory my available models.` The first run read-only detects installed CLIs, their model lists and cc-switch providers (no login, no model calls, no keys printed), asks you to confirm once, smoke-tests each entry, and saves the result to `~/.aicross/skill/manifest.json`. That file is shared by every host on the machine and survives skill updates, so inventory is done once per machine. After that, "have another vendor review this" uses the default reviewer picked from it.
 
 ## License
 
