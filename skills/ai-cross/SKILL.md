@@ -2,7 +2,7 @@
 name: ai-cross
 description: 多模型分工与跨厂商交叉验证 skill：把任务派给合适的模型分工执行，用不同厂商的模型互相核查关键产出，按档位分层派发以节省订阅额度。适用场景：用户要求派发任务、分层执行、多模型协作、对关键产出做交叉验证、盘点或接入可用模型，或提到 dispatch、派工；也包括日常说法：让别的模型或另一家看看、换个模型审一下、要个第二意见、找别家复查、多找几家对一下。不适用场景：没提到其他模型的普通任务（只说"帮我检查一下"不算，没有派发需求时不要触发）、没有 shell 执行能力的纯聊天宿主。
 metadata:
-  version: 1.21.0
+  version: 1.21.1
 ---
 
 # ai-cross — 多模型分工与跨厂商交叉验证
@@ -60,7 +60,11 @@ metadata:
    python <本skill目录>/references/inventory.py pick --role executor --host <宿主名>   # 执行者：用户设过默认才有，没设按路由表
    ```
    输出里的 `notes` 原样带进路由决策行的理由。
-6. 用户点名了就按用户说的；用户说"以后都这样"才改默认值（`inventory.py set --reviewers / --executor`，见 setup.md 第 4 步）。用户当场纠正路由（"这类任务用高档／开思考"）就照办，并用 `inventory.py set --note "…"` 记下，后续同类任务遵循。
+6. 用户点名了就按用户说的；用户说"以后都这样"才改默认值，条目名取第 1 条 `show` 的输出：
+   ```
+   python <本skill目录>/references/inventory.py set --reviewers agy.google              # 以后审查先用这家；几家都要排前面就用逗号连起来
+   python <本skill目录>/references/inventory.py set --executor pi-zai-coding-cn.zhipu:low   # 以后干活默认派这家的低档
+   ```用户当场纠正路由（"这类任务用高档／开思考"）就照办，并用 `inventory.py set --note "…"` 记下，后续同类任务遵循。
 7. 本机装了 aicross 引擎（`aicross` 在 PATH 上）时优先走它，用法见 `references/channels.md`「aicross 引擎通道」；没装就按上面几条。
 
 ## 开场与收尾
