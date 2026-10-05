@@ -4,6 +4,41 @@
 
 **所有外部派发统一附 `AI_CROSS_PEER=1` 环境变量**（防套娃标记）：bash 用前缀 `AI_CROSS_PEER=1 codex exec …`；PowerShell 先 `$env:AI_CROSS_PEER='1'` 再调用；`cc_switch.py exec` 已自动注入。被派方若也装有 ai-cross，检测到该变量即知自己是子任务，只执行不再外派（规则见 SKILL.md 稳健性规则「防套娃」条）。
 
+## 派发脚本 `dispatch.py`（审与干活优先用它，2026-10-05 六条通道真机跑通）
+
+```bash
+# 审：审查者只收到固定模板加原始材料
+python <本skill目录>/references/dispatch.py review --host <宿主名> --file <原始材料> [--kind code]          # 只出方案，不发送
+python <本skill目录>/references/dispatch.py review --host <宿主名> --file <原始材料> [--kind code] --go     # 用户同意后发送
+# 干活：任务文本原样发给执行者
+python <本skill目录>/references/dispatch.py run --host <宿主名> --task-file <任务文本> [--file <参考材料>]     # 只出方案，不发送
+python <本skill目录>/references/dispatch.py run --host <宿主名> --task-file <任务文本> --go                  # 用户同意后发送
+# 冒烟并记进 manifest
+python <本skill目录>/references/dispatch.py smoke --all | --entry <条目>
+```
+
+`review` 派的是审查者，`run` 派的是执行者（默认执行者或 `--entry` 点名的），两者不能互换。`run` 与 `review` 的区别只有三处：prompt 是任务文本原样而不是冻结模板；不加 claude 的 `--restricted` 与 pi 的 `--no-context-files`；留痕里 `role` 记「执行」、`visibility` 记「共享」。执行者同样没有工具，交回的是文字，落盘与跑测试由宿主做。
+
+它按 manifest 选人，替你做本文件下面各节要求的事，手写命令时才需要逐条照做：
+
+| 通道 | 脚本实际执行的写法 | 备注 |
+|---|---|---|
+| claude | `claude -p --model M --tools "" --restricted --output-format json`，材料走 stdin | 查 `is_error`，出错不当回答 |
+| codex | `codex exec -m M -c model_reasoning_effort=… -s read-only --skip-git-repo-check --json -`，材料走 stdin | 回答取全部非空 `agent_message`（正文常在倒数第二条） |
+| pi:<provider> | `pi --provider P --model M -p --no-tools --no-extensions --mode json --no-context-files --thinking …`，材料走 stdin | 只认 `text` 块；`responseModel` 与请求不符判 `identity_mismatch` |
+| agy | `--input-format stream-json --output-format stream-json`，材料是 stdin 的一行 NDJSON | `response` 为空判失败 |
+| kimi | `kimi -p <材料> -m M --output-format stream-json` | 材料超过约 30KB 这一路跳过（没有 stdin 入口） |
+| cc-switch:<名字> | `cc_switch.py exec --provider … --model M --task-file … --tools ""` | key 由桥注入；没有 `--restricted`，隔离记为部分 |
+
+- 每路各在 `${AICROSS_HOME:-~/.aicross}/scratch/<时间>-blind/<条目>/` 这个空目录里跑，带 `AI_CROSS_PEER=1`，跑完目录即删。
+- prompt 只有冻结模板加原始材料原文，外发前做六类脱敏（私钥块、Bearer、口令与密钥字面量、环境变量式赋值、`AKIA…`、带口令的数据库 URL）；脱敏只处理字面量，是兜底不是保证。
+- 留痕写进 `<项目>/.dispatch/`（`--project` 指定，默认当前目录），格式见文末契约；通道的原始事件流另存为同名 `.raw.txt`。
+- `--thinking off|low|mid|high` 只对 codex 与 pi 生效，其余通道的思考档由模型名或其自身配置决定。
+- 退出码：0 至少一路成功；1 没有可用的审查者或全部失败；2 参数有误；3 还没有 manifest。当前会话带 `AI_CROSS_PEER=1` 时拒绝执行。
+- **它不做的**：双保险的多路独立执行、需要被派方自己带工具读写文件的任务、`manual:` 申报的通道——这些仍按下面的模板手写。
+
+## 手写命令时的隔离写法
+
 **验证者一律在空目录里跑**（盲验目录隔离，规则见 SKILL.md「验证的框架隔离」）。项目目录里的 `.dispatch/`、`STATE.md`、`CLAUDE.md`/`AGENTS.md` 都携带我方结论，`codex exec`/`claude -p` 会加载项目指令文件，kimi 会自行打开 cwd 里的文件。两种写法：
 
 ```bash
@@ -405,3 +440,4 @@ error: ""
 - `truncated`：输出撞上上限时置位，不静默丢弃——结论被无声截半是判分事故的来源。
 - `redacted`：外发前对 prompt 与材料做脱敏替换的命中次数，六类：私钥块、`Authorization: Bearer`、`password=`、`token/api_key/secret_key/access_key=`、`AKIA…`、带凭据的数据库 URL。
 - 手工派发（skill 侧）至少填 `schema/agent/model/role/visibility/isolation/status/started_at/duration_ms/tokens_in/tokens_out`，其余留空串或 0。
+- `dispatch.py` 写的留痕：`run_id` 用派发时间戳，`node` 是 manifest 条目名，「原始输出」一节放解析出的回答正文，通道的原始事件流另存为同名 `.raw.txt`；kimi 不报用量，token 记 0。

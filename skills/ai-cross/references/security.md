@@ -31,6 +31,8 @@
 
 `inventory.py` 的写入只有一处：`save` / `set` 改它自己的 manifest（`${AICROSS_HOME:-~/.aicross}/skill/manifest.json`），里面是通道名、模型 ID、端点、冒烟结果与备注，没有 key。读 kimi 的 `config.toml` 时只扫 `[models]` 段，不解析同文件里的登录凭据段（`tests/test_inventory.py` 覆盖）。
 
+`dispatch.py` 自己不读任何密钥：官方 CLI 用各自的登录态，cc-switch 条目交给 `cc_switch.py exec` 在它的子进程里注入。它默认只出方案；带 `--go` 才把材料发给方案里列出的厂商，发之前做字面量脱敏，留痕文件里不写任何环境变量值（`tests/test_dispatch.py` 覆盖）。当前会话带 `AI_CROSS_PEER=1` 时它拒绝执行。
+
 `cc_switch.py` 是铁律的代码化：
 
 - `list` 模式输出 provider 清单，**token 字段从不输出**，只给 `has_token` 布尔。

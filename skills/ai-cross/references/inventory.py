@@ -599,43 +599,35 @@ def describe(entry, tier):
     used = next(t for t in order if t in entry["tiers"])
     out = {k: entry[k] for k in ("id", "channel", "kind", "vendor", "billing", "isolation") if k in entry}
     out.update(tier=used, model=entry["tiers"][used], smoke=smoke_text(entry))
-    for key in ("path", "endpoint"):
+    for key in ("path", "endpoint", "billing_source"):
         if entry.get(key):
             out[key] = entry[key]
     return out
 
 
-def cmd_pick(args):
-    data = load_manifest()
-    entries = {e["id"]: e for e in data["entries"]}
-    host = args.host.strip().lower()
-    host_vendor = HOST_VENDOR.get(host)
-    notes = []
-    if host == "claude-code" and os.environ.get("ANTHROPIC_BASE_URL"):
-        host_vendor = None
+def host_vendor_of(host, notes):
+    vendor = HOST_VENDOR.get(host.strip().lower())
+    if vendor == "Anthropic" and os.environ.get("ANTHROPIC_BASE_URL"):
         notes.append("当前会话设了 ANTHROPIC_BASE_URL，宿主走的是第三方端点，不按 Anthropic 算。")
+        return None
+    return vendor
 
-    if args.role == "executor":
-        executor = data["roles"].get("executor")
-        entry = entries.get(executor["entry"]) if executor else None
-        if not entry:
-            print(json.dumps({"role": "executor", "picked": [],
-                              "notes": ["没有设默认执行者，按 SKILL.md 的路由表选。"]}, ensure_ascii=False, indent=2))
-            return
-        print(json.dumps({"role": "executor", "picked": [describe(entry, args.tier or executor["tier"])],
-                          "notes": notes}, ensure_ascii=False, indent=2))
-        return
 
-    no_author = (args.author or "").strip().lower() in ("none", "无")  # 被审材料不出自任何一家（如演示代码）
-    explicit_author = None if no_author else canon_vendor(args.author)
+def choose_reviewers(data, host, author=None, n=None, tier=None):
+    """按 manifest 选审查者。返回 pick 子命令输出的那个结构，dispatch.py 也用它。"""
+    entries = {e["id"]: e for e in data["entries"]}
+    notes = []
+    host_vendor = host_vendor_of(host, notes)
+    no_author = (author or "").strip().lower() in ("none", "无")  # 被审材料不出自任何一家（如演示代码）
+    explicit_author = None if no_author else canon_vendor(author)
     author = None if no_author else (explicit_author or host_vendor)
     if author:
         notes.append(f"被审产出的厂商按 {author} 算，同厂商的条目不选。")
     elif no_author:
         notes.append("没有要回避的厂商，按顺序选不同厂商。")
     else:
-        notes.append(f"宿主「{args.host}」的底层模型不确定，不把它算作交叉验证的一方，改选两家外部厂商互审。")
-    count = args.n or (1 if author else 2)
+        notes.append(f"宿主「{host}」的底层模型不确定，不把它算作交叉验证的一方，改选两家外部厂商互审。")
+    count = n or (1 if author else 2)
 
     picked, seen, skipped = [], set(), []
     for entry_id in reviewer_order(data):
@@ -645,7 +637,7 @@ def cmd_pick(args):
         if (entry.get("smoke") or {}).get("status") == "fail":
             skipped.append(entry_id)
             continue
-        picked.append(describe(entry, args.tier or "high"))
+        picked.append(describe(entry, tier or "high"))
         seen.add(entry["vendor"])
         if len(picked) == count:
             break
@@ -659,9 +651,35 @@ def cmd_pick(args):
     if len(picked) < count:
         notes.append(f"需要 {count} 家不同厂商，manifest 里只凑得出 {len(picked)} 家。"
                      + ("交叉验证不可用，同厂商复查只算复核。" if not picked else ""))
-    print(json.dumps({"role": "reviewer", "host": args.host, "author_vendor": author,
-                      "picked": picked, "notes": notes}, ensure_ascii=False, indent=2))
-    if not picked:
+    return {"role": "reviewer", "host": host, "author_vendor": author, "picked": picked, "notes": notes}
+
+
+def mark_smoke(data, entry_id, status, reason=None):
+    entry = find_entry(data, entry_id)
+    entry["smoke"] = {"status": status, "date": today()}
+    if reason:
+        entry["smoke"]["reason"] = reason
+
+
+def cmd_pick(args):
+    data = load_manifest()
+    if args.role == "executor":
+        notes = []
+        host_vendor_of(args.host, notes)
+        entries = {e["id"]: e for e in data["entries"]}
+        executor = data["roles"].get("executor")
+        entry = entries.get(executor["entry"]) if executor else None
+        if not entry:
+            print(json.dumps({"role": "executor", "picked": [],
+                              "notes": ["没有设默认执行者，按 SKILL.md 的路由表选。"]}, ensure_ascii=False, indent=2))
+            return
+        print(json.dumps({"role": "executor", "picked": [describe(entry, args.tier or executor["tier"])],
+                          "notes": notes}, ensure_ascii=False, indent=2))
+        return
+
+    result = choose_reviewers(data, args.host, args.author, args.n, args.tier)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    if not result["picked"]:
         sys.exit(1)
 
 
@@ -680,10 +698,7 @@ def cmd_set(args):
         status, _, reason = value.partition(":")
         if status not in ("ok", "fail"):
             fail(f"--smoke 的值只能是 ok 或 fail[:原因]，收到 {value}")
-        entry = find_entry(data, entry_id)
-        entry["smoke"] = {"status": status, "date": today()}
-        if reason:
-            entry["smoke"]["reason"] = reason
+        mark_smoke(data, entry_id, status, reason)
         done.append(f"{entry_id} 冒烟记为{'通过' if status == 'ok' else '失败'}")
     for item in args.billing or []:
         entry_id, value = split_pair(item, "--billing")

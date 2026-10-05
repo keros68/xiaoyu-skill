@@ -29,6 +29,8 @@ ai-cross 是给 AI agent 用的 skill：按任务类型把工作派给不同档�
 
 **路由与分层。** 分级标准是 `SKILL.md` 的路由表：任务类型决定档位与推理强度两个旋钮，档位语义继承 manifest（哪个模型算低/中/高由用户自己标）。每次派发前先输出一行路由决策行（通道/模型、档位、thinking、理由）供当场纠正。需要精确数值的任务，prompt 要求模型写代码执行，编排者再独立核验，不采信模型自述的计算结果。
 
+**盲审。** `references/dispatch.py review` 一条命令完成一次跨厂商盲审：按清单选人，每家各在一个空目录里跑，只发固定模板和原始材料，核对应答模型，结果留痕。不带 `--go` 时只列出打算发给谁、发什么，确认后加 `--go` 才发送。`dispatch.py run` 用同样的方式把一份任务文本派给默认执行者；被派方没有工具，交回文字，写进项目和跑测试由宿主做。
+
 **交叉验证。** 验证 prompt 只给原始材料和中性问题，不写入我方结论和解释框架。coding 闭环是实现 → 换厂商审查 → 修正 → 重跑验证 → 再审，最多三轮。
 
 **通道。** 命令模板在 `references/channels.md`：`codex exec`、Kimi Code CLI、`claude -p` 接 Anthropic 兼容端点（GLM / Kimi coding plan）、`cc_switch.py exec` 桥、裸 API 与 aichat。gemini / qoder / codebuddy 的独立 CLI 已下线（2026-07 核实），不再作为派发通道，Qoder 作为宿主仍支持。模型 ID 不写死，派发前从本地事实源读实时值。
@@ -69,14 +71,14 @@ Windows 上 `~` 即 `C:\Users\<用户名>`，装完新开会话生效。其他�
 
 ## 凭据处理
 
-key 留在你原本存放它的地方（CLI 登录态、用户级环境变量、cc-switch 数据库），ai-cross 只在派发那一刻引用。代码层做到的：`cc_switch.py` 只读打开 cc-switch 数据库，不改数据、不用它的全局切换机制（那会写 `~/.claude/settings.json`，污染宿主的官方登录），`list` 只输出端点、档位映射和 `has_token` 布尔，`exec` 在脚本自己的进程里读 token 注入子进程环境变量，不进命令行 argv、不回到 agent 的上下文（`tests/test_cc_switch.py` 的 6 个用例覆盖这几条）；`verify_model.py` 只把 token 放进发往你自己那个端点的请求头；`usage_probe.py` 只出模型 ID、次数与时间戳，不读对话内容；`inventory.py` 探测时只读各配置里的模型字段，写入的只有它自己的 manifest（`tests/test_inventory.py` 覆盖）。
+key 留在你原本存放它的地方（CLI 登录态、用户级环境变量、cc-switch 数据库），ai-cross 只在派发那一刻引用。代码层做到的：`cc_switch.py` 只读打开 cc-switch 数据库，不改数据、不用它的全局切换机制（那会写 `~/.claude/settings.json`，污染宿主的官方登录），`list` 只输出端点、档位映射和 `has_token` 布尔，`exec` 在脚本自己的进程里读 token 注入子进程环境变量，不进命令行 argv、不回到 agent 的上下文（`tests/test_cc_switch.py` 的 6 个用例覆盖这几条）；`verify_model.py` 只把 token 放进发往你自己那个端点的请求头；`usage_probe.py` 只出模型 ID、次数与时间戳，不读对话内容；`inventory.py` 探测时只读各配置里的模型字段，写入的只有它自己的 manifest（`tests/test_inventory.py` 覆盖）；`dispatch.py` 不读密钥，带 `--go` 才外发，外发前脱敏，留痕里不写环境变量值（`tests/test_dispatch.py` 覆盖）。
 
 其余是 `references/security.md` 里约束 agent 行为的规则，不是代码强制：key 不写进 manifest 与 `.dispatch/` 留痕、输出里一律打码、读凭据库前先告知用户、`ANTHROPIC_BASE_URL` 与 `ANTHROPIC_AUTH_TOKEN` 只按子进程传而不写进全局配置。
 
 ## 仓库结构
 
 - `SKILL.md` - 决策核心：路由规则、执行闭环、稳健性规则
-- `references/` - 盘点向导、通道模板、密钥规则、派发设计、实测证据，以及四个脚本（盘点 `inventory.py`、cc-switch 桥、真身核对、用量痕迹）
+- `references/` - 盘点向导、通道模板、密钥规则、派发设计、实测证据，以及五个脚本（盘点 `inventory.py`、派发与冒烟 `dispatch.py`、cc-switch 桥、真身核对、用量痕迹）
 - `agents/` - Claude Code 用的 scout / worker / heavy / advisor
 - `tests/` `qoder/` - 单元测试与 Qoder 宿主适配。基准原始材料保存在维护者本地归档，不随公开仓库发布。
 
