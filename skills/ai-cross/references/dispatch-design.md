@@ -66,7 +66,7 @@ CLI 基本**不支持枚举**：claude/codex/gemini 均无 list-models（`codex 
 
 ## 任务分解原则（借鉴成熟方案）
 
-- 按"**错误代价 × 任务类型**"路由（见 SKILL.md 路由表）。
+- 按"**错误代价 × 任务类型**"路由（见 `rules.md` 路由表）。
 - 只对**相互独立、无共享状态**的子任务并行（参考 superpowers:dispatching-parallel-agents）。
 - 子任务提示**自包含**：被派 agent 看不到主会话历史，须给全背景+目标+边界+输出格式。
 - **闭环验证**：产出必须验证后才算完；coding review→修正→再 review ≤3 轮，仍分歧上报。
@@ -176,7 +176,7 @@ CLI 基本**不支持枚举**：claude/codex/gemini 均无 list-models（`codex 
 | 明确要求"不要执行任何命令"，仍跑 6–16 轮工具调用 | superpowers 的 TDD / verification-before-completion / using-superpowers |
 | 最终消息是验证总结，代码留在中间消息或 shell 命令里 | 同上 |
 
-**三条推论（已写入 SKILL.md 稳健性规则）**：
+**三条推论（已写入 `rules.md` 稳健性规则）**：
 
 1. **你的任务指令与目标 CLI 的全局指令竞争，且常常输。** 外派得到的不是"模型的能力"，而是"被配置过的 agent 的行为"。
 2. 固定足迹里含一份**技能索引**，但它是**限额**的（codex 约 2% 上下文预算）。实测移除 14 个 superpowers 子技能后，模型可见 prompt 从 42,802 → 43,052 字符（**不减反增**：剩余技能的描述被补全）。**故"少装 skill 能省固定开销"是错的**，已撤回该说法。固定开销主要来自系统提示与工具定义本身。
@@ -203,7 +203,7 @@ tools=[{"type": "advisor_20260301", "model": "claude-opus-4-6", "max_uses": 3}]
 
 **成本为何反降**：更好的规划减少了执行者的试错轮数，省下的迭代费用超过顾问的开销。这与本项目观察到的 **thrash** 现象是同一枚硬币的两面。
 
-**对我们的启示（已写入 SKILL.md 升级阶梯）**：
+**对我们的启示（已写入 `rules.md` 升级阶梯）**：
 - 在**决策点咨询** > **事后审查**。事后审查要为坏实现付全款 + 审查费 + 修正费。实测：一次 tuple 规格分歧引发 5 次调用（实现→审查→修→引入新错→再修→复审）。
 - 顾问只要方案/纠正/叫停，不重做任务，输出仅几百 token。Fable 5 的 $10/$50 定价正是为这个角色设计的（高单价 × 小体量）。
 
@@ -241,7 +241,7 @@ tools=[{"type": "advisor_20260301", "model": "claude-opus-4-6", "max_uses": 3}]
 
 ## OpenSquilla 参照（2026-07，5.5k star，同题项目）
 
-[opensquilla](https://github.com/opensquilla/opensquilla)："令牌高效微核 agent"，与本 skill 同题——按任务复杂度（C0-C3 四级）路由到**最便宜的能力足够模型**，其基准显示分层调度相对单一 Opus 方案成本 $6.23→$0.688，验证了分层派发的核心论点。已借鉴：cheapest-capable 升级阶梯、通道熔断（重复失败自动停）、主备切换、输出有界、成本留痕、输出防注入（见 SKILL.md 稳健性规则）。**不采用**：它的本地 ML 分类器（LightGBM+ONNX，要装模型资产，违背零门槛）——我们的路由表+主 agent 兜底就是 skill 原生的免安装等价物；它的网关/UI/频道形态（又一个壳，与 host-agnostic skill 定位冲突）。
+[opensquilla](https://github.com/opensquilla/opensquilla)："令牌高效微核 agent"，与本 skill 同题——按任务复杂度（C0-C3 四级）路由到**最便宜的能力足够模型**，其基准显示分层调度相对单一 Opus 方案成本 $6.23→$0.688，验证了分层派发的核心论点。已借鉴：cheapest-capable 升级阶梯、通道熔断（重复失败自动停）、主备切换、输出有界、成本留痕、输出防注入（见 `rules.md` 稳健性规则）。**不采用**：它的本地 ML 分类器（LightGBM+ONNX，要装模型资产，违背零门槛）——我们的路由表+主 agent 兜底就是 skill 原生的免安装等价物；它的网关/UI/频道形态（又一个壳，与 host-agnostic skill 定位冲突）。
 
 成熟框架参照：
 - **MoA（Mixture-of-Agents）**：分层聚合，每层 3-6 个提议者，后层综合前层——多模型协作的代表范式。

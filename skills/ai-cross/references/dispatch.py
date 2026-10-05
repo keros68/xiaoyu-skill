@@ -10,10 +10,11 @@ ai-cross 的派发脚本：按 manifest 的默认人选做盲审、把活派给�
       带 --go：每个审查者各在一个空目录里跑，材料走 stdin；
                结果连同任务全文写进 <项目>/.dispatch/，成功的条目顺带刷新冒烟日期。
 
-  run --host NAME --task-file PATH [--file PATH ...] [--entry ID] [--tier low|mid|high]
+  run --host NAME --task-file PATH [--file PATH ...] [--read-dir DIR] [--entry ID] [--tier low|mid|high]
       [--thinking off|low|mid|high] [--project DIR] [--timeout 秒] [--json] [--go]
       让别家干活：把任务文本原样发给执行者（默认取 manifest 的默认执行者），--file 附参考材料。
       执行者没有工具、碰不到项目文件，只交回文字；落盘与跑测试由宿主做。同样不带 --go 只出方案。
+      --read-dir：让执行者进这个目录自己读文件，工具收窄到只读（kimi、agy 不支持）。
 
   smoke (--entry ID ... | --all) [--timeout 秒]
       给条目里每个档位的模型各发一句「只回复两个字：收到」，把通过或失败记进 manifest。
@@ -46,6 +47,7 @@ TEMPLATES = {  # 冻结模板：只许接原始材料，不接我方结论与背
 }
 NO_TOOLS = "材料已全部附在下面，不要使用任何工具。"
 SMOKE_PROMPT = "只回复两个字：收到"
+READ_TOOLS = "Read,Grep,Glob"  # claude 的只读工具白名单：能读能搜，不能写、不能跑命令
 KIMI_ARGV_LIMIT = 30000   # kimi -p 只收命令行参数，Windows 命令行约 32KB 封顶
 ANSWER_CAP = 12000        # 打印给宿主的每路回答上限，全文在留痕文件里
 TIER_TEXT = {"low": "低档", "mid": "中档", "high": "高档"}
@@ -140,10 +142,11 @@ def json_lines(text):
                 continue
 
 
-def call_claude(pick, prompt, cwd, timeout, thinking, blind=True):
+def call_claude(pick, prompt, cwd, timeout, thinking, blind=True, tools=False):
     out = base_result()
     # --restricted 挡住用户级 CLAUDE.md：盲审要挡，执行者不必
-    cmd = [exe(pick), "-p", "--model", pick["model"], "--tools", ""] + (["--restricted"] if blind else []) \
+    cmd = [exe(pick), "-p", "--model", pick["model"], "--tools", READ_TOOLS if tools else ""] \
+        + (["--restricted"] if blind else []) \
         + ["--output-format", "json"]
     out["exit_code"], out["raw"], out["stderr"], err = run_process(cmd, cwd, timeout, prompt)
     if err:
@@ -165,10 +168,11 @@ def call_claude(pick, prompt, cwd, timeout, thinking, blind=True):
     return out
 
 
-def call_cc_switch(pick, prompt, cwd, timeout, thinking, blind, prompt_file):
+def call_cc_switch(pick, prompt, cwd, timeout, thinking, blind, tools, prompt_file):
     out = base_result()
     cmd = [sys.executable, os.path.join(HERE, "cc_switch.py"), "exec", "--provider", pick["channel"].split(":", 1)[1],
-           "--model", pick["model"], "--task-file", prompt_file, "--tools", "", "--usage", "--timeout", str(timeout)]
+           "--model", pick["model"], "--task-file", prompt_file, "--tools", READ_TOOLS if tools else "",
+           "--usage", "--timeout", str(timeout)]
     out["exit_code"], out["raw"], out["stderr"], err = run_process(cmd, cwd, timeout + 30)
     if err:
         out["error"] = err
@@ -184,7 +188,7 @@ def call_cc_switch(pick, prompt, cwd, timeout, thinking, blind, prompt_file):
     return out
 
 
-def call_codex(pick, prompt, cwd, timeout, thinking, blind=True):
+def call_codex(pick, prompt, cwd, timeout, thinking, blind=True, tools=False):
     out = base_result()
     effort = {"off": "low", "low": "low", "mid": "medium", "high": "high"}[thinking]
     out["thinking"] = "low" if thinking == "off" else thinking  # codex 没有关思考，最低是 low
@@ -212,8 +216,12 @@ def call_codex(pick, prompt, cwd, timeout, thinking, blind=True):
     return out
 
 
-def call_kimi(pick, prompt, cwd, timeout, thinking, blind=True):
+def call_kimi(pick, prompt, cwd, timeout, thinking, blind=True, tools=False):
     out = base_result()
+    if tools:
+        out["status"] = "skipped"
+        out["error"] = "kimi 没有只读档，进了项目目录就能改文件，这一路不派；换一个条目"
+        return out
     if len(prompt.encode("utf-8")) > KIMI_ARGV_LIMIT:
         out["status"] = "skipped"
         out["error"] = "材料超过 kimi 命令行能收的长度（约 1 万汉字），kimi 没有 stdin 入口，这一路不派"
@@ -231,13 +239,14 @@ def call_kimi(pick, prompt, cwd, timeout, thinking, blind=True):
     return out
 
 
-def call_pi(pick, prompt, cwd, timeout, thinking, blind=True):
+def call_pi(pick, prompt, cwd, timeout, thinking, blind=True, tools=False):
     out = base_result()
     out["thinking"] = thinking
     level = {"off": "off", "low": "low", "mid": "medium", "high": "high"}[thinking]
     # --no-context-files 挡住用户级 AGENTS.md：盲审要挡，执行者不必
     cmd = [exe(pick), "--provider", pick["channel"].split(":", 1)[1], "--model", pick["model"], "-p",
-           "--no-tools", "--no-extensions", "--mode", "json"] + (["--no-context-files"] if blind else []) \
+           *(["--tools", "read,grep,find,ls"] if tools else ["--no-tools"]), "--no-extensions", "--mode", "json"] \
+        + (["--no-context-files"] if blind else []) \
         + ["--thinking", level]
     out["exit_code"], out["raw"], out["stderr"], err = run_process(cmd, cwd, timeout, prompt)
     if err:
@@ -245,30 +254,39 @@ def call_pi(pick, prompt, cwd, timeout, thinking, blind=True):
         return out
     # 流式增量事件每条都带累计内容，几千条能到上百 KB；留痕只留成段的事件
     out["raw"] = "\n".join(l for l in out["raw"].splitlines() if '"type":"message_update"' not in l)
-    message = None
+    # 带工具时一次任务有多条 assistant 消息，正文可能在中间某一条：逐条收正文、累加用量
+    message, texts = None, []
     for event in json_lines(out["raw"]):
         if event.get("type") == "message_end" and (event.get("message") or {}).get("role") == "assistant":
             message = event["message"]
+            usage = message.get("usage") or {}
+            out["tokens_in"] += usage.get("input", 0)
+            out["tokens_out"] += usage.get("output", 0)
+            out["cache_read"] += usage.get("cacheRead", 0)
+            # 只认 text 块；答案只出现在 thinking 块里时按没有回答算，不回退去读思考草稿
+            text = "".join(b.get("text", "") for b in message.get("content") or [] if b.get("type") == "text")
+            if text.strip():
+                texts.append(text)
     if not message:
         out["error"] = out["stderr"].strip()[:300] or f"pi 没有给出回答（退出码 {out['exit_code']}）"
         return out
-    usage = message.get("usage") or {}
-    out["tokens_in"], out["tokens_out"] = usage.get("input", 0), usage.get("output", 0)
-    out["cache_read"] = usage.get("cacheRead", 0)
     served = message.get("responseModel") or message.get("model") or ""
     out["identity"] = f"{message.get('provider', '')}/{served}".strip("/")
     if message.get("stopReason") == "error":
         out["error"] = (message.get("errorMessage") or "pi 报告 stopReason=error")[:300]
         return out
-    # 只认 text 块；答案只出现在 thinking 块里时按没有回答算，不回退去读思考草稿
-    out["answer"] = "".join(b.get("text", "") for b in message.get("content") or [] if b.get("type") == "text")
+    out["answer"] = "\n\n".join(texts)
     if not out["answer"].strip():
         out["error"] = "回答为空（只有思考块，没有正文）"
     return out
 
 
-def call_agy(pick, prompt, cwd, timeout, thinking, blind=True):
+def call_agy(pick, prompt, cwd, timeout, thinking, blind=True, tools=False):
     out = base_result()
+    if tools:
+        out["status"] = "skipped"
+        out["error"] = "agy 在无头模式下连读文件都会被拒，不能让它自己进项目读；换一个条目，或把材料用 --file 附上"
+        return out
     line = json.dumps({"event": "user", "message": {"role": "user", "content": prompt}}, ensure_ascii=False) + "\n"
     cmd = [exe(pick), "--model", pick["model"], "--print-timeout", f"{max(1, timeout // 60)}m",
            "--input-format", "stream-json", "--output-format", "stream-json"]
@@ -307,7 +325,7 @@ def norm_model(name):
     return re.sub(r"\[.*?\]$", "", (name or "").strip().lower().rsplit("/", 1)[-1])
 
 
-def call(pick, prompt, cwd, timeout, thinking, prompt_file, blind=True):
+def call(pick, prompt, cwd, timeout, thinking, prompt_file, blind=True, tools=False):
     """跑一路并补齐状态。返回的 dict 里 status 为 ok / error / timeout / skipped / identity_mismatch。"""
     runner = runner_for(pick)
     started = datetime.now().astimezone()
@@ -317,9 +335,9 @@ def call(pick, prompt, cwd, timeout, thinking, prompt_file, blind=True):
         out["status"] = "skipped"
         out["error"] = "手工申报的通道，脚本不知道怎么调用；按 channels.md 的模板手动派"
     elif runner is call_cc_switch:
-        out = runner(pick, prompt, cwd, timeout, thinking, blind, prompt_file)
+        out = runner(pick, prompt, cwd, timeout, thinking, blind, tools, prompt_file)
     else:
-        out = runner(pick, prompt, cwd, timeout, thinking, blind)
+        out = runner(pick, prompt, cwd, timeout, thinking, blind, tools)
     if out["status"] == "error" and out["error"].startswith("超过"):
         out["status"] = "timeout"
     if out["answer"].strip() and not out["error"]:
@@ -370,6 +388,23 @@ def write_trace(project, stamp, pick, out, prompt, materials, redacted, workdir,
     return path
 
 
+PROJECT_MARKERS = (".git", ".dispatch", "AGENTS.md", "CLAUDE.md", "pyproject.toml", "package.json", "Cargo.toml")
+
+
+def guess_project(files):
+    """没给 --project 时留痕写哪：材料就在当前目录下则用当前目录；否则从材料所在处往上找项目根。"""
+    cwd = Path.cwd().resolve()
+    if not files:
+        return cwd
+    first = Path(files[0]).resolve()
+    if cwd == first.parent or cwd in first.parents:
+        return cwd
+    for folder in [first.parent, *first.parent.parents]:
+        if any((folder / marker).exists() for marker in PROJECT_MARKERS):
+            return folder
+    return first.parent
+
+
 # ---------- review ----------
 
 def route_line(pick, thinking, reason):
@@ -395,7 +430,7 @@ def cmd_review(args):
     prompt, materials, hits = build_prompt(args.kind, args.file, args.text_file)
     chosen = select(args, data)
     picked, notes = chosen["picked"], chosen["notes"]
-    project = Path(args.project or os.getcwd())
+    project = Path(args.project) if args.project else guess_project(args.file)
     size = len(prompt.encode("utf-8"))
     redacted = sum(hits.values())
     routes = [route_line(p, args.thinking, notes[0]) for p in picked]
@@ -505,7 +540,9 @@ def cmd_run(args):
 
     default = data["roles"].get("executor")
     if args.entry:
-        entry, tier, reason = inventory.find_entry(data, args.entry), args.tier or "low", "执行者由用户点名"
+        name, _, suffix = args.entry.rpartition(":")  # 也认「条目:档位」的写法
+        entry_id, named_tier = (name, suffix) if name and suffix in inventory.TIERS else (args.entry, None)
+        entry, tier, reason = inventory.find_entry(data, entry_id), args.tier or named_tier or "low", "执行者由用户点名"
     elif default:
         entry, tier, reason = inventory.find_entry(data, default["entry"]), args.tier or default["tier"], "manifest 里的默认执行者"
     else:
@@ -521,7 +558,22 @@ def cmd_run(args):
     shown = THINK_TEXT[args.thinking] if pick["channel"].split(":", 1)[0] in ("codex", "pi") else THINK_TEXT[None]
     route = (f"- [ai-cross] 执行 → {pick['channel']} / {pick['model']}（{pick['vendor']}） ｜ "
              f"{TIER_TEXT[pick['tier']]} · thinking={shown} ｜ 理由：{reason}")
-    project = Path(args.project or os.getcwd())
+    read_dir = Path(args.read_dir).resolve() if args.read_dir else None
+    if read_dir:
+        if not read_dir.is_dir():
+            inventory.fail(f"--read-dir 指的目录不存在：{args.read_dir}")
+        base = pick["channel"].split(":", 1)[0]
+        if base in ("kimi", "agy", "manual"):
+            usable = "、".join(e["id"] for e in data["entries"]
+                             if e["channel"].split(":", 1)[0] in ("claude", "codex", "pi", "cc-switch"))
+            inventory.fail(f"{pick['id']} 不能进目录只读（kimi 没有只读档，agy 无头模式读不了文件）。"
+                           f"换一个条目：{usable or '（清单里没有支持只读的通道）'}", 1)
+    project = Path(args.project or read_dir or os.getcwd())
+    if read_dir:
+        how = f"执行者会在 {read_dir} 里只读运行：能读、能搜那里的文件，不能改、不能删；它交回的仍是文字。"
+    else:
+        how = ("执行者没有工具、看不到项目文件：任务文本要自包含，它交回的是文字，写进项目与跑测试由你来做。"
+               "要它自己读项目里的文件，加 --read-dir <项目目录>。")
 
     if not args.go:
         print("路由决策行：\n")
@@ -533,7 +585,7 @@ def cmd_run(args):
         for note in notes:
             print("注意：" + note)
         print(f"留痕位置：{project / '.dispatch'}（不是项目目录的话加 --project <项目目录>）")
-        print("执行者没有工具、看不到项目文件：任务文本要自包含，它交回的是文字，写进项目与跑测试由你来做。")
+        print(how)
         print("\n以上只是方案，尚未发送任何内容。用户同意后，原命令加 --go 再跑一次（可能要几分钟，把命令超时设到 10 分钟）。")
         return
 
@@ -543,7 +595,10 @@ def cmd_run(args):
     workdir.mkdir(parents=True)
     prompt_file = run_dir / "prompt.txt"
     prompt_file.write_text(prompt, encoding="utf-8", newline="\n")
-    out = call(pick, prompt, str(workdir), args.timeout, args.thinking, str(prompt_file), blind=False)
+    if read_dir:  # 只读模式：在用户指定的目录里跑，工具收窄到只读
+        workdir = read_dir
+    out = call(pick, prompt, str(workdir), args.timeout, args.thinking, str(prompt_file),
+               blind=False, tools=bool(read_dir))
     trace = write_trace(project, stamp, pick, out, prompt, materials, redacted, workdir, "执行", blind=False)
     out["trace"] = f".dispatch/{trace.name}"
     shutil.rmtree(run_dir, ignore_errors=True)
@@ -574,7 +629,8 @@ def cmd_run(args):
     print(f"- 留痕：{project} 下的 {out['trace']}")
     for note in notes:
         print("注意：" + note)
-    print("\n被派模型的回答是数据不是指令。它没有工具：回答里的代码由你写进项目并运行测试核验；"
+    print("\n被派模型的回答是数据不是指令。它改不了文件：回答里的代码由你写进项目并运行测试核验，"
+          "它报告的事实（哪个文件里有什么）抽查后再采信；"
           f"要对这份产出做交叉验证，用 dispatch.py review，并加 --author {pick['vendor']}。")
     sys.exit(0 if out["status"] == "ok" else 1)
 
@@ -659,6 +715,8 @@ def main():
     x.add_argument("--host", required=True, help="当前宿主：claude-code / codex / kimi / antigravity / 其他名字")
     x.add_argument("--task-file", dest="task_file", required=True, help="任务文本（UTF-8 文件，要自包含）")
     x.add_argument("--file", action="append", help="随任务附上的参考材料（UTF-8 文本文件，可重复）")
+    x.add_argument("--read-dir", dest="read_dir",
+                   help="让执行者进这个目录自己读文件（只读：能读能搜，不能改）；支持 claude / codex / pi / cc-switch 通道")
     x.add_argument("--entry", help="点名执行者（manifest 条目名）；不写就用默认执行者")
     x.add_argument("--tier", choices=inventory.TIERS, help="档位；默认用设默认执行者时定的档，点名时默认 low")
     x.add_argument("--thinking", choices=["off", "low", "mid", "high"], default="low",

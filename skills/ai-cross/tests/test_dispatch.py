@@ -132,6 +132,23 @@ class TestReview(DBase):
         self.save({"entries": [{"channel": "claude", "tiers": {"low": "haiku"}}]}, replace=True)
         self.assertEqual(self.review()[0], 1)                      # 只有宿主同厂商,没人可派
 
+    def test_project_guessed_from_material_when_cwd_is_elsewhere(self):
+        src = self.project / "src"
+        src.mkdir()
+        (src / "a.py").write_text("x = 1\n", encoding="utf-8")
+        elsewhere = self.home / "elsewhere"
+        elsewhere.mkdir()
+        old = os.getcwd()
+        try:
+            os.chdir(elsewhere)                                    # 当前目录不是项目，也没给 --project
+            code, out, _ = self.review(file=[str(src / "a.py")], project=None)
+            self.assertIn(str(self.project.resolve() / ".dispatch"), out)   # 往上找到带 AGENTS.md 的项目根
+            os.chdir(self.project)
+            code, out, _ = self.review(file=[str(src / "a.py")], project=None)
+            self.assertIn(str(self.project.resolve() / ".dispatch"), out)   # 材料在当前目录下就用当前目录
+        finally:
+            os.chdir(old)
+
     def test_trace_never_contains_environment_values(self):
         with mock.patch.dict(os.environ, {"GLM_CODING_KEY": SECRET_ENV}):
             self.review({"--provider": (0, pi_out(), "")}, go=True)
@@ -173,6 +190,19 @@ class TestChannels(DBase):
         self.assertEqual(self.run_one("pi-zai-coding-cn.zhipu", (0, pi_out(thinking_only=True), ""))["status"], "error")
         r = self.run_one("pi-zai-coding-cn.zhipu", (0, pi_out(stop="error"), ""))
         self.assertIn("Unpurchased", r["error"])
+
+    def test_pi_multi_turn_keeps_every_text_block(self):
+        def msg(content, stop):
+            return {"type": "message_end", "message": {"role": "assistant", "content": content, "stopReason": stop,
+                                                        "provider": "zai-coding-cn", "model": "glm-5.3",
+                                                        "usage": {"input": 100, "output": 10}}}
+        out = jl(msg([{"type": "toolCall"}], "toolUse"),
+                 {"type": "message_end", "message": {"role": "toolResult", "content": [{"type": "text", "text": "文件内容"}]}},
+                 msg([{"type": "text", "text": "未被调用：lerp"}, {"type": "toolCall"}], "toolUse"),
+                 msg([{"type": "text", "text": "无法写入"}], "stop"))
+        r = self.run_one("pi-zai-coding-cn.zhipu", (0, out, ""))
+        self.assertEqual((r["status"], r["answer"], r["tokens_in"]), ("ok", "未被调用：lerp\n\n无法写入", 300))
+        self.assertNotIn("文件内容", r["answer"])                   # 工具返回不算回答
 
     def test_pi_identity_mismatch_voids_the_answer(self):
         r = self.run_one("pi-zai-coding-cn.zhipu", (0, pi_out(served="glm-4.7"), ""))
@@ -267,8 +297,8 @@ class TestRun(DBase):
     def run_task(self, outputs=None, **over):
         task = self.home / "task.txt"
         task.write_text("写一个函数 slugify(title)，带 5 个单元测试。\n", encoding="utf-8")
-        args = dict(host="claude-code", task_file=str(task), file=None, entry=None, tier=None, thinking="low",
-                    project=str(self.project), timeout=5, json=False, go=False)
+        args = dict(host="claude-code", task_file=str(task), file=None, read_dir=None, entry=None, tier=None,
+                    thinking="low", project=str(self.project), timeout=5, json=False, go=False)
         args.update(over)
         with self.fake(outputs or {}):
             return self.call(dispatch.cmd_run, **args)
@@ -304,6 +334,37 @@ class TestRun(DBase):
         self.assertEqual(code, 0)
         self.assertNotIn("--restricted", self.calls[0][0])
         self.assertIn("同厂商", out)                                # 宿主就是 Claude 时提醒可用内部通道
+
+    def test_read_dir_runs_in_project_with_read_only_tools(self):
+        code, out, _ = self.run_task(entry="codex.openai:high", read_dir=str(self.project), project=None)
+        self.assertEqual((code, self.calls), (0, []))
+        self.assertIn("gpt-6.1-sol", out)                           # 「条目:档位」的写法也认
+        self.assertIn("只读运行", out)
+        self.assertIn(str(self.project / ".dispatch"), out)         # 没给 --project 时留痕跟着只读目录走
+        self.run_task({"exec": (0, CODEX_OUT, "")}, entry="codex.openai", read_dir=str(self.project), go=True)
+        cmd, cwd, _ = self.calls[0]
+        self.assertEqual(Path(cwd), self.project.resolve())         # 在项目目录里跑
+        self.assertEqual(cmd[cmd.index("-s") + 1], "read-only")     # 沙箱只读
+        self.assertTrue((self.project / "AGENTS.md").exists())      # 跑完不清理用户的目录
+        self.calls.clear()
+        self.run_task({"--provider": (0, pi_out(model="glm-5.3-flash"), "")}, entry="pi-zai-coding-cn.zhipu",
+                      read_dir=str(self.project), go=True)
+        cmd = self.calls[0][0]
+        self.assertEqual(cmd[cmd.index("--tools") + 1], "read,grep,find,ls")
+        self.assertNotIn("--no-tools", cmd)
+        self.calls.clear()
+        self.run_task({"claude": (0, CLAUDE_OUT, "")}, entry="claude.anthropic", read_dir=str(self.project), go=True)
+        cmd = self.calls[0][0]
+        self.assertEqual(cmd[cmd.index("--tools") + 1], "Read,Grep,Glob")
+
+    def test_read_dir_refuses_channels_without_read_only_mode(self):
+        for channel in ("kimi", "agy"):
+            pick = {"id": channel, "channel": channel, "kind": "cli", "vendor": "X", "billing": "subscription",
+                    "tier": "low", "model": "m"}
+            with self.fake({}):
+                r = dispatch.call(pick, "任务", str(self.project), 5, "low", "p", blind=False, tools=True)
+            self.assertEqual((r["status"], self.calls), ("skipped", []), channel)
+        self.assertEqual(self.run_task(entry="codex.openai", read_dir=str(self.home / "nope"))[0], 2)
 
     def test_review_plan_points_to_run_for_work(self):
         _, out, _ = self.review()

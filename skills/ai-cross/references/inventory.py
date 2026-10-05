@@ -671,7 +671,7 @@ def cmd_pick(args):
         entry = entries.get(executor["entry"]) if executor else None
         if not entry:
             print(json.dumps({"role": "executor", "picked": [],
-                              "notes": ["没有设默认执行者，按 SKILL.md 的路由表选。"]}, ensure_ascii=False, indent=2))
+                              "notes": ["没有设默认执行者，按 rules.md 的路由表选。"]}, ensure_ascii=False, indent=2))
             return
         print(json.dumps({"role": "executor", "picked": [describe(entry, args.tier or executor["tier"])],
                           "notes": notes}, ensure_ascii=False, indent=2))

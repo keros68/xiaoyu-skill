@@ -2,7 +2,7 @@
 
 抽象定义："命令模板 + 模型参数"。换任何等价 CLI 只需替换模板，其余逻辑不变。模型名会过时，以各 CLI 当前版本为准替换。
 
-**所有外部派发统一附 `AI_CROSS_PEER=1` 环境变量**（防套娃标记）：bash 用前缀 `AI_CROSS_PEER=1 codex exec …`；PowerShell 先 `$env:AI_CROSS_PEER='1'` 再调用；`cc_switch.py exec` 已自动注入。被派方若也装有 ai-cross，检测到该变量即知自己是子任务，只执行不再外派（规则见 SKILL.md 稳健性规则「防套娃」条）。
+**所有外部派发统一附 `AI_CROSS_PEER=1` 环境变量**（防套娃标记）：bash 用前缀 `AI_CROSS_PEER=1 codex exec …`；PowerShell 先 `$env:AI_CROSS_PEER='1'` 再调用；`cc_switch.py exec` 已自动注入。被派方若也装有 ai-cross，检测到该变量即知自己是子任务，只执行不再外派（规则见 `rules.md` 稳健性规则「防套娃」条）。
 
 ## 派发脚本 `dispatch.py`（审与干活优先用它，2026-10-05 六条通道真机跑通）
 
@@ -18,6 +18,8 @@ python <本skill目录>/references/dispatch.py smoke --all | --entry <条目>
 ```
 
 `review` 派的是审查者，`run` 派的是执行者（默认执行者或 `--entry` 点名的），两者不能互换。`run` 与 `review` 的区别只有三处：prompt 是任务文本原样而不是冻结模板；不加 claude 的 `--restricted` 与 pi 的 `--no-context-files`；留痕里 `role` 记「执行」、`visibility` 记「共享」。执行者同样没有工具，交回的是文字，落盘与跑测试由宿主做。
+
+`run --read-dir <项目目录>` 让执行者进那个目录自己读文件，工具收窄到只读（2026-10-05 真机：三条通道都被要求顺手建一个文件，全部被拦住，目录内文件哈希不变）：claude 用 `--tools Read,Grep,Glob`，codex 仍是 `-s read-only`（沙箱内可读可搜），pi 用 `--tools read,grep,find,ls`，cc-switch 桥用 `--tools Read,Grep,Glob`；kimi 没有只读档、agy 无头模式读不了文件，这两类条目脚本直接拒绝。带工具时 pi 一次任务有多条 assistant 消息，回答取全部 `text` 块。
 
 它按 manifest 选人，替你做本文件下面各节要求的事，手写命令时才需要逐条照做：
 
@@ -35,11 +37,12 @@ python <本skill目录>/references/dispatch.py smoke --all | --entry <条目>
 - 留痕写进 `<项目>/.dispatch/`（`--project` 指定，默认当前目录），格式见文末契约；通道的原始事件流另存为同名 `.raw.txt`。
 - `--thinking off|low|mid|high` 只对 codex 与 pi 生效，其余通道的思考档由模型名或其自身配置决定。
 - 退出码：0 至少一路成功；1 没有可用的审查者或全部失败；2 参数有误；3 还没有 manifest。当前会话带 `AI_CROSS_PEER=1` 时拒绝执行。
-- **它不做的**：双保险的多路独立执行、需要被派方自己带工具读写文件的任务、`manual:` 申报的通道——这些仍按下面的模板手写。
+- 双保险的多路独立执行：同一份任务文本对两个不同厂商的条目各跑一次 `run --entry <条目>`。
+- **它不做的**：需要被派方自己改项目文件的任务、`manual:` 申报的通道——这些仍按下面的模板手写。
 
 ## 手写命令时的隔离写法
 
-**验证者一律在空目录里跑**（盲验目录隔离，规则见 SKILL.md「验证的框架隔离」）。项目目录里的 `.dispatch/`、`STATE.md`、`CLAUDE.md`/`AGENTS.md` 都携带我方结论，`codex exec`/`claude -p` 会加载项目指令文件，kimi 会自行打开 cwd 里的文件。两种写法：
+**验证者一律在空目录里跑**（盲验目录隔离，规则见 `rules.md`「验证的框架隔离」）。项目目录里的 `.dispatch/`、`STATE.md`、`CLAUDE.md`/`AGENTS.md` 都携带我方结论，`codex exec`/`claude -p` 会加载项目指令文件，kimi 会自行打开 cwd 里的文件。两种写法：
 
 ```bash
 # ① 纯文本材料：不给工具，材料走 stdin，cwd 无所谓
@@ -285,7 +288,7 @@ echo "[任务]" | claude -p --model X --tools ""
 
 **别抄的负结果**：`--exclude-dynamic-system-prompt-sections` 只省 1.3%（12,229→12,071），它是为跨用户共享缓存设计的，不是单机省 token 手段。
 
-**`--fallback-model <a,b>`（claude 2.1.232 有）**：主模型过载/不可用时自动按序换模型。可作为本 skill「通道熔断」的 CLI 层兜底——但**它换的是模型不是厂商**，同厂商 fallback 不构成交叉验证的独立源；熔断后要不要换厂商仍由编排者按 SKILL.md 规则判。
+**`--fallback-model <a,b>`（claude 2.1.232 有）**：主模型过载/不可用时自动按序换模型。可作为本 skill「通道熔断」的 CLI 层兜底——但**它换的是模型不是厂商**，同厂商 fallback 不构成交叉验证的独立源；熔断后要不要换厂商仍由编排者按 `rules.md`「稳健性规则」判。
 
 **合规注**：多数 coding plan 条款限定用于 coding agent（Claude Code 等）。本通道载体就是 claude CLI，属限定范围内的用法；**不要**用 aichat 直连 coding plan 端点（可能违反条款，网关也常拒非 agent 流量）——aichat 只兜按量 API。
 
@@ -400,7 +403,7 @@ aicross recover <run_id> [--rollback]   # 引擎中断后核对；--rollback 恢
 
 ## `.dispatch/` 留痕契约（aicross-dispatch/1，2026-09-13 定）
 
-skill 与 aicross 引擎共用同一份留痕格式，字段定了不改。每路一份 `<项目>/.dispatch/<YYYYMMDD-HHMMSS>-<agent>-<model>-<角色>.md`，首次创建目录时写入 `.gitignore`（内容一行 `*`）。正文两节：`## 任务全文`（发出去的 prompt 原文）、`## 原始输出`（stdout 全文；stderr 另起 `## stderr`）。**绝不写入任何环境变量值。** 同目录的 `STATE.md` 格式见 SKILL.md 闭环规则第 5 条。
+skill 与 aicross 引擎共用同一份留痕格式，字段定了不改。每路一份 `<项目>/.dispatch/<YYYYMMDD-HHMMSS>-<agent>-<model>-<角色>.md`，首次创建目录时写入 `.gitignore`（内容一行 `*`）。正文两节：`## 任务全文`（发出去的 prompt 原文）、`## 原始输出`（stdout 全文；stderr 另起 `## stderr`）。**绝不写入任何环境变量值。** 同目录的 `STATE.md` 格式见 `rules.md` 闭环规则第 5 条。
 
 ```yaml
 ---
