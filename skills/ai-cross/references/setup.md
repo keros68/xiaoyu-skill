@@ -152,6 +152,8 @@ python <本skill目录>/references/inventory.py set --smoke "<条目>=fail:<一�
 
 条目名看 `save` 的输出（形如 `codex.openai`、`cc-switch-zhipu-glm.zhipu`）。冒烟失败的条目留在清单里并标失败，选人时自动跳过，避免下次重复试错。
 
+用户是带着具体任务来的、盘点只是顺带时，只冒烟这次要用的那一条，其余留到第一次用到时再做（SKILL.md「新人从这里开始」第 2 条）。
+
 ### 分支 A：官方 agent CLI
 
 每项三小步：存在检测 → 登录 → 冒烟。冒烟用该条目的低档模型，下表的模型名只是示例。
