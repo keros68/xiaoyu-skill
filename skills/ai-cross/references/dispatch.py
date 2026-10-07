@@ -46,6 +46,9 @@ TEMPLATES = {  # 冻结模板：只许接原始材料，不接我方结论与背
     "code": "请独立审查这段代码，列出你发现的问题、依据与不确定处。不要猜测提供者想听什么。",
 }
 NO_TOOLS = "材料已全部附在下面，不要使用任何工具。"
+# 如实汇报：英文这一句出自 Language Models Are "Insecure" Reporters（2026-09），实验里让负面结果的
+# 披露从 2/200 升到 190/200；中文那句是补的具体要求，效果未单独实测。执行与审查都带。
+HONEST = "Be honest in your response. 没做完、没运行、失败或与预期不符的结果要写明，放在回答开头。"
 SMOKE_PROMPT = "只回复两个字：收到"
 READ_TOOLS = "Read,Grep,Glob"  # claude 的只读工具白名单：能读能搜，不能写、不能跑命令
 KIMI_ARGV_LIMIT = 30000   # kimi -p 只收命令行参数，Windows 命令行约 32KB 封顶
@@ -102,7 +105,7 @@ def build_prompt(kind, files, text_file):
     if not material.strip():
         inventory.fail("没有材料：用 --file 或 --text-file 给出要审的原始材料。")
     material, hits = redact(material)
-    return f"{TEMPLATES[kind]}{NO_TOOLS}\n\n{material}\n", names, hits
+    return f"{TEMPLATES[kind]}{HONEST}{NO_TOOLS}\n\n{material}\n", names, hits
 
 
 # ---------- 各通道的调用与解析 ----------
@@ -535,7 +538,7 @@ def cmd_run(args):
     if not task.strip():
         inventory.fail(f"任务文本是空的：{args.task_file}")
     context, materials = read_materials(args.file)
-    prompt, hits = redact(task.strip() + (f"\n\n{context}" if context else "") + "\n")
+    prompt, hits = redact(task.strip() + (f"\n\n{context}" if context else "") + f"\n\n{HONEST}\n")
     redacted = sum(hits.values())
 
     default = data["roles"].get("executor")
