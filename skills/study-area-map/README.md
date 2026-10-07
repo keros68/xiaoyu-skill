@@ -58,7 +58,7 @@ cp -R ~/xiaoyu-skill/skills/study-area-map ~/.claude/skills/study-area-map
 模块自带线宽、字号、字体注册与地图主题，加载即可用。
 
 ```r
-SK <- "~/.claude/skills/study-area-map/reference/"
+SK <- "~/.claude/skills/study-area-map/reference/"   # 改成实际安装位置
 source(paste0(SK, "relief_basemap.R"))
 source(paste0(SK, "palettes.R"))
 source(paste0(SK, "thematic.R"))        # 需要专题图层时
@@ -118,7 +118,7 @@ ggplot() +
 
 仓库不含 shapefile 和栅格。
 
-不备数据时，可用自动下载的 GEBCO 画出带图例、指北针和图框的地形底图。研究区轮廓与行政边界需自备 shp。
+不备数据时，可用自动下载的 GEBCO 画出带图例、指北针和图框的地形底图。研究区轮廓与行政边界需自备 shp。ArcGIS 打包文件和 MapGIS 6.x 图层的读取方法见 `guides/data-sources.md`。
 
 | 用途 | 来源 | 说明 |
 |---|---|---|
@@ -172,7 +172,7 @@ GEBCO（0.05°，约 5 km）适合国家级面板，用于省级面板偏粗，�
 
 | 文件 | 内容 |
 |---|---|
-| `reference/relief_basemap.R` | `ensure_font()` `theme_map_pub()` `shade_factor()` `inscribed_window()` `bbox_union()` `vsizip_tiles()` `fit_aspect()` `win_aspect()` `load_dem()` `locate_na()` `relief_rgb()` `north_needle()` `elev_legend_block()` `legend_backing()` `assert_inside()` `assert_window()` `inset_is_clear()` `assert_inset_clear()` `widen_for_inset()` `pad_win()` `pad_until_clear()` `inset_aspect()` `corner_inset()` `credit_footer()` `check_cn_content()` `pin_panel()` `panel_margins()` `with_font_device()` `box_in()` `add_leaders()` `FRAME_PAD` `CN_REQUIRED_POINTS` |
+| `reference/relief_basemap.R` | `ensure_font()` `theme_map_pub()` `shade_factor()` `inscribed_window()` `bbox_union()` `vsizip_tiles()` `fit_aspect()` `win_aspect()` `load_dem()` `locate_na()` `relief_rgb()` `north_needle()` `elev_legend_block()` `legend_backing()` `frac_fun()` `assert_inside()` `assert_window()` `inset_is_clear()` `assert_inset_clear()` `widen_for_inset()` `pad_win()` `pad_until_clear()` `inset_aspect()` `corner_inset()` `credit_footer()` `check_cn_content()` `pin_panel()` `panel_margins()` `with_font_device()` `box_in()` `add_leaders()` `FRAME_PAD` `CN_REQUIRED_POINTS` |
 | `reference/palettes.R` | `pal_hypso()` `elev_breaks()` `elev_labels()` `preview_hypso()` `check_ramp()` `simulate_cvd()` `to_gray()` `assert_accent_unique()` `PAL_SURROUND` `BRK_SURROUND` |
 | `reference/thematic.R` | `class_rgb()` `graduated_sizes()` `legend_rows_block()` `assert_within_reserved()` `mm_win()` `legend_panel()` |
 
@@ -196,3 +196,7 @@ R ≥ 4.3，ggplot2 ≥ 3.5，另需 sf、terra、tidyterra、ragg、systemfonts
 ## 许可
 
 MIT
+
+---
+
+**同系列 Agent Skills**：[sci-select](../sci-select/)（选刊+投稿前审查） · [academic-reference-matcher](../academic-reference-matcher/)（文献引用） · [abstract-fig](../abstract-fig/)（图形摘要） · [cugb-doctoral-thesis-format](../cugb-doctoral-thesis-format/)（学位论文格式） · [ai-cross](../ai-cross/)（多模型交叉验证）｜[返回总览](../../)

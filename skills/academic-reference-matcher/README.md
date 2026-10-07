@@ -19,13 +19,13 @@
 | Format | 转换文献格式 | 否 |
 | Extract | 挑出需要引用的论断 | 否 |
 
-**工作深度**：Quick（几条论断）、Standard（一个段落，出 claim 表）、Deep（长小节或有争议论断）、Audit（引用证据审计、高风险稿件）。深度越高核验越细，处理范围不变。
+**工作深度**：Quick（1–3 条论断）、Standard（一个段落或短小节，出 claim 表）、Deep（长小节或有争议论断）、Audit（引用证据审计、高风险稿件）。深度越高核验越细，处理范围不变。
 
 **证据分级**：每条引用标注证据基础（元数据、摘要、摘录或全文）。题名相似不算核验通过，只有元数据的文献不作强支撑。查不到的论断列入 Could not verify，不补凑文献。
 
 **输出**：小请求直接给带引用的正文和文献列表。大任务可写成 `reference-match-report.md`，含正文、claim-reference 对照表、参考文献和检索记录。可按需输出 APA、GB/T 7714、Vancouver、IEEE 格式及 BibTeX/RIS。
 
-**人工确认**：超过 10 条论断或高风险论断时，先试跑 3–5 条，确认后继续；批量替换先给替换表。
+**人工确认**：超过 10 条论断、高风险论断（临床、安全、监管、政策）或批量修改时，先试跑 3–5 条，确认后继续；批量替换先给替换表。
 
 ## 安装
 
@@ -71,7 +71,7 @@ cp -R ~/xiaoyu-skill/skills/academic-reference-matcher ~/.claude/skills/academic
 
 ## 限制
 
-- 不做开放式文献检索、主题查全、系统综述语料构建或 PRISMA 流程。
+- 不做开放式文献检索、主题查全、系统综述语料构建或 PRISMA 流程，也不用于一般事实核查和法律、新闻引用。
 - 不含搜索引擎、付费数据库和引用解析器，检索质量取决于宿主 agent 的工具和用户提供的文献。宿主不能联网时，只在用户提供的文献列表、PDF、Zotero 导出或检索结果中核实。
 - 不绕过付费墙、验证码和登录墙；付费墙文献可留作候选。
 - 没有限定语料范围或可复现检索式时，不声称覆盖完整。
@@ -108,4 +108,4 @@ MIT. See [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
 ---
 
-**同系列 Agent Skills**：[sci-select](../sci-select/)（选刊+投稿前审查） · [abstract-fig](../abstract-fig/)（图形摘要） · [cugb-doctoral-thesis-format](../cugb-doctoral-thesis-format/)（学位论文格式） · [ai-cross](../ai-cross/)（多模型交叉验证）｜[返回总览](../../)
+**同系列 Agent Skills**：[sci-select](../sci-select/)（选刊+投稿前审查） · [abstract-fig](../abstract-fig/)（图形摘要） · [cugb-doctoral-thesis-format](../cugb-doctoral-thesis-format/)（学位论文格式） · [study-area-map](../study-area-map/)（研究区区位图） · [ai-cross](../ai-cross/)（多模型交叉验证）｜[返回总览](../../)

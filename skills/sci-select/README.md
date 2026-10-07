@@ -53,7 +53,7 @@ cp -R ~/xiaoyu-skill/skills/sci-select ~/.claude/skills/sci-select
 使用 $sci-select 根据下面这篇论文摘要发现候选期刊，先总结研究方向，再列出方向证据、期刊层级、风险和待核验项；不要评价稿件水平或预测录用。
 ```
 
-可追加筛选条件：IF 范围、JCR Q 区、2025中科院、2026新锐、SCIE/ESCI、排除预警期刊、返回数量。只有明确提出的条件才作硬筛选，默认按方向证据和发表先例排序。
+可追加筛选条件：IF 范围、JCR Q 区、2025中科院、2026新锐、SCIE/ESCI、排除预警期刊、返回数量。条件默认作为偏好，明确要求排除时才作硬筛选；排序始终以方向证据和发表先例为先。
 
 正常工作时的表现：
 
@@ -132,7 +132,7 @@ bundle = select_journals(
     paper_profile=profile,       # 可选
     impact_low="5",
     impact_high="20",
-    jcr_quartiles=["Q1", "Q2"],
+    jcr_quartiles=["Q1", "Q2"],  # 需自建索引含 JCR 字段，内置库下会清空结果
     cas_partitions=["1区"],
     xinrui_partition="1区",
     coverage_types=["SCIE"],
@@ -202,7 +202,7 @@ $env:SCI_SELECT_JOURNAL_INDEX_DB = "$HOME\journal-index\sci_select_journals.sqli
 - `scripts/build_journal_index.py` / `audit_journal_index.py`：索引构建与审计。
 - `scripts/benchmark_dataset.py` / `benchmark_run.py` / `benchmark_score.py`：评测数据、执行与评分。
 - `references/`：数据源、评测协议、画像 schema、投稿前审查、常见错误。
-- `examples/demo-report.md`：示例报告；`tests/`：77 项行为测试。
+- `examples/demo-report.md`：示例报告；`tests/`：81 项行为测试。
 
 ## 验证
 
@@ -252,4 +252,4 @@ MIT. See [LICENSE](LICENSE).
 
 ---
 
-**同系列 Agent Skills**：[academic-reference-matcher](../academic-reference-matcher/)（文献引用） · [abstract-fig](../abstract-fig/)（图形摘要） · [cugb-doctoral-thesis-format](../cugb-doctoral-thesis-format/)（学位论文格式） · [ai-cross](../ai-cross/)（多模型交叉验证）｜[返回总览](../../)
+**同系列 Agent Skills**：[academic-reference-matcher](../academic-reference-matcher/)（文献引用） · [abstract-fig](../abstract-fig/)（图形摘要） · [cugb-doctoral-thesis-format](../cugb-doctoral-thesis-format/)（学位论文格式） · [study-area-map](../study-area-map/)（研究区区位图） · [ai-cross](../ai-cross/)（多模型交叉验证）｜[返回总览](../../)
