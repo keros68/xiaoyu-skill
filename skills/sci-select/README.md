@@ -19,14 +19,26 @@ sci-select 是一个 AI agent skill，用于查询 SCI/SCIE/ESCI/SSCI 期刊的�
 
 ## 安装
 
-在支持 skills / agent instructions 的工具里：
+以下方式任选一种，同一台电脑不要用两种方式各装一份。
 
-```text
-请从 GitHub 安装这个 skill，并在 SCI 期刊查询、论文投稿选刊、候选期刊对比时优先使用它：
-https://github.com/keros68/xiaoyu-skill/tree/main/skills/sci-select
+**skills.sh（推荐，需要 Node.js）**
+
+```bash
+npx skills add keros68/xiaoyu-skill --skill sci-select -g
 ```
 
-也可以从 `xiaoyu-skill` 仓库复制到所用工具的 skills 目录，例如 Claude Code：
+安装时选择要装到的 Agent，也可以用 `-a claude-code -a codex` 指定。更新用 `npx skills update -g`。
+
+**交给 Agent 安装**：把这段发给正在用的 Agent：
+
+```text
+用 skills.sh 安装 keros68/xiaoyu-skill 里的 sci-select：运行
+npx skills add keros68/xiaoyu-skill --skill sci-select -g -a <你自己对应的 agent 名，如 claude-code、codex、kimi-code-cli、pi>
+不要手动复制文件。装完检查本机是否有 Python 3（已测 3.12），在装好的 sci-select 目录里运行 pip install -r requirements.txt；再告诉我是否设置了 OPENALEX_API_KEY，没有设置时相似论文召回会跳过。
+装完提醒我新开会话。
+```
+
+**克隆后复制**：从 `xiaoyu-skill` 仓库复制到所用工具的 skills 目录，例如 Claude Code：
 
 ```bash
 git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
@@ -34,6 +46,15 @@ cp -R ~/xiaoyu-skill/skills/sci-select ~/.claude/skills/sci-select
 ```
 
 安装后新开窗口或重启 agent。没有 skill loader 的环境，把 `SKILL.md` 直接作为 agent instruction 使用。
+
+## 装好后怎么确认它在起作用
+
+1. 给题名和摘要，说"使用 $sci-select 推荐候选期刊"：先给出论文画像（研究对象、问题、贡献、目标读者等）和检索式，再列候选；每本期刊带状态（优先核验 / 可选 / 谨慎 / 排除）、匹配置信度与理由、近年同主题先例、官网 scope 状态、期刊层级和指标。没给筛选条件时，结尾有一句可追加条件的提示。
+2. 候选里不出现"冲刺""主投""保底"这类标签；没取到的指标标为待核验或未获取，不填推测值。
+3. 说"查一下 Environmental Pollution 的分区和 IF"：只返回该刊的 IF、`2025中科院`、`2026新锐`、收录类型等指标和各数据来源的状态（成功、部分、失败或跳过），不转成推荐。
+4. 问"我这篇能不能被录用"：说明它不预测录用，只提供范围与指标层面的信息，以及需要研究者自己评估的方面。
+
+## 调用
 
 调用时可以只给摘要：
 
@@ -245,9 +266,13 @@ The default workflow builds a model-neutral manuscript profile, retrieves recent
 
 Unverified ISSN/JIF/JCR fields are deliberately excluded from the bundled index; a user-built SQLite/JSON index is the only source of JCR quartiles. The repository also includes a 60-paper, 20-stratum blinded benchmark protocol, an expert relevance-labeling protocol, Recall@K/nDCG/generalist-exposure scoring, and a CI release gate for journal-index identity and provenance. Human expert labels are required before any accuracy claim is published.
 
+Install with `npx skills add keros68/xiaoyu-skill --skill sci-select -g`, or clone the repository and copy `skills/sci-select` into the agent's skills directory; pick one method. The scripts need Python 3 (tested on 3.12) and `pip install -r requirements.txt`; without `OPENALEX_API_KEY`, similar-work recall is skipped and the report says so.
+
 ```text
 Use $sci-select to discover candidate journals for this abstract, with scope evidence, objective journal levels, risks, and missing-data notes. Do not evaluate manuscript quality or predict acceptance.
 ```
+
+To confirm it is active: a title and abstract produce a manuscript profile and queries, then candidates each with a status, fit confidence and reason, recent precedents, official-scope status, journal level, and metrics, with no "reach/safe" labels; a named-journal lookup returns metrics and per-source status without turning into a recommendation; asking whether the paper will be accepted gets a statement that the skill does not predict acceptance.
 
 ## License
 

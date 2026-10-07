@@ -16,12 +16,40 @@
 
 ## 安装
 
+以下方式任选一种，同一台电脑不要用两种方式各装一份。
+
+**skills.sh（推荐，需要 Node.js）**
+
+```bash
+npx skills add keros68/xiaoyu-skill --skill study-area-map -g
+```
+
+安装时选择要装到的 Agent，也可以用 `-a claude-code` 指定。更新用 `npx skills update -g`。
+
+**交给 Agent 安装**：把这段发给正在用的 Agent：
+
+```text
+用 skills.sh 安装 keros68/xiaoyu-skill 里的 study-area-map：运行
+npx skills add keros68/xiaoyu-skill --skill study-area-map -g -a <你自己对应的 agent 名，如 claude-code、codex、kimi-code-cli、pi>
+不要手动复制文件。装完检查本机是否有 R ≥ 4.3 和这些包：ggplot2（≥ 3.5）、sf、terra、tidyterra、ragg、systemfonts、gridExtra；用 GEBCO 国家级底图时还要 ggmapcn。缺什么列给我，经我同意再安装。
+装完提醒我新开会话，并告诉我装好的 study-area-map/reference/ 的完整路径。
+```
+
+**克隆后复制**
+
 ```bash
 git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
 cp -R ~/xiaoyu-skill/skills/study-area-map ~/.claude/skills/study-area-map
 ```
 
 放在 `~/.claude/skills/` 下全部项目可用，放在项目的 `.claude/skills/` 下仅该项目可用。
+
+## 装好后怎么确认它在起作用
+
+1. 说"用 study-area-map 给我的研究区画一张两级区位图"：从 `example/` 里最接近的脚本（两级用 `taiyuan_locator.R`，三级用 `taiyuan_three_level.R`，配专题图用 `taiyuan_thematic.R`）复制出来，改开头的数据块，而不是从零写。
+2. 动手前先确定几级定位、主面板展示什么、底图多淡、研究区强调色、图例和图廓件放在哪。
+3. 脚本运行后输出 300 dpi PNG 和 150 dpi 预览两版。
+4. 窗口不对、DEM 有缺值、图例压到图框、角框压到陆地、强调色被别的要素占用时，脚本报断言错误停下，不出图。
 
 ## 用法
 

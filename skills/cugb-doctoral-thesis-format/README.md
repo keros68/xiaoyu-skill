@@ -55,7 +55,26 @@ powershell -ExecutionPolicy Bypass -File scripts/convert_doc_to_docx_with_word.p
 
 ## 作为 skill 使用
 
-项目由 `SKILL.md`、`assets/`、`references/`、`scripts/` 组成，可交给支持 skill 的 AI agent。从 `xiaoyu-skill` 仓库复制到 Codex 的 skills 目录：
+项目由 `SKILL.md`、`assets/`、`references/`、`scripts/` 组成，可交给支持 skill 的 AI agent。以下安装方式任选一种，同一台电脑不要用两种方式各装一份。
+
+**skills.sh（推荐，需要 Node.js）**
+
+```bash
+npx skills add keros68/xiaoyu-skill --skill cugb-doctoral-thesis-format -g
+```
+
+安装时选择要装到的 Agent，也可以用 `-a claude-code -a codex` 指定。更新用 `npx skills update -g`。
+
+**交给 Agent 安装**：把这段发给正在用的 Agent：
+
+```text
+用 skills.sh 安装 keros68/xiaoyu-skill 里的 cugb-doctoral-thesis-format：运行
+npx skills add keros68/xiaoyu-skill --skill cugb-doctoral-thesis-format -g -a <你自己对应的 agent 名，如 claude-code、codex、kimi-code-cli、pi>
+不要手动复制文件。装完检查本机是否有 Python 3 和 python-docx、lxml，缺的用 pip install python-docx lxml 补上；再告诉我这台电脑是否为 Windows 且装了 Microsoft Word（转换 .doc 和页眉审计需要）。
+装完提醒我新开会话。
+```
+
+**克隆后复制**：从 `xiaoyu-skill` 仓库复制到 Codex 的 skills 目录：
 
 ```powershell
 git clone https://github.com/keros68/xiaoyu-skill.git "$env:USERPROFILE\xiaoyu-skill"
@@ -69,6 +88,13 @@ Copy-Item -Recurse "$env:USERPROFILE\xiaoyu-skill\skills\cugb-doctoral-thesis-fo
 ```
 
 `SKILL.md` 为 agent 规定了修改顺序：先预检，改前另存新文件，字段和目录页码最后在 Word 中更新。
+
+## 装好后怎么确认它在起作用
+
+1. 说"使用 $cugb-doctoral-thesis-format 预检这篇博士论文 DOCX"：运行 `precheck_cugb_doctoral_thesis.py`，生成 Markdown 和 JSON 两份预检报告（默认在论文同级目录的 `cugb-precheck/`）。只要求预检时到此结束，不改论文。
+2. 说"按报告修改"：先复制出新文件再改，不覆盖原稿；按分节页眉页码、封面摘要目录、正文标题与图表题、引用与参考文献的顺序处理，改完给出改动清单。目录页码、域和交叉引用留到最后在 Word 中更新。
+3. 同时给出学校的 HTML 格式检测报告：报告按严重、错误、提醒分层汇总，并据此处理。
+4. 硕士学位论文或其他学校的模板，它不会触发。
 
 ## 适用范围
 

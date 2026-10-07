@@ -24,19 +24,46 @@
 
 观测影像、实验照片、地图边界和定量结果应来自可追溯来源。生成插画用于概念表达，不替代观测证据。文字、箭头和结构尽量保持可编辑；嵌入位图内部仍是像素内容。
 
-## 使用
+## 安装
 
-将 `skills/abstract-fig` 安装到 agent 的技能目录，在支持的环境中用 `$abstract-fig` 调用，例如：
+以下方式任选一种，同一台电脑不要用两种方式各装一份。
 
-```text
-使用 $abstract-fig，结合正文和这个案例，先梳理展示内容与模块关系，再调整图1。优先使用已有影像和可编辑矢量元素，保留旧版，交付源文件和预览。
+**skills.sh（推荐，需要 Node.js）**
+
+```bash
+npx skills add keros68/xiaoyu-skill --skill abstract-fig -g
 ```
 
-手动安装示例：
+安装时选择要装到的 Agent，也可以用 `-a claude-code -a codex` 指定。更新用 `npx skills update -g`。
+
+**交给 Agent 安装**：把这段发给正在用的 Agent：
+
+```text
+用 skills.sh 安装 keros68/xiaoyu-skill 里的 abstract-fig：运行
+npx skills add keros68/xiaoyu-skill --skill abstract-fig -g -a <你自己对应的 agent 名，如 claude-code、codex、kimi-code-cli、pi>
+不要手动复制文件。装完检查本机是否有 Python 3.10+（draw.io 文件检查脚本要用），再告诉我本机有没有能打开和导出 .drawio 的 draw.io 编辑器；没有时我用 https://app.diagrams.net/ 打开，你交付时要写明未在编辑器里核验渲染。
+装完提醒我新开会话。
+```
+
+**克隆后复制**
 
 ```bash
 git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
 cp -R ~/xiaoyu-skill/skills/abstract-fig ~/.codex/skills/abstract-fig
+```
+
+## 装好后怎么确认它在起作用
+
+1. 要求新做或大改一张图：动手前先简要说明要展示的内容、阅读路径、模块分组和视觉处理；信息足够时直接继续，不给一串选项让你逐项批准。
+2. 改现有图：旧版保留（另存版本或留备份）；你手改过的版本作为底稿，只改你指出的元素。
+3. 交付时给出可编辑源文件（默认 `.drawio`）和预览图，说明改了什么、做了哪些检查；draw.io 文件会跑 `scripts/inspect_drawio_images.py` 检查图片嵌入，未在目标编辑器里核验的渲染会写明。
+
+## 使用
+
+在支持的环境中用 `$abstract-fig` 调用，例如：
+
+```text
+使用 $abstract-fig，结合正文和这个案例，先梳理展示内容与模块关系，再调整图1。优先使用已有影像和可编辑矢量元素，保留旧版，交付源文件和预览。
 ```
 
 draw.io 文件可拖入 [官方编辑器](https://app.diagrams.net/) 继续修改。投稿用 PDF、SVG、PNG 按用户要求或既有工作流导出。
@@ -73,6 +100,10 @@ The project is released under the MIT License. Redistribution, forks, modified v
 ## English
 
 Abstract-Fig plans and creates editable scientific figures from manuscript content. It selects essential information, organizes module relationships, and chooses project observations, native vector schematics, or optional generated illustrations. Image generation is not required.
+
+Install with `npx skills add keros68/xiaoyu-skill --skill abstract-fig -g`, or clone the repository and copy `skills/abstract-fig` into the agent's skills directory; pick one method. The draw.io inspector needs Python 3.10+; `.drawio` files open in a draw.io editor or at https://app.diagrams.net/.
+
+To confirm it is active: for a new or substantially redesigned figure it first states the content, reading path, grouping, and visual treatment; it keeps the previous version and edits only the elements you name in a hand-edited file; it hands off an editable source (`.drawio` by default) plus a preview, runs the image-embedding check on draw.io files, and states any rendering it could not verify.
 
 Draw.io is the default; script-generated SVG edited in Inkscape, PowerPoint, or another requested editable format can be used instead. For graphical abstracts, check the journal's requirements and generative-AI policy, follow the layout family of the user's references, and build the figure around real maps, photographs, and data plots. Deliver the editable source and a preview, with publication exports as requested. Check the intended output size and the actual editor rendering when available. The bundled inspector accepts vector-only, single-image, compressed, and multi-page draw.io files; large images require visual review rather than automatic rejection.
 
