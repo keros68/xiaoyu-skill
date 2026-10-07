@@ -60,11 +60,16 @@ VENDOR_RULES = (
 )
 
 # 宿主 → 它自己的厂商。聚合型或底层不透明的宿主留空：不把宿主算作交叉验证的一方。
+# 宿主名 → 厂商。aicross 生成的斜杠命令用它自己的宿主 id（claude / codex / kimi / pi），
+# 这里按别名一并认；pi 的底层模型随配置变，不列，按不确定处理。
 HOST_VENDOR = {
     "claude-code": "Anthropic",
+    "claude": "Anthropic",
     "codex": "OpenAI",
     "kimi": "Moonshot",
+    "kimi-code": "Moonshot",
     "antigravity": "Google",
+    "agy": "Google",
 }
 
 # 各通道做盲审时的隔离程度（依据见 channels.md 开头）：
@@ -753,7 +758,7 @@ def main():
     w.add_argument("--human", action="store_true")
     k = sub.add_parser("pick", help="选默认人选")
     k.add_argument("--role", required=True, choices=["reviewer", "executor"])
-    k.add_argument("--host", required=True, help="当前宿主：claude-code / codex / kimi / antigravity / 其他名字")
+    k.add_argument("--host", required=True, help="当前宿主：claude-code（或 claude）/ codex / kimi / antigravity（或 agy）/ 其他名字")
     k.add_argument("--author", help="被审产出出自哪家厂商（默认是宿主厂商）；none = 不回避任何一家")
     k.add_argument("--n", type=int, help="选几家（默认 1；宿主厂商不确定时 2）")
     k.add_argument("--tier", choices=TIERS)

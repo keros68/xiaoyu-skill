@@ -85,6 +85,23 @@ class TestReview(DBase):
         self.assertIn("尚未发送", out)
         self.assertFalse((self.project / ".dispatch").exists())
 
+    def test_same_name_materials_labeled_by_relative_path(self):
+        files = []
+        for skill in ("alpha", "beta"):
+            path = self.project / "skills" / skill / "README.md"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(f"# {skill}\n", encoding="utf-8")
+            files.append(str(path))
+        outside = self.home / "outside.md"
+        outside.write_text("x\n", encoding="utf-8")
+        text, names = dispatch.read_materials(files + [str(outside)], base=self.project)
+        self.assertEqual(names[:2], ["skills/alpha/README.md", "skills/beta/README.md"])
+        self.assertEqual(names[2], str(outside.resolve()))       # 不在项目下用绝对路径
+        self.assertIn("===== 文件：skills/beta/README.md =====", text)
+        code, out, _ = self.review(file=files)
+        self.assertEqual(code, 0)
+        self.assertIn("skills/alpha/README.md", out)
+
     def test_go_runs_blind_and_leaves_trace(self):
         code, out, _ = self.review({"--provider": (0, pi_out(), "")}, go=True)
         self.assertEqual(code, 0)
@@ -319,7 +336,8 @@ class TestRun(DBase):
         cmd, cwd, stdin = self.calls[0]
         self.assertTrue(stdin.startswith("写一个函数 slugify(title)"))    # 任务原文，不套审查模板
         self.assertNotIn("请独立审查", stdin)
-        self.assertIn("===== 文件：avg.py =====", stdin)            # 参考材料附在任务后面
+        # 参考材料附在任务后面；不在项目目录下，标题用绝对路径
+        self.assertIn(f"===== 文件：{self.material.resolve()} =====", stdin)
         self.assertNotIn("--no-context-files", cmd)                 # 执行者不做盲审隔离
         self.assertIn("--no-tools", cmd)                            # 但同样没有工具，落盘归宿主
         self.assertEqual(cmd[cmd.index("--thinking") + 1], "low")

@@ -87,21 +87,33 @@ def read_text(path):
         inventory.fail(f"文件读不出来（需要 UTF-8 文本文件）：{path}（{type(e).__name__}）")
 
 
-def read_materials(files, text_file=None):
+def material_label(path, base=None):
+    """材料标题：相对 base（项目目录）的路径，同名文件也分得清；不在 base 下时用绝对路径。"""
+    full = Path(path).resolve()
+    if base is not None:
+        try:
+            return full.relative_to(Path(base).resolve()).as_posix()
+        except ValueError:
+            pass
+    return str(full)
+
+
+def read_materials(files, text_file=None, base=None):
     """把材料文件拼成一段原文。返回 (文本, 材料名列表)。"""
     parts, names = [], []
     for path in files or []:
-        parts.append(f"===== 文件：{Path(path).name} =====\n{read_text(path)}")
-        names.append(Path(path).name)
+        label = material_label(path, base)
+        parts.append(f"===== 文件：{label} =====\n{read_text(path)}")
+        names.append(label)
     if text_file:
         parts.append(read_text(text_file))
         names.append("(文本)")
     return "\n\n".join(parts), names
 
 
-def build_prompt(kind, files, text_file):
+def build_prompt(kind, files, text_file, base=None):
     """冻结模板 + 原始材料原文。返回 (prompt, 材料名列表, 脱敏命中)。"""
-    material, names = read_materials(files, text_file)
+    material, names = read_materials(files, text_file, base)
     if not material.strip():
         inventory.fail("没有材料：用 --file 或 --text-file 给出要审的原始材料。")
     material, hits = redact(material)
@@ -430,10 +442,10 @@ def select(args, data):
 
 def cmd_review(args):
     data = inventory.load_manifest()
-    prompt, materials, hits = build_prompt(args.kind, args.file, args.text_file)
+    project = Path(args.project) if args.project else guess_project(args.file)
+    prompt, materials, hits = build_prompt(args.kind, args.file, args.text_file, project)
     chosen = select(args, data)
     picked, notes = chosen["picked"], chosen["notes"]
-    project = Path(args.project) if args.project else guess_project(args.file)
     size = len(prompt.encode("utf-8"))
     redacted = sum(hits.values())
     routes = [route_line(p, args.thinking, notes[0]) for p in picked]
@@ -537,7 +549,8 @@ def cmd_run(args):
     task = read_text(args.task_file)
     if not task.strip():
         inventory.fail(f"任务文本是空的：{args.task_file}")
-    context, materials = read_materials(args.file)
+    label_base = args.project or args.read_dir or os.getcwd()
+    context, materials = read_materials(args.file, base=label_base)
     prompt, hits = redact(task.strip() + (f"\n\n{context}" if context else "") + f"\n\n{HONEST}\n")
     redacted = sum(hits.values())
 
@@ -700,7 +713,7 @@ def main():
     p = argparse.ArgumentParser(description="ai-cross 派发：盲审与冒烟")
     sub = p.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("review", help="按默认人选做一次盲审")
-    r.add_argument("--host", required=True, help="当前宿主：claude-code / codex / kimi / antigravity / 其他名字")
+    r.add_argument("--host", required=True, help="当前宿主：claude-code（或 claude）/ codex / kimi / antigravity（或 agy）/ 其他名字")
     r.add_argument("--file", action="append", help="要审的原始材料（UTF-8 文本文件，可重复）")
     r.add_argument("--text-file", dest="text_file", help="不成文件的原始材料（一段文字）先存成文件再给")
     r.add_argument("--kind", choices=sorted(TEMPLATES), default="general", help="general 通用材料；code 代码审查")
@@ -715,7 +728,7 @@ def main():
     r.add_argument("--json", action="store_true", help="结果按 JSON 输出")
     r.add_argument("--go", action="store_true", help="真的发送；不带它只出方案")
     x = sub.add_parser("run", help="把活派给执行者")
-    x.add_argument("--host", required=True, help="当前宿主：claude-code / codex / kimi / antigravity / 其他名字")
+    x.add_argument("--host", required=True, help="当前宿主：claude-code（或 claude）/ codex / kimi / antigravity（或 agy）/ 其他名字")
     x.add_argument("--task-file", dest="task_file", required=True, help="任务文本（UTF-8 文件，要自包含）")
     x.add_argument("--file", action="append", help="随任务附上的参考材料（UTF-8 文本文件，可重复）")
     x.add_argument("--read-dir", dest="read_dir",

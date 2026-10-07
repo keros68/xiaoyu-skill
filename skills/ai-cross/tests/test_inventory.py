@@ -225,6 +225,13 @@ class TestPick(Base):
                          ["pi-zai-coding-cn.zhipu", "codex.openai", "cc-switch-deepseek.deepseek"])
         self.assertTrue(any("按次计费" in n for n in res["notes"]))
 
+    def test_aicross_host_alias_claude_is_anthropic(self):
+        # aicross 生成的斜杠命令写 --host claude，应与 claude-code 同样排除 Anthropic
+        _, res = self.pick("claude")
+        self.assertEqual(res["author_vendor"], "Anthropic")
+        self.assertNotIn("Anthropic", [p["vendor"] for p in res["picked"]])
+        self.assertEqual([p["id"] for p in res["picked"]], ["pi-zai-coding-cn.zhipu"])
+
     def test_opaque_host_gets_two_external_vendors(self):
         _, res = self.pick("workbuddy")
         self.assertIsNone(res["author_vendor"])

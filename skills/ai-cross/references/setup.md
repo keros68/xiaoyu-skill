@@ -13,7 +13,7 @@
 - 宿主是 **Claude Code**：内部 subagent 三档可用；claude CLI 仍可作 coding plan 载体（分支 B）。
 - 宿主是 **Codex / WorkBuddy / Qoder / 其他**：**无内部通道**，全部走外部命令。盘点阶段第一个实际动作是**第 1 步的只读探测**（不是提问），不要尝试内部派发。
 
-记下宿主名，选人时 `pick --host` 要用：`claude-code` / `codex` / `kimi` / `antigravity`。其他宿主（Qoder、WorkBuddy、ZCode 这类聚合型或底层模型不确定的）照实写它的名字——脚本不认识的宿主不算作交叉验证的一方，默认改选两家外部厂商互审。
+记下宿主名，选人时 `pick --host` 要用：`claude-code` / `codex` / `kimi` / `antigravity`（`claude`、`agy` 是同义写法）。其他宿主（Qoder、WorkBuddy、ZCode 这类聚合型或底层模型不确定的）照实写它的名字——脚本不认识的宿主不算作交叉验证的一方，默认改选两家外部厂商互审。
 
 **壳 ≠ 模型**：zcode(ZCode)、Qoder 桌面、Hermes、OpenClaw、WorkBuddy 这类是 harness/壳，不是可派发的模型。派发目标永远是**模型**，经三种方式之一触达：①官方 CLI（claude/codex/gemini/qoder）②Anthropic/OpenAI 兼容端点（GLM/Kimi/DeepSeek）③按量 API。用户报"我有 zcode/z.ai"时，其底层模型是 GLM，走分支 B 直连智谱端点，**不需要装它的桌面，也不需要经过任何路由壳**。只有桌面 GUI、无 CLI 也无 API 的工具无法被任何方式派发（路由壳也救不了——它自己也得靠 API 触达模型）。
 
