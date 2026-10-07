@@ -4,7 +4,7 @@
 
 # xiaoyu-skill
 
-面向科研工作的开源 Agent Skill 合集：文献引用 · 期刊选刊 · 论文格式 · 学术制图 · 多模型协作
+科研用 Agent Skill 合集：文献引用、期刊选刊、论文格式、学术制图、多模型协作。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Skills](https://img.shields.io/badge/skills-6-blueviolet)
@@ -12,7 +12,7 @@
 
 </div>
 
-每个 Skill 是一个自带 `SKILL.md` 的独立目录，定义了触发条件、执行流程和交付要求。Agent 根据任务描述自动匹配合适的 Skill，无需手动调用。可以按需安装任意一个 Skill，也可以保留完整仓库统一更新。
+每个 Skill 是一个独立目录，`SKILL.md` 定义触发条件、流程和交付要求。Agent 按任务描述自动匹配，也可单独安装任意一个。
 
 ## 目录
 
@@ -36,21 +36,21 @@
 
 ## 快速开始
 
-三种安装方式任选一种。同一个 Skill 不要用两种方式各装一份，否则宿主会加载两份。
+任选一种安装方式。同一个 Skill 只装一份，否则宿主会加载两次。
 
 **方式一：skills.sh（推荐）**
 
-需要 Node.js。以 `sci-select` 为例，`-g` 装到用户目录，所有项目可用；去掉 `-g` 只装进当前项目：
+需要 Node.js。以 `sci-select` 为例，`-g` 装到用户目录，去掉则只装进当前项目：
 
 ```bash
 npx skills add keros68/xiaoyu-skill --skill sci-select -g
 ```
 
-安装时选择要装到的 Agent（Claude Code、Codex、Kimi Code CLI、pi 等），也可以用 `-a claude-code -a codex` 指定。`--list` 列出仓库里的全部 Skill。
+用 `-a claude-code -a codex` 指定 Agent，`--list` 列出全部 Skill。
 
 **方式二：交给 Agent 安装**
 
-把下面这段发给正在用的 Agent，把 `<skill 名>` 换成要装的 Skill：
+把下面这段发给 Agent，`<skill 名>` 换成要装的 Skill：
 
 ```text
 用 skills.sh 安装 keros68/xiaoyu-skill 里的 <skill 名>：运行
@@ -75,17 +75,15 @@ mkdir -p ~/.codex/skills
 cp -R ~/xiaoyu-skill/skills/sci-select ~/.codex/skills/
 ```
 
-安装后，Skill 目录内应直接包含 `SKILL.md`。装好后新开会话，在对话中直接描述任务；符合用途的 Skill 会按其触发规则自动启用，也可以在提示词中点名：
+Skill 目录下应直接是 `SKILL.md`。装好后新开会话，直接描述任务即可，也可点名调用：
 
 ```text
 使用 sci-select，根据这篇论文的标题和摘要给出候选期刊。
 ```
 
-各目录内的 `README.md` 介绍具体用法，`SKILL.md` 定义执行流程、触发条件和交付要求。
-
 ## 支持的 Agent
 
-Skill 采用 [Agent Skills 规范](https://agentskills.io)的 `SKILL.md` 格式，适用于所有读取该格式的宿主：
+采用 [Agent Skills 规范](https://agentskills.io)，兼容读取 `SKILL.md` 的宿主：
 
 | Agent | 用户 Skill 目录 |
 | --- | --- |
@@ -93,7 +91,7 @@ Skill 采用 [Agent Skills 规范](https://agentskills.io)的 `SKILL.md` 格式�
 | Claude Code | `~/.claude/skills/` |
 | 其他兼容宿主 | 见各宿主文档 |
 
-注意：部分 Skill 依赖宿主能力（联网、shell、Python/R 运行时），见 [Skill 一览](#skill-一览)中的"环境要求"列；宿主不具备相应能力时，对应 Skill 可能无法发挥完整功能。
+部分 Skill 需要联网、shell 或 Python/R，见上表"环境要求"列。
 
 ## 更新
 
@@ -103,7 +101,7 @@ Skill 采用 [Agent Skills 规范](https://agentskills.io)的 `SKILL.md` 格式�
 npx skills update -g
 ```
 
-克隆后复制的：在本地仓库中拉取最新版本，再重新复制已安装的 Skill 目录。
+克隆安装的：拉取仓库后重新复制 Skill 目录。
 
 Windows PowerShell：
 
@@ -123,12 +121,12 @@ mkdir -p ~/.codex/skills/sci-select
 cp -R ~/xiaoyu-skill/skills/sci-select/. ~/.codex/skills/sci-select/
 ```
 
-使用 Claude Code 时，把路径中的 `.codex` 换成 `.claude` 即可。
+Claude Code 把路径中的 `.codex` 换成 `.claude`。
 
 ## 来源与合并基线
 
-各 Skill 来自作者独立维护的原仓库（见 [Skill 一览](#skill-一览)），本仓库保留各目录内的原许可证与必要声明。首次合并的基线 commit 见 [docs/PROVENANCE.md](docs/PROVENANCE.md)。
+各 Skill 原为独立仓库（见上表），合并基线 commit 见 [docs/PROVENANCE.md](docs/PROVENANCE.md)。
 
 ## License
 
-仓库采用 [MIT License](LICENSE)。各 Skill 目录同时保留了原项目的许可证和必要声明。
+[MIT License](LICENSE)。各 Skill 目录保留原项目的许可证和声明。

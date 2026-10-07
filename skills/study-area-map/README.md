@@ -1,8 +1,8 @@
 # study-area-map
 
-用 R 绘制论文研究区区位图的 Claude Code 技能。基于 ggplot2、sf、terra。
+用 R（ggplot2、sf、terra）绘制论文研究区区位图的 AI agent skill。
 
-负责快速搭出框架：投影、窗口、地形底图、专题图层、面板对齐、图廓件。配色、留白、标注位置与要素取舍出图后自行调整。
+负责搭出投影、窗口、地形底图、专题图层、面板对齐和图廓件；配色、留白、标注和要素取舍出图后自行调整。
 
 ## 功能
 
@@ -12,11 +12,11 @@
 - 一张定位图配多幅专题图，共用窗口，经纬度只标外侧，图例放在面板下方的图例条
 - 缩放引线，虚线锥连接相邻两级面板
 - 图内图例、针形指北针、比例尺
-- 投影窗口、DEM 缺值、图廓件压框、角框压盖陆地、强调色撞色、色带可分辨性，均自带断言
+- 自带断言：投影窗口、DEM 缺值、图廓件压框、角框压陆地、强调色重复、色带可分辨性
 
 ## 安装
 
-以下方式任选一种，同一台电脑不要用两种方式各装一份。
+任选一种，同一台电脑只装一份。
 
 **skills.sh（推荐，需要 Node.js）**
 
@@ -24,9 +24,9 @@
 npx skills add keros68/xiaoyu-skill --skill study-area-map -g
 ```
 
-安装时选择要装到的 Agent，也可以用 `-a claude-code` 指定。更新用 `npx skills update -g`。
+用 `-a claude-code` 指定 Agent；更新用 `npx skills update -g`。
 
-**交给 Agent 安装**：把这段发给正在用的 Agent：
+**交给 Agent 安装**：把下面这段发给正在用的 Agent：
 
 ```text
 用 skills.sh 安装 keros68/xiaoyu-skill 里的 study-area-map：运行
@@ -42,18 +42,20 @@ git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
 cp -R ~/xiaoyu-skill/skills/study-area-map ~/.claude/skills/study-area-map
 ```
 
-放在 `~/.claude/skills/` 下全部项目可用，放在项目的 `.claude/skills/` 下仅该项目可用。
+放在 `~/.claude/skills/` 下所有项目可用，放在项目的 `.claude/skills/` 下仅该项目可用。
 
-## 装好后怎么确认它在起作用
+## 使用
 
-1. 说"用 study-area-map 给我的研究区画一张两级区位图"：从 `example/` 里最接近的脚本（两级用 `taiyuan_locator.R`，三级用 `taiyuan_three_level.R`，配专题图用 `taiyuan_thematic.R`）复制出来，改开头的数据块，而不是从零写。
-2. 动手前先确定几级定位、主面板展示什么、底图多淡、研究区强调色、图例和图廓件放在哪。
-3. 脚本运行后输出 300 dpi PNG 和 150 dpi 预览两版。
-4. 窗口不对、DEM 有缺值、图例压到图框、角框压到陆地、强调色被别的要素占用时，脚本报断言错误停下，不出图。
+说"用 study-area-map 给我的研究区画一张两级区位图"。正常工作时的表现：
 
-## 用法
+- 复制 `example/` 中最接近的脚本（两级 `taiyuan_locator.R`，三级 `taiyuan_three_level.R`，配专题图 `taiyuan_thematic.R`），改开头的数据块。
+- 动手前先确定定位级数、主面板内容、底图深浅、强调色、图例和图廓件位置。
+- 输出 300 dpi PNG 和 150 dpi 预览。
+- 窗口错误、DEM 缺值、图例压框、角框压陆地或强调色重复时，断言报错，不出图。
 
-两个模块自带线宽、字号、字体注册与地图主题，加载后即可用。
+## R 调用
+
+模块自带线宽、字号、字体注册与地图主题，加载即可用。
 
 ```r
 SK <- "~/.claude/skills/study-area-map/reference/"
@@ -82,27 +84,27 @@ ggplot() +
   theme_map_pub()
 ```
 
-图面内的图例落在研究区上，是窗口贴着研究区取的必然结果：没有空角可放。`pad_until_clear()` 放大窗口直到图例区不压研究区，研究区因此画得小一些，让出的边缘正是图例落脚的地方。示例的太原窗口由此定在 19%。另一条路是把图例移到图框外，两者都成立。
+窗口贴着研究区取时，图内图例会压住研究区。`pad_until_clear()` 逐步放大窗口，直到图例不压研究区（示例太原窗口放大 19%）；也可把图例移到图框外。
 
-图例内部的行距按毫米排，所以要传面板高度。行距若按比例给，文字高度是固定的毫米数，面板一小文字占比就变大，刻度数字会压到图例自己的边框上。
+图例行距按毫米计算，需传入面板高度 `panel_h_mm`；按比例计算时，小面板上的刻度数字会压到图例边框。
 
-`coord_sf()` 必须排在所有 `geom_sf()` 之后。`geom_sf()` 自带一个默认 `coord_sf()`，排在其后会替换掉已设的窗口，面板退回数据全域。`assert_window(p, W)` 用于核验。
+`coord_sf()` 须放在所有 `geom_sf()` 之后，否则窗口会被默认坐标系覆盖。可用 `assert_window(p, W)` 核验。
 
-多面板拼版的顺序与单幅相反：先用 `pin_panel()` 把各面板尺寸定死，再用 `gridExtra::arrangeGrob()` 按毫米拼，最后由 `box_in()` 算出引线端点。完整流程见 `SKILL.md`。
+多面板拼版：先用 `pin_panel()` 固定各面板尺寸，再用 `gridExtra::arrangeGrob()` 按毫米拼接，最后由 `box_in()` 计算引线端点。完整流程见 `SKILL.md`。
 
 ## 示例
 
-`example/` 下三个脚本可以照着改，各出 300 dpi 成品与 150 dpi 预览两版；仓库只保存预览版。
+`example/` 下三个脚本可直接改用，仓库只保存 150 dpi 预览图。
 
-一张两级矢量定位图配四幅专题图：地形、土地利用、采样点、土壤有机碳。四幅共用一个窗口，面板等大，图例放在各面板下方。土地利用、采样点和有机碳是固定随机种子生成的模拟数据，只用于演示版式：
+两级定位图配四幅专题图（地形、土地利用、采样点、土壤有机碳），共用窗口，图例在面板下方。后三幅为固定随机种子生成的模拟数据，仅演示版式：
 
 ![专题组图示例](example/taiyuan_thematic_preview.png)
 
-三级版，`SCS_INSET <- FALSE`，窗口取全部要素，南海落在正图内，三级引线齐全：
+三级版，`SCS_INSET <- FALSE`，南海在正图内，三级引线齐全：
 
 ![三级区位图示例](example/taiyuan_three_level_preview.png)
 
-三级版，`SCS_INSET <- TRUE`，正图只放陆域，南海作角框。角框与引线锥占同一块地方，因此只保留山西到主图那一段引线，中国到山西由红色块本身指示：
+三级版，`SCS_INSET <- TRUE`，南海作角框。角框占用了引线位置，只保留山西到主图的引线：
 
 ![三级角框版](example/taiyuan_three_level_inset_preview.png)
 
@@ -110,13 +112,13 @@ ggplot() +
 
 ![两级区位图示例](example/taiyuan_locator_preview.png)
 
-示例需要三样数据（专题图层为模拟数据，不另需）：覆盖 N37–N38 / E111–E113 的 ASTER 压缩瓦片、含市县两级的行政区划 shp，以及自动下载的 GEBCO。脚本开头的路径改成自己的即可。压缩瓦片不必解包，`vsizip_tiles()` 会读归档拼出 GDAL 虚拟路径。
+运行示例需要：覆盖 N37–N38 / E111–E113 的 ASTER 压缩瓦片、含市县两级的行政区划 shp，以及自动下载的 GEBCO。改脚本开头的路径即可；压缩瓦片无需解压，`vsizip_tiles()` 直接读取。
 
 ## 自备数据
 
 仓库不含 shapefile 和栅格。
 
-不备数据也能出图：GEBCO 由 `ggmapcn::check_geodata()` 自动下载，可以画出带图例、指北针与图框的地形底图。研究区轮廓与行政边界必须自备 shp，否则图上只有地形。
+不备数据时，可用自动下载的 GEBCO 画出带图例、指北针和图框的地形底图。研究区轮廓与行政边界需自备 shp。
 
 | 用途 | 来源 | 说明 |
 |---|---|---|
@@ -125,15 +127,15 @@ ggplot() +
 | 研究区面板 30 m | Copernicus DEM GLO-30 | 开放，无需登录 |
 | 国家级面板 | GEBCO 2024，经 `ggmapcn::check_geodata()` | 0.05°，约 24 MB，自动下载 |
 
-本仓库示例的行政边界用「中国省市县标准行政区划数据 审图号GS（2024）0650号」，最终以使用者自备的版本为准。图件是否符合发表要求由使用者自行判断。
+示例行政边界为「中国省市县标准行政区划数据 审图号GS（2024）0650号」。图件是否符合发表要求由使用者判断。
 
-GEBCO 为 0.05°，约 5 km，用于国家级面板合适，用于省级面板偏粗。省级面板重采样到 700 m 显示后，图注须写明是概化地形。研究区面板需要真实 30 m DEM。
+GEBCO（0.05°，约 5 km）适合国家级面板，用于省级面板偏粗，需在图注写明为概化地形。研究区面板需用 30 m DEM。
 
-`ggmapcn` 的 jsDelivr 镜像返回 HTTP 403，函数会自行回退到 `raw.githubusercontent.com`。
+`ggmapcn` 的 jsDelivr 镜像返回 HTTP 403 时，会自动改从 `raw.githubusercontent.com` 下载。
 
 ## 配色
 
-六条色带，按低地是什么来选。
+六条色带，按低地类型选择。
 
 | 名称 | 低 → 高 | 适用 |
 |---|---|---|
@@ -144,13 +146,13 @@ GEBCO 为 0.05°，约 5 km，用于国家级面板合适，用于省级面板�
 | `cvd` | 蓝绿 → 卡其 → 橙 → 褐 | 避开红绿轴 |
 | `gray` | L\* 等距灰阶 | 黑白印刷 |
 
-`cols` 处处是普通字符向量，别的色带照样能用：`relief_rgb(dem, brk, viridisLite::viridis(6))`。
+`cols` 是普通颜色向量，也可传入其他色带：`relief_rgb(dem, brk, viridisLite::viridis(6))`。
 
-`preview_hypso(dem)` 用同一份 DEM 把全部色带各画一遍：
+`preview_hypso(dem)` 用同一份 DEM 预览全部色带：
 
 ![色带对照](example/hypso_preview.png)
 
-`check_ramp(cols)` 报相邻两类在正常视觉、色盲与灰度下的最小 Lab 距离。6 级实测：
+`check_ramp(cols)` 计算相邻两级在正常视觉、色盲和灰度下的最小 Lab 距离。6 级实测：
 
 | 色带 | 正常 | 绿色盲 | 红色盲 | 灰度 |
 |---|---|---|---|---|
@@ -161,7 +163,10 @@ GEBCO 为 0.05°，约 5 km，用于国家级面板合适，用于省级面板�
 | `cvd` | **18.1** | **19.0** | **14.5** | 8.4 |
 | `gray` | 11.7 | 11.7 | 11.7 | **11.7** |
 
-彩色分层设色的灰度距离为 1.5 至 8.4，黑白印刷用 `gray`。`cvd` 是唯一在色盲下仍保持分离的彩色色带。级数取 5 至 8：`terrain` 的正常视觉距离从 5 级的 21.4 降到 10 级的 9.4，红色盲下从 2.5 降到 0.5。阈值 10 是经验值，低于它两档的边界在 8 pt 图例上就看不出来。判定默认只算正常视觉与两种色盲，黑白印刷时把 `"gray"` 加进 `require`。
+- 黑白印刷用 `gray`；彩色色带的灰度距离只有 1.5–8.4。
+- 色盲读者用 `cvd`，它是唯一在色盲下仍可区分的彩色色带。
+- 级数建议 5–8。`terrain` 从 5 级增到 10 级时，正常视觉距离由 21.4 降到 9.4，红色盲下由 2.5 降到 0.5。
+- 距离阈值 10 为经验值，低于此值时 8 pt 图例上难以分辨相邻两级。默认只检查正常视觉和两种色盲，黑白印刷时在 `require` 中加入 `"gray"`。
 
 ## 模块
 
@@ -171,13 +176,10 @@ GEBCO 为 0.05°，约 5 km，用于国家级面板合适，用于省级面板�
 | `reference/palettes.R` | `pal_hypso()` `elev_breaks()` `elev_labels()` `preview_hypso()` `check_ramp()` `simulate_cvd()` `to_gray()` `assert_accent_unique()` `PAL_SURROUND` `BRK_SURROUND` |
 | `reference/thematic.R` | `class_rgb()` `graduated_sizes()` `legend_rows_block()` `assert_within_reserved()` `mm_win()` `legend_panel()` |
 
-各环节的原理与实测数据在 `guides/` 下，按窗口与投影、地形底图、专题图层、拼版与引线、图廓件、数据来源分为六篇。
+原理与实测数据见 `guides/`：窗口与投影、地形底图、专题图层、拼版与引线、图廓件、数据来源，共六篇。
 
-两处做法与常见写法不同。
-
-`relief_rgb()` 先按高程分箱取色，再乘以归一到均值 1 的山影系数，直接输出 RGB 栅格。山影只改变明暗，分级边界与饱和度都保留。常见的 alpha 叠压是朝下层插值，调高埋掉地形，调低埋掉颜色。`wash` 参数把颜色朝白色插值，供需要承载大量叠加符号的底图使用。
-
-色带可复用，分级边界不可复用。`elev_breaks(d, n)` 从该 DEM 自身的分位算出整数级差，首末开区间吸收长尾。
+- `relief_rgb()` 先按高程分级取色，再乘以均值为 1 的山影系数，输出 RGB 栅格。山影只改变明暗，分级边界和饱和度不变；常见的 alpha 叠加则会削弱地形或颜色。`wash` 参数把颜色向白色淡化，用于需要叠加大量符号的底图。
+- 色带可复用，分级边界不复用：`elev_breaks(d, n)` 按当前 DEM 的分位数计算整数级差，首末两级为开区间。
 
 ## 环境
 
@@ -187,7 +189,7 @@ R ≥ 4.3，ggplot2 ≥ 3.5，另需 sf、terra、tidyterra、ragg、systemfonts
 
 ## 致谢
 
-排版取值（8 pt 正文、1 pt 结构线、数据线加重、物理尺寸导出）沿用 [rfigure.skill](https://github.com/qwlei328-maker/rfigure.skill) 的约定。本技能自带这些常量，不需要另外安装。已有 rfigure.skill 的用户可以照旧用 `theme_qw_pub()`。
+排版取值（8 pt 正文、1 pt 结构线、数据线加重、物理尺寸导出）沿用 [rfigure.skill](https://github.com/qwlei328-maker/rfigure.skill) 的约定，常量已内置，无需另装；已装 rfigure.skill 的可继续用 `theme_qw_pub()`。
 
 国家级面板的 GEBCO 底图经 [ggmapcn](https://github.com/Rimagination/ggmapcn) 获取。
 

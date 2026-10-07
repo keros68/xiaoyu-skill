@@ -4,7 +4,7 @@ English | [简体中文](README.md)
 
 # xiaoyu-skill
 
-An open-source collection of Agent Skills for academic research: references · journal selection · thesis formatting · scientific figures · multi-model orchestration
+Agent Skills for academic research: references, journal selection, thesis formatting, scientific figures, multi-model orchestration.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Skills](https://img.shields.io/badge/skills-6-blueviolet)
@@ -12,7 +12,7 @@ An open-source collection of Agent Skills for academic research: references · j
 
 </div>
 
-Each skill is a self-contained directory with a `SKILL.md` that defines its trigger conditions, workflow, and deliverables. The agent matches the right skill automatically from the task description — no manual invocation needed. Install any single skill on its own, or keep the whole repository and update everything in one place.
+Each skill is a directory whose `SKILL.md` defines triggers, workflow, and deliverables. The agent matches skills from the task description; each skill can be installed on its own.
 
 ## Contents
 
@@ -81,8 +81,6 @@ After installing, the skill directory should contain `SKILL.md` directly. Start 
 Use sci-select to suggest candidate journals for this paper's title and abstract.
 ```
 
-Each skill directory has its own `README.md` with detailed usage; `SKILL.md` defines the workflow, triggers, and deliverables.
-
 ## Supported Agents
 
 Skills follow the [Agent Skills specification](https://agentskills.io) (`SKILL.md` format) and work with any host that reads it:
@@ -93,7 +91,7 @@ Skills follow the [Agent Skills specification](https://agentskills.io) (`SKILL.m
 | Claude Code | `~/.claude/skills/` |
 | Other compatible hosts | See host documentation |
 
-Note: some skills depend on host capabilities (internet access, shell, Python/R runtime) — see the Requirements column in [Skills](#skills). Skills may not be fully functional on hosts lacking the required capability.
+Some skills need internet access, a shell, or Python/R; see the Requirements column above.
 
 ## Updating
 
