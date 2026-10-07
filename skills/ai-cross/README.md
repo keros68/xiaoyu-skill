@@ -51,16 +51,41 @@
 
 ## 安装
 
-从 `xiaoyu-skill` 仓库复制这个 skill 子目录到宿主的 skills 目录：
+以下方式任选一种，同一台电脑不要用两种方式各装一份。
+
+**skills.sh（推荐，需要 Node.js）**
+
+```bash
+npx skills add keros68/xiaoyu-skill --skill ai-cross -g
+```
+
+安装时选择要装到的 Agent，也可以用 `-a claude-code -a codex -a kimi-code-cli -a pi` 指定。更新用 `npx skills update -g`。
+
+**交给 Agent 安装**：把这段发给正在用的 Agent：
+
+```text
+用 skills.sh 安装 keros68/xiaoyu-skill 里的 ai-cross：运行
+npx skills add keros68/xiaoyu-skill --skill ai-cross -g -a <你自己对应的 agent 名，如 claude-code、codex、kimi-code-cli、pi>
+不要手动复制文件。如果你是 Claude Code，再把装好的 ai-cross/agents/ 下的 *.md 复制到 ~/.claude/agents/。
+装完提醒我新开会话，然后说"使用 ai-cross 盘点模型"。
+```
+
+**克隆后复制**
 
 ```text
 # Claude Code
 git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
 cp -R ~/xiaoyu-skill/skills/ai-cross ~/.claude/skills/ai-cross
-# agents/*.md 另拷到 ~/.claude/agents/，内部 subagent 分层才可用
 ```
 
-Windows 上 `~` 即 `C:\Users\<用户名>`，装完新开会话生效。其他宿主放进各自的 skills 目录（Qoder 见 `qoder/HOWTO.md`），不支持 skill loader 的把 `SKILL.md` 当项目规则用。
+Claude Code 的内部 subagent 分层（scout / worker / heavy / advisor）要另把 `agents/*.md` 拷到 `~/.claude/agents/`，skills.sh 不会代拷。Windows 上 `~` 即 `C:\Users\<用户名>`，装完新开会话生效。其他宿主放进各自的 skills 目录（Qoder 见 `qoder/HOWTO.md`），不支持 skill loader 的把 `SKILL.md` 当项目规则用。
+
+## 装好后怎么确认它在起作用
+
+1. 新开会话说"使用 ai-cross 盘点模型"：列出本机检测到的 agent CLI 与模型，等你确认；确认后生成 `~/.aicross/skill/manifest.json`（设了 `AICROSS_HOME` 则在其下）。
+2. 说"让别家审一下这段代码"：先给出一行路由决策（派给哪个模型、什么档位、理由）和外发说明（发给谁、多大、脱敏几处），你同意之前什么都不发送。
+3. 同意后，项目下出现 `.dispatch/<日期时间>-...md`，里面记着任务原文、应答模型和原始输出；应答模型应与方案里写的一致。
+4. 只说"帮我检查一下"、没提别的模型时，它不会触发。
 
 ## 快速开始
 
@@ -102,7 +127,7 @@ The project is released under the MIT License. Redistribution, forks, modified v
 
 ai-cross is a skill for AI agents: it routes each task to a model tier chosen by task type, has models from a different vendor cross-check important outputs, and writes every dispatch to `.dispatch/` for later review. It is not a majority-voting tool: verifiable facts are validated by running code or tests, and unresolved disagreements are presented side by side. Cross-vendor review needs at least two vendors; with one, tiered dispatch still works and the inventory report says so explicitly.
 
-Install by cloning into `~/.claude/skills/ai-cross`, then run `Use $ai-cross to inventory my available models.` The first run read-only detects installed CLIs, their model lists and cc-switch providers (no login, no model calls, no keys printed), asks you to confirm once, smoke-tests each entry, and saves the result to `~/.aicross/skill/manifest.json`. That file is shared by every host on the machine and survives skill updates, so inventory is done once per machine. After that, "have another vendor review this" uses the default reviewer picked from it.
+Install with `npx skills add keros68/xiaoyu-skill --skill ai-cross -g` (or clone into `~/.claude/skills/ai-cross`; pick one method), then run `Use $ai-cross to inventory my available models.` The first run read-only detects installed CLIs, their model lists and cc-switch providers (no login, no model calls, no keys printed), asks you to confirm once, smoke-tests each entry, and saves the result to `~/.aicross/skill/manifest.json`. That file is shared by every host on the machine and survives skill updates, so inventory is done once per machine. After that, "have another vendor review this" uses the default reviewer picked from it.
 
 ## License
 

@@ -36,40 +36,46 @@ Each skill is a self-contained directory with a `SKILL.md` that defines its trig
 
 ## Quick Start
 
-**1. Clone the repository**
+Pick one of the three install methods. Do not install the same skill twice by different methods, or the host loads two copies.
+
+**Option 1: skills.sh (recommended)**
+
+Requires Node.js. Using `sci-select` as the example: `-g` installs to your user directory for all projects; drop `-g` to install into the current project only.
+
+```bash
+npx skills add keros68/xiaoyu-skill --skill sci-select -g
+```
+
+Choose the target agents when prompted (Claude Code, Codex, Kimi Code CLI, pi, and others), or pass `-a claude-code -a codex`. `--list` shows every skill in the repository.
+
+**Option 2: let your agent install it**
+
+Send this to the agent you are using, replacing `<skill name>`:
+
+```text
+Install <skill name> from keros68/xiaoyu-skill with skills.sh: run
+npx skills add keros68/xiaoyu-skill --skill <skill name> -g -a <your own agent name, e.g. claude-code, codex, kimi-code-cli, pi>
+Do not copy files by hand. Afterwards read that skill's README.md and tell me whether I need a new session and what to say on first use.
+```
+
+**Option 3: clone and copy**
 
 Windows PowerShell:
 
 ```powershell
 git clone https://github.com/keros68/xiaoyu-skill.git "$env:USERPROFILE\xiaoyu-skill"
-```
-
-macOS / Linux:
-
-```bash
-git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
-```
-
-**2. Copy the skills you need into your agent's user skills directory**
-
-The examples below install `sci-select`; substitute any other skill directory name. After installing, the skill directory should contain `SKILL.md` directly.
-
-Windows PowerShell:
-
-```powershell
 Copy-Item -Recurse "$env:USERPROFILE\xiaoyu-skill\skills\sci-select" "$env:USERPROFILE\.codex\skills\sci-select"
 ```
 
 macOS / Linux:
 
 ```bash
+git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
 mkdir -p ~/.codex/skills
 cp -R ~/xiaoyu-skill/skills/sci-select ~/.codex/skills/
 ```
 
-**3. Describe your task in the conversation**
-
-Matching skills activate automatically by their trigger rules; you can also name one explicitly:
+After installing, the skill directory should contain `SKILL.md` directly. Start a new session and describe your task; matching skills activate by their trigger rules, or name one explicitly:
 
 ```text
 Use sci-select to suggest candidate journals for this paper's title and abstract.
@@ -91,7 +97,13 @@ Note: some skills depend on host capabilities (internet access, shell, Python/R 
 
 ## Updating
 
-Pull the latest version in your local clone, then re-copy the installed skill directories.
+Installed with skills.sh:
+
+```bash
+npx skills update -g
+```
+
+Cloned and copied: pull the latest version in your local clone, then re-copy the installed skill directories.
 
 Windows PowerShell:
 

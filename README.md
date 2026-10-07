@@ -36,40 +36,46 @@
 
 ## 快速开始
 
-**1. 克隆仓库**
+三种安装方式任选一种。同一个 Skill 不要用两种方式各装一份，否则宿主会加载两份。
+
+**方式一：skills.sh（推荐）**
+
+需要 Node.js。以 `sci-select` 为例，`-g` 装到用户目录，所有项目可用；去掉 `-g` 只装进当前项目：
+
+```bash
+npx skills add keros68/xiaoyu-skill --skill sci-select -g
+```
+
+安装时选择要装到的 Agent（Claude Code、Codex、Kimi Code CLI、pi 等），也可以用 `-a claude-code -a codex` 指定。`--list` 列出仓库里的全部 Skill。
+
+**方式二：交给 Agent 安装**
+
+把下面这段发给正在用的 Agent，把 `<skill 名>` 换成要装的 Skill：
+
+```text
+用 skills.sh 安装 keros68/xiaoyu-skill 里的 <skill 名>：运行
+npx skills add keros68/xiaoyu-skill --skill <skill 名> -g -a <你自己对应的 agent 名，如 claude-code、codex、kimi-code-cli、pi>
+不要手动复制文件。装完读一遍该 Skill 目录里的 README.md，告诉我是否需要新开会话，以及第一次使用要说的话。
+```
+
+**方式三：克隆后复制**
 
 Windows PowerShell：
 
 ```powershell
 git clone https://github.com/keros68/xiaoyu-skill.git "$env:USERPROFILE\xiaoyu-skill"
-```
-
-macOS / Linux：
-
-```bash
-git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
-```
-
-**2. 把需要的 Skill 复制到 Agent 的用户 Skill 目录**
-
-以 `sci-select` 为例，安装其他 Skill 时换成对应目录名。安装后，Skill 目录内应直接包含 `SKILL.md`。
-
-Windows PowerShell：
-
-```powershell
 Copy-Item -Recurse "$env:USERPROFILE\xiaoyu-skill\skills\sci-select" "$env:USERPROFILE\.codex\skills\sci-select"
 ```
 
 macOS / Linux：
 
 ```bash
+git clone https://github.com/keros68/xiaoyu-skill.git ~/xiaoyu-skill
 mkdir -p ~/.codex/skills
 cp -R ~/xiaoyu-skill/skills/sci-select ~/.codex/skills/
 ```
 
-**3. 在对话中直接描述任务**
-
-符合用途的 Skill 会按其触发规则自动启用，也可以在提示词中点名：
+安装后，Skill 目录内应直接包含 `SKILL.md`。装好后新开会话，在对话中直接描述任务；符合用途的 Skill 会按其触发规则自动启用，也可以在提示词中点名：
 
 ```text
 使用 sci-select，根据这篇论文的标题和摘要给出候选期刊。
@@ -91,7 +97,13 @@ Skill 采用 [Agent Skills 规范](https://agentskills.io)的 `SKILL.md` 格式�
 
 ## 更新
 
-在本地仓库中拉取最新版本，再重新复制已安装的 Skill 目录。
+用 skills.sh 安装的：
+
+```bash
+npx skills update -g
+```
+
+克隆后复制的：在本地仓库中拉取最新版本，再重新复制已安装的 Skill 目录。
 
 Windows PowerShell：
 
