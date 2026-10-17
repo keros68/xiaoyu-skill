@@ -32,7 +32,10 @@
 | 论文格式 | [`cugb-doctoral-thesis-format`](skills/cugb-doctoral-thesis-format/) | 中国地质大学（北京）博士论文 DOCX 格式预检与定稿审查 | Python（DOCX 处理） | [keros68/cugb-doctoral-thesis-format](https://github.com/keros68/cugb-doctoral-thesis-format) |
 | 学术制图 | [`abstract-fig`](skills/abstract-fig/) | 可编辑的论文图形摘要、概念/机制图、技术路线图（draw.io） | draw.io 查看与编辑；图像生成工具可选 | [keros68/abstract-fig](https://github.com/keros68/abstract-fig) |
 | 学术制图 | [`study-area-map`](skills/study-area-map/) | 研究区区位图、地形晕渲底图、土地利用与采样点等专题图层、多面板地图组织 | R（ggplot2 + sf + terra） | [keros68/study-area-map.skill](https://github.com/keros68/study-area-map.skill) |
+| 学术制图（外部） | [`gis-plot-editor`](https://github.com/liujiayuGIS/gis-plot-editor) | Python GIS 可编辑 Matplotlib 图件；支持本地编辑、撤销恢复与复现导出 | Python 3.11+、Tk、Windows 桌面 | [liujiayuGIS/gis-plot-editor](https://github.com/liujiayuGIS/gis-plot-editor) |
 | 多模型协作 | [`ai-cross`](skills/ai-cross/) | 多模型分工派发、分层执行与跨厂商交叉验证 | 宿主需支持 shell；交叉验证需两家以上厂商的模型 | — |
+
+`gis-plot-editor` 由上游仓库独立维护，此处仅作外部推荐，不随本仓库分发。安装请按上游说明运行 `npx skills add liujiayuGIS/gis-plot-editor --skill gis-plot-editor`。
 
 ## 快速开始
 
