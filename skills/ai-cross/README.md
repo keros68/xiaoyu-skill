@@ -33,7 +33,7 @@
 
 ## 工作原理
 
-**盘点**：`references/inventory.py` 只读检测本机的 agent CLI、模型清单和 cc-switch 供应商（不登录、不调用模型、不输出密钥），用户确认后做冒烟测试。模型 ID 与检测结果不符的拒收。结果存于 `~/.aicross/skill/manifest.json`（设了 `AICROSS_HOME` 则在其下），各宿主共用，skill 更新不影响。
+**盘点**：`references/inventory.py` 只读检测本机的 agent CLI、模型清单和 cc-switch 供应商（不登录、不调用模型、不输出密钥），用户确认后做冒烟测试。模型 ID 与检测结果不符的拒收。之后出了新模型，`inventory.py diff` 对比上次确认时的清单，列出新模型和已下线的档位，由用户决定换不换。结果存于 `~/.aicross/skill/manifest.json`（设了 `AICROSS_HOME` 则在其下），各宿主共用，skill 更新不影响。
 
 **默认人选**：未指定时由脚本选择。审查者避开被审产出的厂商，订阅内模型优先于按次计费；宿主底层模型不确定时，改由两家外部厂商互审。用户说"以后审查都先用某家"即修改默认值。
 

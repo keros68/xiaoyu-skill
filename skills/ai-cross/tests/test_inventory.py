@@ -80,7 +80,8 @@ class Base(unittest.TestCase):
         return code, json.loads(out)
 
     def setm(self, **kw):
-        args = dict(smoke=None, billing=None, reviewers=None, executor=None, note=None, remove=None)
+        args = dict(smoke=None, billing=None, reviewers=None, executor=None, note=None, remove=None,
+                    tier=None, ack=None)
         args.update(kw)
         return self.call(inventory.cmd_set, **args)
 
@@ -314,6 +315,101 @@ class TestSet(Base):
     def test_no_manifest_exits_3(self):
         inventory.manifest_path().unlink()
         self.assertEqual(self.call(inventory.cmd_show, human=False)[0], 3)
+
+
+# 一段时间后：codex 出了新模型、换掉了旧的高档，agy 多列了一个 Claude，新登录了一个 pi provider
+LATER = {"channels": [
+    channel("claude", ["haiku", "sonnet", "opus"], isolation="full"),
+    channel("codex", ["gpt-6-luna", "gpt-6.2-sol"], path="C:/bin/codex.cmd"),
+    channel("agy", ["gemini-3.8-flash-low", "gemini-3.8-flash-high", "claude-opus-5-5-high", "claude-fable-5-1"]),
+    channel("pi:zai-coding-cn", ["glm-5.3-flash", "glm-5.3"], kind="pi", isolation="full"),
+    channel("pi:opencode-go", ["hy3", "grok-4.7"], kind="pi", isolation="full"),
+    channel("pi:minimax", ["minimax-m3"], kind="pi", isolation="full"),
+]}
+
+
+class TestDiff(Base):
+    def setUp(self):
+        super().setUp()
+        plan = json.loads(json.dumps(PLAN))
+        plan["entries"].append({"channel": "agy", "billing": "subscription",
+                                "tiers": {"low": "gemini-3.8-flash-low"}})
+        self.save(plan)
+
+    def diff(self, detected=LATER):
+        with mock.patch.object(inventory, "detect", return_value=detected):
+            code, out, _ = self.call(inventory.cmd_diff, human=False)
+        return code, json.loads(out)
+
+    def test_save_records_baseline_and_no_change(self):
+        entry = next(e for e in self.manifest()["entries"] if e["id"] == "codex.openai")
+        self.assertEqual(entry["seen_models"], ["gpt-6-luna", "gpt-6.1-sol"])
+        _, report = self.diff(FAKE)
+        self.assertEqual((report["changed"], report["unread"]), ([], []))
+
+    def test_reports_new_gone_new_channel_and_unread(self):
+        _, report = self.diff()
+        rows = {r["id"]: r for r in report["changed"]}
+        self.assertEqual([m["id"] for m in rows["codex.openai"]["new"]], ["gpt-6.2-sol"])
+        self.assertEqual(rows["codex.openai"]["gone"], {"high": "gpt-6.1-sol"})
+        self.assertEqual(rows["codex.openai"]["candidates"], ["gpt-6.2-sol"])
+        self.assertNotIn("agy.google", rows)                    # 新增的 Claude 不算 Google 条目的新模型
+        self.assertIn("pi:minimax", [c["id"] for c in report["new_channels"]])
+        self.assertIn("cc-switch-deepseek.deepseek", [u["id"] for u in report["unread"]])
+        self.assertEqual(self.manifest()["checked"], date.today().isoformat())
+
+    def test_tier_swap_then_ack_silences(self):
+        with mock.patch.object(inventory, "detect", return_value=LATER):
+            code, _, _ = self.setm(tier=["codex.openai:high=gpt-6.2-sol"])
+        self.assertEqual(code, 0)
+        entry = next(e for e in self.manifest()["entries"] if e["id"] == "codex.openai")
+        self.assertEqual(entry["tiers"], {"low": "gpt-6-luna", "high": "gpt-6.2-sol"})
+        self.assertEqual(entry["smoke"]["status"], "untested")
+        _, report = self.diff()
+        self.assertNotIn("codex.openai", [r["id"] for r in report["changed"]])
+
+    def test_tier_rejects_unlisted_or_other_vendor(self):
+        before = self.manifest()
+        with mock.patch.object(inventory, "detect", return_value=LATER):
+            self.assertEqual(self.setm(tier=["codex.openai:high=gpt-7"])[0], 2)
+            self.assertEqual(self.setm(tier=["agy.google:high=claude-fable-5-1"])[0], 2)
+            self.assertEqual(self.setm(tier=["codex.openai:top=gpt-6.2-sol"])[0], 2)
+        self.assertEqual(self.manifest(), before)
+
+    def test_unused_channel_from_save_and_acked_channel_not_reported(self):
+        _, report = self.diff()
+        ids = [c["id"] for c in report["new_channels"]]
+        self.assertEqual(ids, ["pi:minimax"])                    # save 时见过的 pi:opencode-go 不算新通道
+        with mock.patch.object(inventory, "detect", return_value=LATER):
+            self.assertEqual(self.setm(ack=["pi:minimax"])[0], 0)
+        _, report = self.diff()
+        self.assertEqual(report["new_channels"], [])
+
+    def test_ack_all_keeps_reporting_gone_tier(self):
+        with mock.patch.object(inventory, "detect", return_value=LATER):
+            self.assertEqual(self.setm(ack=["all"])[0], 0)
+        _, report = self.diff()
+        rows = {r["id"]: r for r in report["changed"]}
+        self.assertEqual(rows["codex.openai"]["new"], [])
+        self.assertEqual(rows["codex.openai"]["gone"], {"high": "gpt-6.1-sol"})
+
+    def test_old_manifest_gets_baseline_and_reminder(self):
+        data = self.manifest()
+        for e in data["entries"]:
+            e.pop("seen_models", None)
+        data.pop("checked")
+        data.pop("seen_channels")
+        inventory.write_manifest(data)
+        _, res = self.pick("claude-code")
+        self.assertIn("还没检查过新模型", res["notes"][-1])
+        _, report = self.diff()
+        rows = {r["id"]: r for r in report["changed"]}
+        self.assertEqual(list(rows), ["codex.openai"])           # 建基线时不报新模型，但档位消失照报
+        self.assertEqual((rows["codex.openai"]["new"], rows["codex.openai"]["gone"]), ([], {"high": "gpt-6.1-sol"}))
+        self.assertEqual(report["new_channels"], [])
+        self.assertIn("codex.openai", report["baselined"])
+        _, res = self.pick("claude-code")
+        self.assertFalse(any("新模型" in n for n in res["notes"]))
 
 
 if __name__ == "__main__":

@@ -377,6 +377,7 @@ aicross recover <run_id> [--rollback]   # 引擎中断后核对；--rollback 恢
 
 **模型 ID 漂移**（模型在迭代，如 glm-4.6→GLM-4.7→GLM-5.2、gpt-5.4→5.5）：
 - **权威来源分两类**：有本地事实源的（codex `models_cache.json`、kimi `config.toml`、cc-switch 映射、aichat `--list-models`）**运行时读，本文件只记"去哪读"**；没有事实源的（如 coding plan 端点在售 ID）才把值记在本文件。本文件模板里出现的具体 ID 都是**示例快照**，以事实源/官方文档当前值为准。漂了改这里即可，skill 其余逻辑不动。
+- **新模型上线**：旧模型通常还能用，冒烟和报错都不会提示。发现靠 `inventory.py diff`（与 save 时记下的各通道清单比对，`pick`/`show` 超过 7 天未检查会提醒），换档用 `set --tier`，不换用 `set --ack`；流程见 `setup.md`「之后：出了新模型」。claude 通道用 haiku/sonnet/opus 别名，自动跟随新版，不在比对范围内；`manual:` 条目没有可读清单，靠用户申报。
 - 派发命中"unknown model / 模型不存在"类错误：先去掉 `-m`/`--model` 用该 CLI **默认模型**重试（默认通常跟随当前版），再提示用户更新本文件对应行。
 - 支持枚举/有本地缓存的以其为准（`aichat --list-models`、codex 的 `~/.codex/models_cache.json`、kimi 的 `config.toml`）；都没有的（claude/gemini）以各家官方文档当前型号为准。
 

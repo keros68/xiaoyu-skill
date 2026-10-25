@@ -7,13 +7,17 @@ ai-cross 的盘点脚本：探测本机模型入口，把用户确认过的清�
   save --plan FILE        把用户确认过的方案写进 manifest（同名条目覆盖，其余保留）。
        [--replace]        模型 ID 逐个对照探测结果，不在清单里的拒收。--replace 先清空旧条目。
   show [--human]          输出 manifest，标出超过 30 天未冒烟的条目。
+  diff [--human]          重新探测，与上次确认时各通道的模型清单比对：新出现的模型、档位里已消失的模型、
+                          还没纳入的通道。只报告，不改档位；会记下检查日期。
   pick --role reviewer|executor --host NAME
        [--author VENDOR|none] [--n N] [--tier low|mid|high]
                           选默认人选。reviewer 排除被审产出的厂商（默认是宿主厂商），
                           多选时各选不同厂商。
   set  [--smoke ENTRY=ok|fail[:原因]] [--billing ENTRY=subscription|per-call]
        [--reviewers A,B,...] [--executor ENTRY[:tier]] [--note 文本] [--remove ENTRY]
-                          改 manifest 里的单项。
+       [--tier ENTRY:TIER=MODEL] [--ack ENTRY|CHANNEL|all]
+                          改 manifest 里的单项。--tier 换一个档位的模型（须在实读清单里，冒烟记录清空）；
+                          --ack 把条目当前的模型清单或一个未纳入的通道记为已看过，diff 不再提示。
 
 manifest 位置：$AICROSS_HOME/skill/manifest.json，未设 AICROSS_HOME 时是 ~/.aicross/skill/manifest.json。
 它在用户主目录下，各宿主共用一份，skill 更新不影响它。
@@ -39,6 +43,7 @@ import cc_switch  # noqa: E402  同目录的只读桥，复用它的 provider �
 HOME = Path.home()
 SCHEMA = "ai-cross-manifest/1"
 STALE_DAYS = 30
+CHECK_DAYS = 7  # 超过这么久没跑 diff，pick / show 提示检查新模型
 TIERS = ("low", "mid", "high")
 BILLING = ("subscription", "unknown", "per-call")  # 也是选人时的先后顺序
 
@@ -473,6 +478,7 @@ def build_entry(item, channels):
                 entry[key] = ch[key]
         vendors = {known[mid]["vendor"] for mid in tiers.values()} - {None}
         unknown = [mid for mid in tiers.values() if not known[mid]["vendor"]]
+        entry["seen_models"] = sorted(known)  # diff 的比对基线
 
     vendor = canon_vendor(item.get("vendor"))
     if not vendor:
@@ -536,6 +542,8 @@ def cmd_save(args):
         old[entry["id"]] = entry
         new_ids.append(entry["id"])
     data["entries"] = list(old.values())
+    data["seen_channels"] = sorted(channels)  # 拟方案时用户看过全部通道，没选的不再算新通道
+    data["checked"] = today()
     drop_dangling_roles(data)
     write_manifest(data)
     print(f"已写入 {manifest_path()}：{len(new_ids)} 个条目（共 {len(data['entries'])} 个）。")
@@ -585,6 +593,9 @@ def print_manifest(data):
     print("默认执行者：" + (f"{executor['entry']}（{executor['tier']} 档）" if executor else "未设，按路由表"))
     for note in data["notes"]:
         print(f"备注（{note.get('date', '')}）：{note.get('text', '')}")
+    reminder = check_reminder(data)
+    if reminder:
+        print(reminder)
 
 
 def cmd_show(args):
@@ -595,7 +606,97 @@ def cmd_show(args):
     for e in data["entries"]:
         e["stale"] = (stale_days(e) or 0) > STALE_DAYS
     data["reviewer_order"] = reviewer_order(data)
+    reminder = check_reminder(data)
+    if reminder:
+        data["check_reminder"] = reminder
     print(json.dumps(data, ensure_ascii=False, indent=2))
+
+
+# ---------- 新模型检查 ----------
+
+def check_reminder(data):
+    """距上次比对清单太久时返回一句提示。只看日期，不在这里探测，免得拖慢每次派发。"""
+    try:
+        days = (date.today() - date.fromisoformat(data["checked"])).days
+    except (KeyError, TypeError, ValueError):
+        days = None
+    if days is not None and days <= CHECK_DAYS:
+        return None
+    since = f"已 {days} 天没检查新模型" if days is not None else "还没检查过新模型"
+    return f"{since}：跑 inventory.py diff --human 看各通道有没有新模型。"
+
+
+def compare(data, channels):
+    """manifest 与实读清单比对。没有基线的条目与通道就地补上基线（不算新出现）。"""
+    changed, unread, baselined = [], [], []
+    if "seen_channels" not in data:
+        data["seen_channels"] = sorted(channels)
+        baselined.append("通道列表")
+    known_channels = {e["channel"] for e in data["entries"]} | set(data["seen_channels"])
+    for e in data["entries"]:
+        if e.get("kind") == "manual":
+            continue
+        ch = channels.get(e["channel"])
+        if not ch or not ch["models"]:
+            unread.append({"id": e["id"], "reason": (ch or {}).get("source") or "本机没有探测到这个通道"})
+            continue
+        now = {m["id"]: m for m in ch["models"]}
+        if "seen_models" not in e:
+            e["seen_models"] = sorted(now)
+            baselined.append(e["id"])
+        seen = set(e["seen_models"])
+        # 同一通道可能跨厂商（如 agy 也列 Claude），只报这个条目所属厂商或认不出厂商的
+        own = [m for m in now.values() if m.get("vendor") in (e["vendor"], None)]
+        new = [m for m in own if m["id"] not in seen]
+        gone = {t: mid for t, mid in e["tiers"].items() if mid not in now}
+        if new or gone:
+            row = {"id": e["id"], "channel": e["channel"], "tiers": e["tiers"], "new": new, "gone": gone}
+            if gone:  # 档位断了要当场能换：列出同厂商的现有模型
+                in_use = set(e["tiers"].values())
+                row["candidates"] = [m["id"] for m in own if m["id"] not in in_use]
+            changed.append(row)
+    new_channels = [{"id": cid, "models": [m["id"] for m in ch["models"]], "vendors": vendors_line(ch["models"])}
+                    for cid, ch in channels.items() if cid not in known_channels and ch["models"]]
+    return {"changed": changed, "new_channels": new_channels, "unread": unread, "baselined": baselined}
+
+
+def print_diff(report):
+    print("新模型检查（实读各通道清单，与上次确认时比对）\n")
+    for row in report["changed"]:
+        tiers = " / ".join(f"{t}={row['tiers'][t]}" for t in TIERS if t in row["tiers"])
+        print(f"[{row['id']}]  现用 {tiers}")
+        for m in row["new"]:
+            hint = f"（cc-switch 现映射到 {m['tier']} 档）" if m.get("tier") else ""
+            note = f"  {m['note']}" if m.get("note") else ""
+            print(f"    新出现：{m['id']}{hint}{note}")
+        for t, mid in row["gone"].items():
+            print(f"    {t} 档的 {mid} 已不在清单里，派发会失败或被静默替换")
+        if row.get("candidates"):
+            print("    可换：" + "、".join(row["candidates"]))
+    for ch in report["new_channels"]:
+        print(f"未纳入的通道：[{ch['id']}]  {len(ch['models'])} 个模型，厂商 {ch['vendors']}")
+    for row in report["unread"]:
+        print(f"读不到清单、未比对：{row['id']}（{row['reason']}）")
+    if report["baselined"]:
+        print("首次记下模型清单，下次起比对：" + "、".join(report["baselined"]))
+    if not (report["changed"] or report["new_channels"]):
+        print("没有新模型，档位里的模型都还在。")
+        return
+    print("\n换档：inventory.py set --tier <条目>:<low|mid|high>=<模型ID>（换后冒烟记录清空，派发前先冒烟）")
+    print("不换：inventory.py set --ack <条目或通道>（或 all），以后不再提示")
+    if report["new_channels"]:
+        print("纳入新通道：按 setup.md 第 2–3 步拟方案后 save")
+
+
+def cmd_diff(args):
+    data = load_manifest()
+    report = compare(data, {ch["id"]: ch for ch in detect()["channels"]})
+    data["checked"] = today()
+    write_manifest(data)
+    if args.human:
+        print_diff(report)
+    else:
+        print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 def describe(entry, tier):
@@ -656,6 +757,9 @@ def choose_reviewers(data, host, author=None, n=None, tier=None):
     if len(picked) < count:
         notes.append(f"需要 {count} 家不同厂商，manifest 里只凑得出 {len(picked)} 家。"
                      + ("交叉验证不可用，同厂商复查只算复核。" if not picked else ""))
+    reminder = check_reminder(data)
+    if reminder:
+        notes.append(reminder)
     return {"role": "reviewer", "host": host, "author_vendor": author, "picked": picked, "notes": notes}
 
 
@@ -678,6 +782,9 @@ def cmd_pick(args):
             print(json.dumps({"role": "executor", "picked": [],
                               "notes": ["没有设默认执行者，按 rules.md 的路由表选。"]}, ensure_ascii=False, indent=2))
             return
+        reminder = check_reminder(data)
+        if reminder:
+            notes.append(reminder)
         print(json.dumps({"role": "executor", "picked": [describe(entry, args.tier or executor["tier"])],
                           "notes": notes}, ensure_ascii=False, indent=2))
         return
@@ -740,8 +847,53 @@ def cmd_set(args):
     if args.note:
         data["notes"].append({"date": today(), "text": args.note})
         done.append("已记备注")
+    live = None  # 实读清单，--tier / --ack 用到时才探测
+    for item in args.tier or []:
+        key, mid = split_pair(item, "--tier")
+        entry_id, _, tier = key.partition(":")
+        if tier not in TIERS:
+            fail(f"--tier 的写法是 条目:low|mid|high=模型ID，收到 {item}")
+        entry = find_entry(data, entry_id)
+        if entry.get("kind") != "manual":
+            live = live or {ch["id"]: ch for ch in detect()["channels"]}
+            ch = live.get(entry["channel"])
+            known = {m["id"]: m for m in ch["models"]} if ch else {}
+            if mid not in known:
+                fail(f"{entry_id}：模型 {mid} 不在 {entry['channel']} 的实读清单里。"
+                     f"清单：{'、'.join(known) or '（读不到）'}")
+            vendor = known[mid]["vendor"]
+            if vendor and vendor != entry["vendor"]:
+                fail(f"{entry_id} 是 {entry['vendor']} 的条目，{mid} 看起来属于 {vendor}。"
+                     f"一个条目只放一家厂商的模型，另起条目用 save。")
+            entry["seen_models"] = sorted(set(entry.get("seen_models", [])) | {mid})
+        entry["tiers"][tier] = mid
+        entry["tiers"] = {t: entry["tiers"][t] for t in TIERS if t in entry["tiers"]}
+        entry["smoke"] = {"status": "untested", "date": None}
+        done.append(f"{entry_id} 的 {tier} 档换成 {mid}，冒烟记录已清空，派发前先冒烟")
+    for entry_id in args.ack or []:
+        live = live or {ch["id"]: ch for ch in detect()["channels"]}
+        ids = {e["id"] for e in data["entries"]}
+        if entry_id == "all" or (entry_id in live and entry_id not in ids):  # 通道名：不纳入，也不再提示
+            seen = set(data.get("seen_channels", [])) | (set(live) if entry_id == "all" else {entry_id})
+            data["seen_channels"] = sorted(seen)
+        if entry_id == "all":
+            targets = [e for e in data["entries"] if e.get("kind") != "manual"]
+        elif entry_id in live and entry_id not in ids:
+            targets = []
+        else:
+            targets = [find_entry(data, entry_id)]
+        for entry in targets:
+            ch = live.get(entry["channel"])
+            if entry.get("kind") == "manual" or not ch or not ch["models"]:
+                if entry_id == "all":
+                    continue
+                fail(f"{entry['id']}：读不到它的模型清单，没有可确认的内容。")
+            entry["seen_models"] = sorted(m["id"] for m in ch["models"])
+        data["checked"] = today()
+        done.append(f"{entry_id} 记为已看过")
     if not done:
-        fail("没有要改的内容。可用：--smoke / --billing / --reviewers / --executor / --note / --remove")
+        fail("没有要改的内容。可用：--smoke / --billing / --reviewers / --executor / --note / --remove"
+             " / --tier / --ack")
     write_manifest(data)
     print("；".join(done) + "。")
 
@@ -756,6 +908,8 @@ def main():
     s.add_argument("--replace", action="store_true", help="先清空旧条目")
     w = sub.add_parser("show", help="输出 manifest")
     w.add_argument("--human", action="store_true")
+    f = sub.add_parser("diff", help="检查各通道有没有新模型")
+    f.add_argument("--human", action="store_true")
     k = sub.add_parser("pick", help="选默认人选")
     k.add_argument("--role", required=True, choices=["reviewer", "executor"])
     k.add_argument("--host", required=True, help="当前宿主：claude-code（或 claude）/ codex / kimi / antigravity（或 agy）/ 其他名字")
@@ -769,6 +923,8 @@ def main():
     e.add_argument("--executor", metavar="ENTRY[:tier]", help='默认执行者；传 "" 清除')
     e.add_argument("--note")
     e.add_argument("--remove", action="append", metavar="ENTRY")
+    e.add_argument("--tier", action="append", metavar="ENTRY:TIER=MODEL", help="换一个档位的模型")
+    e.add_argument("--ack", action="append", metavar="ENTRY|CHANNEL|all", help="记为已看过，diff 不再提示")
     a = p.parse_args()
 
     for stream in (sys.stdout, sys.stderr):  # Windows 默认 GBK，中文输出统一成 UTF-8
@@ -784,6 +940,8 @@ def main():
         cmd_save(a)
     elif a.cmd == "show":
         cmd_show(a)
+    elif a.cmd == "diff":
+        cmd_diff(a)
     elif a.cmd == "pick":
         cmd_pick(a)
     else:
