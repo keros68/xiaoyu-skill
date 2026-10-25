@@ -8,7 +8,7 @@
 
 | 通道 | 载体 | 计费 | 宿主适用性 |
 |---|---|---|---|
-| aicross 引擎（可选） | `aicross dispatch/status/adopt/cancel/open`（本机命令行，后台执行，不需要窗口） | 按 aicross 的角色设置 | 全部宿主，需已安装 |
+| aicross 引擎（可选） | `aicross dispatch/status/adopt/cancel/open`（本机命令行，后台执行，不需要窗口） | 按用户在 aicross 窗口里设的模式与人选 | 全部宿主，需已安装 |
 | 派发脚本 | `dispatch.py review`（审）／`dispatch.py run`（干活）：按 manifest 选人，替你调用下面各外部通道并留痕 | 各条目自己的订阅 | 全部宿主，需 Python 与 manifest |
 | 内部 subagent | scout/worker/heavy | Claude 订阅 | **仅 Claude Code 宿主** |
 | 外部 agent CLI | `codex exec` / `kimi` / `pi` / `agy` 等（gemini/qoder CLI 已下线，见 channels.md） | 各自订阅 | 全部宿主 |
@@ -17,7 +17,7 @@
 | **裸 API 直调** | 主 agent 直接 `curl` OpenAI/Anthropic 兼容端点 | API 按量 | 全部宿主 |
 | 外部 aichat | `aichat -m <provider>:<model>`（裸 API 的 CLI 封装） | API 按量 | 全部宿主 |
 
-**aicross 引擎（可选）**：作者的派发程序，未公开发布；`aicross` 不在 PATH 上就跳过本段。装了就优先走它——盲审隔离、真身核对、留痕、修正轮与厂商回退都由它在后台执行，不需要打开窗口，skill 只提议、发起和读结果。**只有退出码 3 才回退到下面的 CLI 通道**。用法与边界见 `references/channels.md`「aicross 引擎通道」。没装 aicross 时，审走 `dispatch.py review`，干活走 `dispatch.py run`，脚本不覆盖的派发走下面的通道。
+**aicross 引擎（可选）**：ai-cross 的桌面配套程序，安装包在 GitHub Release；`aicross` 不在 PATH 上就跳过本段。装了就优先走它，按用户在窗口里选好的模式与人选派发（`SKILL.md`「先看装没装 aicross」）——盲审隔离、真身核对、留痕、修正轮与厂商回退都由它在后台执行，不需要打开窗口，skill 只提议、发起和读结果。**只有退出码 3 才回退到下面的 CLI 通道**。用法与边界见 `references/channels.md`「aicross 引擎通道」。没装 aicross 时，审走 `dispatch.py review`，干活走 `dispatch.py run`，脚本不覆盖的派发走下面的通道。
 
 **Antigravity（`agy`）**：订阅式额度窗口，`agy models` 下有 Gemini 3.x、Claude 4.6、GPT-OSS 120B 三家权重——**manifest 里没有 Google 系厂商时，Gemini 能补一个新的厂商轴，交叉验证优先考虑它**。无头模式下连读文件都会被自动拒绝，所以只能当纯文本盲审者：材料全内联、明写不用工具（这正合盲验隔离）。绝不加 `--dangerously-skip-permissions`。见 `references/channels.md`「Antigravity CLI」。
 

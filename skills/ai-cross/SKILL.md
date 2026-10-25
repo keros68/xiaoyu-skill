@@ -2,7 +2,7 @@
 name: ai-cross
 description: 多模型分工与跨厂商交叉验证 skill：把任务派给合适的模型分工执行，用不同厂商的模型互相核查关键产出，按档位分层派发以节省订阅额度。适用场景：用户要求派发任务、分层执行、多模型协作、对关键产出做交叉验证、盘点或接入可用模型，或提到 dispatch、派工；也包括日常说法：让别的模型或另一家看看、换个模型审一下、要个第二意见、找别家复查、多找几家对一下。不适用场景：没提到其他模型的普通任务（只说"帮我检查一下"不算，没有派发需求时不要触发）、没有 shell 执行能力的纯聊天宿主。
 metadata:
-  version: 1.22.0
+  version: 1.23.0
 ---
 
 # ai-cross — 多模型分工与跨厂商交叉验证
@@ -14,6 +14,12 @@ metadata:
 本文件是入口和每次都要做的判断。完整规则在 `references/rules.md`，按文末「什么时候读哪一节」按需读，不必预先通读。
 
 ## 从这里开始
+
+**先看装没装 aicross**（用户在它的窗口里选好模式与人选，skill 照办）：跑 `aicross config show --host <主 agent>`，主 agent 写 `claude` / `codex` / `kimi` / `pi`（当前宿主是哪家就写哪家；宿主不在这四家里就跳过这一段）。
+
+- **退出码 0** → 按 aicross 的配置派发，**不看下面的盘点清单，也不要求盘点**：读 `references/channels.md`「aicross 引擎通道」的「按窗口配置派发」照做。开场的路由决策行写明「按你在 aicross 里设的<模式名>」和每个位置派给谁。
+- **命令不存在** → 没装 aicross，从下面第 1 条开始。
+- **其他退出码**（当前宿主不在 aicross 的主 agent 里、配置读不了）→ 对用户说一句原因（stderr 原文），从下面第 1 条开始。
 
 1. 先看这台机器盘点过没有：`python <本skill目录>/references/inventory.py show --human`。manifest 存在用户主目录下（`$AICROSS_HOME/skill/manifest.json`，未设时 `~/.aicross/skill/manifest.json`），各宿主共用一份，skill 更新不影响它——**每台机器盘点一次，换宿主不用重做**。
 2. 退出码 3（还没有 manifest）→ **直接进入盘点**：读 `references/setup.md` 按其执行。**被点名且没有 manifest 时，盘点就是当前任务——不要只复述规则等用户开口。**
@@ -65,7 +71,6 @@ metadata:
    python <本skill目录>/references/inventory.py set --reviewers agy.google              # 以后审查先用这家；几家都要排前面就用逗号连起来
    python <本skill目录>/references/inventory.py set --executor pi-zai-coding-cn.zhipu:low   # 以后干活默认派这家的低档
    ```用户当场纠正路由（"这类任务用高档／开思考"）就照办，并用 `inventory.py set --note "…"` 记下，后续同类任务遵循。
-7. 本机装了 aicross 引擎（`aicross` 在 PATH 上）时优先走它，用法见 `references/channels.md`「aicross 引擎通道」；没装就按上面几条。
 
 ## 开场与收尾
 
@@ -123,7 +128,7 @@ metadata:
 ```
 
 - **关键产出**指：涉及数据、权限、金额、迁移或跨多个文件的代码改动；科研分析的结论与数值；要对外交付的长文档。日常小改动不提。
-- 默认审查者取 `inventory.py pick --role reviewer --host <宿主名>`；它退出码 1（只有一家厂商）时不提。
+- 默认审查者取 `inventory.py pick --role reviewer --host <宿主名>`；它退出码 1（只有一家厂商）时不提。按 aicross 配置派发时，取 `config show` 里盲审模式各位置的人选。
 - **只提一句，不展开，不自动派**。用户没接话就当没提过；用户说过"不用""别提了"，本次会话不再提。
 - 会话里没用过本 skill 时不适用——不要为了提议而触发 skill。
 
@@ -135,6 +140,7 @@ metadata:
 
 | 情形 | 读 |
 |---|---|
+| 装了 aicross，按它的配置派发 | `references/channels.md`「aicross 引擎通道」 |
 | 还没盘点、接新通道、模型或订阅变了 | `references/setup.md`；出了新模型、`pick` 提示检查新模型，看其中「之后：出了新模型」 |
 | 要手写派发命令（上面第 5 条） | `references/channels.md` 对应通道；`references/rules.md`「验证的框架隔离」「通道用法」 |
 | 拿不准派不派、派几路、能并行多少 | `rules.md`「先问要不要外派」「派发强度」「并行边界与任务分配」「派发单元与门槛」 |

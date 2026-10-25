@@ -344,12 +344,27 @@ cat file.txt | aichat -m <provider>:<model> "总结要点"   # 长文本走 stdi
 
 ## aicross 引擎通道（可选；装了 aicross 就优先走这条，2026-10-01 端到端实测）
 
-aicross 是作者的派发程序，未公开发布；命令 `aicross` 不在 PATH 上就跳过本节。它在本机后台执行整条流水线：拉起各家 CLI、盲审隔离、真身核对、`.dispatch/` 留痕、修正轮、红绿核对、额度切备选；**不需要打开它的窗口**。skill 只负责提议、发起和读结果。
+aicross 是 ai-cross 的桌面配套程序，安装包在 GitHub Release（安装时把自己加进当前用户 PATH）；命令 `aicross` 不存在就跳过本节。用户在它的窗口里探测本机模型、选默认模式和每个位置的人选；派发时它在本机后台执行整条流水线：拉起各家 CLI、盲审隔离、真身核对、`.dispatch/` 留痕、修正轮、红绿核对、额度切备选。**派发不需要打开窗口**，skill 只负责提议、发起和读结果。
+
+### 按窗口配置派发
+
+`aicross config show --host <主 agent>` 输出 JSON：`defaultMode` 是默认模式的 id，`modes[]` 每项有 `id`、`name`（如「盲审模式」）、`default`，`stages[][]` 是各阶段的位置，每个位置有 `role`（执行 / 验收 / 验证 …）和 `effective`（实际派给谁：`agent`、`provider`、`model`、`state`），没人选时 `unfilledReason` 写原因。
+
+1. **选模式**：看用户要的是审还是干活。
+   - 审（盲审、第二意见、"让别家看看"）：默认模式是盲审模式或评审模式就用它，否则用盲审模式（`--preset blind`）。
+   - 干活：默认模式是共享、经济、擂台、蜂群模式之一就用它，否则用经济模式（`--preset economy`）。
+   - 用户这次点名了模式（"这次用擂台模式"），就加 `--preset <模式 id>`。
+   - 用默认模式时不加 `--preset`，引擎自己读默认模式。
+2. **开场一行写明配置来源**：`- [ai-cross] <任务> → 按你在 aicross 里设的<模式名>：<角色> <模型>，<角色> <模型> ｜ 理由：<一句话>`。人选取该模式各位置的 `effective`，用户同意后再发。
+3. **位置没人选（有 `unfilledReason`），或 `effective.state` 是未安装 / 未探测 / 未发现 / 未登录 / 验证失败 / 不在资源库**：不发，告诉用户是哪个位置、原因，请他在 aicross 窗口里重新探测或在「模式」页换人选。不自行换人。额度用尽由引擎按备选改派；未验证、冒烟超时照常派发，在开场那行注明。
+4. **单次例外**（"这次换 Kimi 审"）：只对这一次改派，不改 aicross 的配置。换模式就加 `--preset`；换人则改用下面的 `dispatch.py --entry`（需要盘点清单，没有就说明并请用户在窗口里改）。用户说"以后都这样"时，请他在窗口里改，或跑 `aicross config set-seat` / `set-default-mode`（写入前在对话里确认）。
 
 ```powershell
 $s = if ($env:AICROSS_HOME) { "$env:AICROSS_HOME\scratch" } else { "$HOME\.aicross\scratch" }
-aicross dispatch --project D:\work\project --preset economy --text-file $s\dispatch.txt
-aicross dispatch --project D:\work\project --preset economy --text-file $s\dispatch.txt --accept-file $s\accept.md
+aicross config show --host claude
+aicross dispatch --host claude --project D:\work\project --text-file $s\dispatch.txt                 # 默认模式
+aicross dispatch --host claude --project D:\work\project --preset blind --text-file $s\dispatch.txt   # 指定模式
+aicross dispatch --host claude --project D:\work\project --text-file $s\dispatch.txt --accept-file $s\accept.md
 aicross status <run_id>
 aicross status <run_id> --wait --timeout 540
 aicross adopt <run_id> <node_id>
