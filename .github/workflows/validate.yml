@@ -21,7 +21,5 @@ jobs:
         working-directory: skills/sci-select
       - run: python -m py_compile scripts/*.py
         working-directory: skills/sci-select
-      - run: python -m unittest discover -s tests -p "test_*.py"
-        working-directory: skills/ai-cross
       - run: python -m pytest scripts/test_cugb_format_tools.py -q
         working-directory: skills/cugb-doctoral-thesis-format

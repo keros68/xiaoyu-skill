@@ -4,10 +4,10 @@
 
 # xiaoyu-skill
 
-科研用 Agent Skill 合集：文献引用、期刊选刊、论文格式、学术制图、多模型协作。
+科研用 Agent Skill 合集：文献引用、期刊选刊、论文格式、学术制图。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![Skills](https://img.shields.io/badge/skills-6-blueviolet)
+![Skills](https://img.shields.io/badge/skills-5-blueviolet)
 [![Tests](https://github.com/keros68/xiaoyu-skill/actions/workflows/test.yml/badge.svg)](https://github.com/keros68/xiaoyu-skill/actions/workflows/test.yml)
 
 </div>
@@ -32,7 +32,8 @@
 | 论文格式 | [`cugb-doctoral-thesis-format`](skills/cugb-doctoral-thesis-format/) | 中国地质大学（北京）博士论文 DOCX 格式预检与定稿审查 | Python（DOCX 处理） | [keros68/cugb-doctoral-thesis-format](https://github.com/keros68/cugb-doctoral-thesis-format) |
 | 学术制图 | [`abstract-fig`](skills/abstract-fig/) | 可编辑的论文图形摘要、概念/机制图、技术路线图（draw.io） | draw.io 查看与编辑；图像生成工具可选 | [keros68/abstract-fig](https://github.com/keros68/abstract-fig) |
 | 学术制图 | [`study-area-map`](skills/study-area-map/) | 研究区区位图、地形晕渲底图、土地利用与采样点等专题图层、多面板地图组织 | R（ggplot2 + sf + terra） | [keros68/study-area-map.skill](https://github.com/keros68/study-area-map.skill) |
-| 多模型协作 | [`ai-cross`](skills/ai-cross/) | 多模型分工派发、分层执行与跨厂商交叉验证 | 宿主需支持 shell；交叉验证需两家以上厂商的模型 | — |
+
+多模型分工与跨厂商交叉验证的 `ai-cross` 已移到 [keros68/aicross](https://github.com/keros68/aicross)，与它的桌面面板放在一起。之前从本仓库装的，执行 `npx skills remove ai-cross -g` 后改装 `npx skills add keros68/aicross --skill ai-cross -g`。
 
 ## 快速开始
 

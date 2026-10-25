@@ -4,10 +4,10 @@ English | [简体中文](README.md)
 
 # xiaoyu-skill
 
-Agent Skills for academic research: references, journal selection, thesis formatting, scientific figures, multi-model orchestration.
+Agent Skills for academic research: references, journal selection, thesis formatting, scientific figures.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![Skills](https://img.shields.io/badge/skills-6-blueviolet)
+![Skills](https://img.shields.io/badge/skills-5-blueviolet)
 [![Tests](https://github.com/keros68/xiaoyu-skill/actions/workflows/test.yml/badge.svg)](https://github.com/keros68/xiaoyu-skill/actions/workflows/test.yml)
 
 </div>
@@ -32,7 +32,8 @@ Each skill is a directory whose `SKILL.md` defines triggers, workflow, and deliv
 | Thesis Formatting | [`cugb-doctoral-thesis-format`](skills/cugb-doctoral-thesis-format/) | DOCX format pre-check and final review for China University of Geosciences (Beijing) doctoral theses | Python (DOCX processing) | [keros68/cugb-doctoral-thesis-format](https://github.com/keros68/cugb-doctoral-thesis-format) |
 | Scientific Figures | [`abstract-fig`](skills/abstract-fig/) | Editable graphical abstracts, concept/mechanism diagrams, and research roadmaps in draw.io | draw.io viewer/editor; image generation optional | [keros68/abstract-fig](https://github.com/keros68/abstract-fig) |
 | Scientific Figures | [`study-area-map`](skills/study-area-map/) | Study-area locator maps, shaded-relief basemaps, thematic layers such as land use and sampling sites, and multi-panel map compositions | R (ggplot2 + sf + terra) | [keros68/study-area-map.skill](https://github.com/keros68/study-area-map.skill) |
-| Multi-Model Orchestration | [`ai-cross`](skills/ai-cross/) | Multi-model task dispatch, tiered execution, and cross-vendor verification | Shell-capable host; cross-vendor review needs models from two or more providers | — |
+
+`ai-cross` (multi-model dispatch and cross-vendor verification) has moved to [keros68/aicross](https://github.com/keros68/aicross), together with its desktop panel. If you installed it from this repository, run `npx skills remove ai-cross -g`, then `npx skills add keros68/aicross --skill ai-cross -g`.
 
 ## Quick Start
 

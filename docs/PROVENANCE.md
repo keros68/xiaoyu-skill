@@ -6,7 +6,7 @@
 | --- | --- |
 | `abstract-fig` | `75e955b49d3dfa5cc7f2e9ba43d0597e60554cc1` |
 | `academic-reference-matcher` | `189a5ddbeaca8e1a594c28ac5d4c694741c01db9` |
-| `ai-cross` | `c05c6ac42fa48ad083a6f25f0c68b721a3ab20f2` |
+| `ai-cross` | `c05c6ac42fa48ad083a6f25f0c68b721a3ab20f2`（2026-10-25 移至 keros68/aicross） |
 | `cugb-doctoral-thesis-format` | `2f89e6261075ae382324671309e76d42559e725c` |
 | `sci-select` | `ad03233015af343ad3c013c9477cb314d69574dd` |
 | `study-area-map` | `4179ef5115359d6f997362d9e34e27c803d8b598` |
